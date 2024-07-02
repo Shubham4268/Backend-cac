@@ -1,0 +1,26 @@
+Javascript has two ways to import files, one is Common js and other is Module Js.
+import "" from "" is  Module Js syntax. It imports code Asynchronously.
+Require() is Common Js syntax It imports code synchronously.
+To use import we add  type : "Module" in package.json files
+
+Axios: A Promise-based HTTP Client for Node.js and the Browser
+Axios is a popular JavaScript library used for making HTTP requests from both the browser and Node.js. It simplifies the process of making HTTP requests and handling responses, providing an easy-to-use API.
+
+Cross-Origin Resource Sharing (CORS) is a mechanism that allows web servers to control how resources are shared across different origins. It is implemented via HTTP headers and is crucial for web security, ensuring that only authorized domains can access resources while protecting users from malicious actions.
+
+In simple language, CORS does not allow someone that is not from the same home. 
+
+One of the solution is to install a CORS package, we can white list the urls using it. but we need to take care of these urls and ports while deploying applications.
+
+To reduce the repeated writing of url, Proxy is used. 
+
+Proxy for Handling CORS Errors
+When your frontend application is making requests to a backend server on a different origin, the browser's same-origin policy may block these requests if the server does not permit them via CORS headers. A proxy server can help to bypass this issue by acting as an intermediary between your frontend and backend servers.
+
+How It Works
+Frontend Application: Makes a request to the proxy server (which is on the same origin as the frontend).
+Proxy Server: Forwards the request to the actual backend server.
+Backend Server: Sends the response back to the proxy server.
+Proxy Server: Sends the response back to the frontend application.
+Since the request from the frontend to the proxy is same-origin, CORS issues are avoided.
+

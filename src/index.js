@@ -1,5 +1,22 @@
-import mongoose from "mongoose";
+import dotenv from "dotenv"
+import connectDB from "./db/index.js"
 
+dotenv.config({
+    path : './env'
+})
+
+connectDB()
+
+
+
+
+
+
+
+
+
+
+/*
 (async () => {
     try {
         mongoose.connect(`${process.env.MONGO_URI}/${DB_NAME}`)
@@ -15,4 +32,5 @@ import mongoose from "mongoose";
         console.error("Error: ", error);
         throw error;
     }
-})()                                // ifi  // used arrow function intead of normal function
+})()                                // ifi  // used arrow function instead of normal function
+*/

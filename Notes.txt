@@ -29,3 +29,14 @@ Database-
  2. Database operations involve latency, and traditional synchronous code can lead to blocking, where the program waits for the database query to complete before moving on. So, we should async/await which allows for non-blocking execution, enabling the program to continue with other tasks while waiting for the database response. 
  - Used two approach to connect the database - 1. In Index File, 2. In Seprate DB file
 
+
+NOTE : Arrow function should not be used as a callback function in middlewares because it does not have the context of 'this' i.e. ongoing function.
+
+Mongoose Aggregate paginate is a plugin that can be used to write mongoose complex queries.
+
+bcrypt or bcryptjs library -  It is used to hash passwords
+JWT - JSON Web Token - For hashing passwords, It creates tokens after hashing,
+Tokens consist of three parts - Header (Algorithms and Token Type), Payload (Data), Signature used for encryting
+
+JWT is a bearer token. Whoever has this token can access the data, it is like a key.
+

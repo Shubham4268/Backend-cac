@@ -40,3 +40,82 @@ Tokens consist of three parts - Header (Algorithms and Token Type), Payload (Dat
 
 JWT is a bearer token. Whoever has this token can access the data, it is like a key.
 
+Here is an extended explanation of each HTTP method:
+1. GET:
+Purpose: Retrieves data from the server.
+Typical Use: Used when requesting data such as a webpage, image, or document. GET requests should be idempotent, meaning multiple identical requests will have the same effect as a single request.
+Example: Fetching a list of users from a server (GET /users).
+Characteristics: Does not modify server state, only retrieves data.
+
+2. HEAD:
+Purpose: Similar to GET, but without the response body.
+Typical Use: Used to check what a GET request would return, without transferring the data. Often used for checking things like file metadata, caching information, or verifying that a resource exists.
+Example: Checking if a file exists without downloading it (HEAD /file.txt).
+Characteristics: Faster than GET as it only retrieves headers.
+
+3. OPTIONS:
+Purpose: Asks the server which HTTP methods are allowed or supported for a particular resource.
+Typical Use: Used in CORS (Cross-Origin Resource Sharing) requests to check if the client has permission to interact with a resource.
+Example: Checking the supported methods for a particular endpoint (OPTIONS /users might return GET, POST, OPTIONS).
+Characteristics: Doesn't modify any resources, purely informational.
+
+4. TRACE:
+Purpose: Performs a message loopback test, where the request is echoed back to the client.
+Typical Use: Used for diagnostic purposes to see how requests are being modified along the path to the server.
+Example: Checking how intermediate servers might modify your HTTP request.
+Characteristics: Rarely used in production and can expose sensitive information, so it's often disabled on servers for security reasons.
+
+5. DELETE:
+Purpose: Removes a resource from the server.
+Typical Use: Used when you need to delete data, such as deleting a user account or a file.
+Example: Deleting a user with DELETE /users/123.
+Characteristics: Modifies server state by removing data. Idempotent, meaning if you DELETE the same resource multiple times, the result is the same (resource remains deleted).
+
+6. PUT:
+Purpose: Replaces an existing resource or creates a resource if it doesn't exist.
+Typical Use: Used when you need to update a resource entirely, such as replacing a document or updating user information.
+Example: Replacing a user’s profile with PUT /users/123.
+Characteristics: Idempotent. If the same PUT request is repeated, the result should be the same.
+
+7. POST:
+Purpose: Sends data to the server to create or modify a resource.
+Typical Use: Used for creating new resources, such as submitting a form, adding a new user, or uploading a file.
+Example: Creating a new user with POST /users.
+Characteristics: Not idempotent. Multiple POST requests can result in multiple new resources being created (e.g., multiple users).
+
+8. PATCH:
+Purpose: Modifies part of an existing resource.
+Typical Use: Used when you want to partially update an existing resource rather than replacing it entirely.
+Example: Updating a user's email with PATCH /users/123 where only the email field is modified.
+Characteristics: Unlike PUT, PATCH is not idempotent, meaning multiple PATCH requests may have different effects depending on the nature of the update.
+
+HTTP Status Code
+1xx: Informational
+2xx: Success
+3xx: Redirection
+4xx: Client error
+5xx: Server error
+
+Codes:
+100: Continue
+102: Processing
+200: OK
+201: Created
+202: Accepted
+307: Temporary Redirect
+308: Permanent Redirect
+
+Client Errors:
+400: Bad Request
+401: Unauthorized
+402: Payment Required
+404: Not Found
+
+Server Errors:
+500: Internal Server Error
+504: Gateway Timeout
+
+Complete guide for router and controller:
+1. Main App (app.js): The Express app is set up with app.use("/api/v1/users", userRouter) to handle routes related to users.
+2. Routes (user.routes.js): When a POST request is made to /api/v1/users/register, it triggers the registerUser function in the controller.
+3. Controller (users.controller.js): The registerUser function (wrapped in asyncHandler) sends a response with a status of 200 and a JSON message { message: 'ok' }. If there is an error, it will be caught by the asyncHandler.

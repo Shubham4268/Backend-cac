@@ -40,3 +40,19 @@ Tokens consist of three parts - Header (Algorithms and Token Type), Payload (Dat
 
 JWT is a bearer token. Whoever has this token can access the data, it is like a key.
 
+Files are uploaded using multer and stored using Cloudinary after the upload.
+
+url = Uniform resourse locater
+uri = Uniform resourse Identifier
+urn = Uniform resourse Name
+
+HTTP Headers - 
+Metadata - data about some data - key value sent along with request and response
+Used for caching, authentication, manage state(User logged in or not)
+
+Request Headers  -  from Client
+Response Headers  - from Server
+Representation Headers  - encoding / compression
+Payload Headers - data
+
+

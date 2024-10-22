@@ -21,7 +21,6 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // Extract user details from the request body
 const { fullName, email, username, password } = req.body;
-console.log("email: ", email); // Debug log for the email
 
 // Validate input fields - check if any field is empty
 if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
@@ -29,7 +28,7 @@ if ([fullName, email, username, password].some((field) => field?.trim() === ""))
 }
 
 // Check if a user with the same email or username already exists in the database
-const existedUser = User.findOne({
+const existedUser = await User.findOne({
     $or: [{ email }, { username }]
 });
 
@@ -40,7 +39,10 @@ if (existedUser) {
 
 // Get file paths for avatar and cover image from the uploaded files in the request
 const avatarLocalPath = req.files?.avatar[0]?.path;
-const coverImageLocalPath = req.files?.coverImage[0]?.path;
+let coverImageLocalPath 
+if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+    coverImageLocalPath = req.files.coverImage[0].path                   
+}
 
 // Check if avatar image is provided, if not, throw an error
 if (!avatarLocalPath) {
@@ -75,6 +77,8 @@ if (!createdUser) {
 }
 
 // Return a successful response with the created user details
+console.log(res.status(201));
+
 return res.status(201).json(
     new ApiResponse(200, createdUser, "User registered successfully")
 );

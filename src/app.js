@@ -13,7 +13,7 @@ app.use(express.json({limit : '16kb'}))
 // Some times urls are written as shubham+joshi or shubham%20joshi. to make express understand:-
 app.use(express.urlencoded({extended : true, limit : '16kb'}))
 app.use(express.static("public"))  // Static stores files, images in the server in public folder
-app.use(cookieParser())
+app.use(cookieParser())            // req gets the Access of cookies via middleware
 
 
 

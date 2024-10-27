@@ -135,3 +135,18 @@ Complete guide for router and controller:
 1. Main App (app.js): The Express app is set up with app.use("/api/v1/users", userRouter) to handle routes related to users.
 2. Routes (user.routes.js): When a POST request is made to /api/v1/users/register, it triggers the registerUser function in the controller.
 3. Controller (users.controller.js): The registerUser function (wrapped in asyncHandler) sends a response with a status of 200 and a JSON message { message: 'ok' }. If there is an error, it will be caught by the asyncHandler.
+
+Using access and refresh tokens:
+
+1. Access Token Expiration:
+The access token has a shorter lifespan and is used for authentication in most requests. When it expires, the user is no longer authenticated and would normally receive a 401 Unauthorized response for protected routes.
+
+2. Refreshing the Access Token:
+Instead of logging the user out when the access token expires, the client (e.g., a frontend app) automatically sends a request to a "refresh token endpoint" with the refresh token.
+The server then checks if the refresh token is valid. This usually involves comparing it to the one stored in a secure database or cache.
+If the refresh token is valid and not expired, the server generates a new access token and returns it to the client.
+The client replaces the expired access token with the new one, allowing the user to continue without needing to log in again.
+
+3. Error Handling:
+If the refresh token is invalid or expired, the server will respond with a 401 Unauthorized message, requiring the user to log in again. This could happen if the refresh token has been revoked (e.g., if the user logged out) or expired.
+

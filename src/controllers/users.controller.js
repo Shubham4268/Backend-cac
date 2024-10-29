@@ -91,10 +91,10 @@ const generateAccessAndRefreshTokens = async (userId) => {
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
 
-        
+
         user.refreshToken = refreshToken
         await user.save({ validateBeforeSave: false }); // save method validates for each field while saving everytime, so to avoid needless validation, validateBeforeSave is set to false.
-        
+
         return { accessToken, refreshToken }
 
 
@@ -250,6 +250,175 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
+// Function to change the current password of the logged-in user
+const changeCurrentPassword = asyncHandler(async (req, res) => {
+    // Extract old and new passwords from the request body
+    const { oldPassword, newPassword } = req.body;
+
+    // Find the user by their ID (retrieved from request's user data)
+    const user = await User.findById(req.user?._id);
+
+    // Check if the old password is correct
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+    // If the old password is incorrect, throw an error
+    if (!isPasswordCorrect) {
+        throw new ApiError(400, "Invalid old password");
+    }
+
+    // Update user's password with the new password and save changes
+    user.password = newPassword;
+    await user.save({ validateBeforeSave: false });
+
+    // Send success response
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                {},
+                "Password changed successfully"
+            )
+        );
+});
+
+// Function to fetch details of the currently logged-in user
+const getCurrentUser = asyncHandler(async (req, res) => {
+    // Send a response with user details stored in request
+    return res
+        .status(200)
+        .json(
+            200,
+            req.user,
+            "Current user fetched successfully"
+        );
+});
+
+// Function to update account details such as full name and email
+const updateAccountDetails = asyncHandler(async (req, res) => {
+    // Extract full name and email from the request body
+    const { fullName, email } = req.body;
+
+    // Check if full name and email are provided, else throw an error
+    if (!fullName || !email) {
+        throw new ApiError(400, "All fields are required");
+    }
+
+    // Find user by ID and update full name and email
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                fullName,
+                email
+            }
+        },
+        { new: true }
+    ).select("-password"); // Exclude password from response
+
+    // Send success response with updated user details
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                user,
+                "Account details updated successfully"
+            )
+        );
+});
+
+// Function to update the avatar image of the logged-in user
+const updateAvatarImage = asyncHandler(async (req, res) => {
+    // Get the local path of the uploaded avatar image file
+    const avatarLocalPath = req.file?.path;
+
+    // Check if the avatar image file is provided, else throw an error
+    if (!avatarLocalPath) {
+        throw new ApiError(400, "Avatar image is missing");
+    }
+
+    // Upload the avatar image to Cloudinary and get the URL
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    // If the upload fails, throw an error
+    if (!avatar) {
+        throw new ApiError(400, "Error while uploading avatar");
+    }
+
+    // Update user’s avatar URL with the new image URL from Cloudinary
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                avatar: avatar.url
+            }
+        },
+        { new: true }
+    ).select("-password"); // Exclude password from response
+
+    // Send success response with updated user details
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                user,
+                "Avatar image updated successfully"
+            )
+        );
+});
+
+// Function to update the cover image of the logged-in user
+const updateCoverImage = asyncHandler(async (req, res) => {
+    // Get the local path of the uploaded cover image file
+    const coverImageLocalPath = req.file?.path;
+
+    // Check if the cover image file is provided, else throw an error
+    if (!coverImageLocalPath) {
+        throw new ApiError(400, "Cover image is missing");
+    }
+
+    // Upload the cover image to Cloudinary and get the URL
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+
+    // If the upload fails, throw an error
+    if (!coverImage) {
+        throw new ApiError(400, "Error while uploading cover image");
+    }
+
+    // Update user’s cover image URL with the new image URL from Cloudinary
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                coverImage: coverImage.url
+            }
+        },
+        { new: true }
+    ).select("-password"); // Exclude password from response
+
+    // Send success response with updated user details
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                user,
+                "Cover image updated successfully"
+            )
+        );
+});
 
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+export {
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    changeCurrentPassword,
+    getCurrentUser, 
+    updateAccountDetails,
+    updateAvatarImage,
+    updateCoverImage
+};

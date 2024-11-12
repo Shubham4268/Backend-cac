@@ -57,7 +57,7 @@ const userSchema = new Schema(
 userSchema.pre("save",  async function (next) {
     if(!this.isModified("password")) return next();
     // Need to check if the password is modified, else the middleware will be triggered each time when user clicks on save button
-    this.password = bcrypt.hash(this.password, 10)
+    this.password = await bcrypt.hash(this.password, 10)
     next()
 })
 

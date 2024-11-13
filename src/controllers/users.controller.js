@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
 
 // Register a new user using the asyncHandler to manage asynchronous errors.
 // If the request is successful, the server responds with status 200 and a JSON message.
@@ -410,6 +411,153 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         );
 });
 
+const getUserChannelProfile = asyncHandler(async (req, res) => {
+    // Extracts the 'username' parameter from the URL path (route parameters)
+    const { username } = req.params;
+
+    // Checks if 'username' is provided and is not an empty string after trimming whitespaces
+    if (!username?.trim()) {
+        throw new ApiError(400, "Username is missing"); // Throws a 400 Bad Request error if username is missing
+    }
+
+    // Queries the 'User' collection to find the user's channel profile
+    const channel = await User.aggregate([
+        {
+            // Matches a user document where the 'username' matches the provided one, case-insensitively
+            $match: {
+                username: username?.toLowerCase()
+            }
+        },
+        {
+            // looks through the subscriptions collection to find the documents in which the channel list is matched with userId of visited channel
+            $lookup: {
+                from: "subscriptions",  // The collection to join (subscriptions)
+                localField: "_id",   // id of the channel(user) being matched 
+                foreignField: "channel", // list of channels to look through to match it with localfield
+                as: "subscribers"  // Stores the matched documents in a new field named 'subscribers'
+            }
+        },
+        {
+            // looks through the subscriptions collection to find the documents in which the subscriber list is matched with userId of visited channel
+            $lookup: {
+                from: "subscriptions",
+                localField: "_id",
+                foreignField: "subscriber",
+                as: "subscribedTo"
+            }
+        },
+        {
+            // Adds computed fields to the document
+            $addFields: {
+                // 'subscribersCount' is set to the number of elements in the 'subscribers' array
+                subscribersCount: {
+                    $size: "$subscribers"
+                },
+                // 'channelsSubscribedToCount' is set to the number of elements in the 'subscribedTo' array
+                channelsSubscribedToCount: {
+                    $size: "$subscribedTo"
+                },
+                // 'isSubscribed' is a boolean indicating whether the current user is subscribed to this channel
+                isSubscribed: {
+                    $cond: {
+                        // Checks if the current user's ID is in the list of 'subscribers'
+                        if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+                        then: true,
+                        else: false
+                    }
+                }
+            }
+        },
+        {
+            // Projects (selects) specific fields to include in the final result
+            $project: {
+                fullName: 1,
+                username: 1,
+                subscribersCount: 1,
+                channelsSubscribedToCount: 1,
+                isSubscribed: 1,
+                avatar: 1,
+                coverImage: 1,
+                email: 1
+            }
+        }
+    ]);
+
+    // Logs the retrieved channel data to the console (for debugging purposes)
+    console.log(channel);
+
+    // Checks if no channel was found (empty array), and if so, throws a 404 Not Found error
+    if (!channel?.length) {
+        throw new ApiError(404, "Channel does not exist");
+    }
+
+    // Returns a successful response with the first (and only) channel document
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, channel[0], "User channel fetched successfully")
+        );
+});
+
+const getWatchHistory = asyncHandler(async (req, res) => {
+    // Aggregate the user's watch history from the database
+    const user = await User.aggregate([
+        {
+            // Match the user document by the user's unique ID (from the request)
+            $match: {
+                _id : new mongoose.Types.ObjectId(req.user._id)
+            },
+            // Lookup documents in the "videos" collection where the video ID matches an ID in the user's "watchHistory" array
+            $lookup: {
+                from: "videos", // Collection to join (videos collection)
+                localField: "watchHistory", // Field from the User model to match (watchHistory array)
+                foreignField: "_id", // Field in the videos collection to match (video IDs)
+                as: "watchHistory", // Result array to hold matched documents
+                pipeline: [
+                    {
+                        // Perform a nested lookup to get the "owner" details of each video
+                        $lookup: {
+                            from: "users", // Collection to join (users collection for video owners)
+                            localField: "owner", // Field in videos collection to match (video owner ID)
+                            foreignField: "_id", // Field in users collection to match (user ID)
+                            as: "owner", // Result array to hold owner details
+                            pipeline: [
+                                {
+                                    // Select specific fields of the owner to return (for minimal data transfer)
+                                    $project: {
+                                        fullName: 1,
+                                        username: 1,
+                                        avatar: 1
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        // Convert the "owner" array into a single object by taking the first element
+                        $addFields: {
+                            owner: {
+                                $first: "$owner"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]);
+
+    // Respond with the user's watch history in a formatted response
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200, // Status code
+                user[0].watchHistory, // Data: User's watch history array
+                "Watch History fetched successfully" // Message for the response
+            )
+        );
+});
+
 
 export {
     registerUser,
@@ -417,8 +565,10 @@ export {
     logoutUser,
     refreshAccessToken,
     changeCurrentPassword,
-    getCurrentUser, 
+    getCurrentUser,
     updateAccountDetails,
     updateAvatarImage,
-    updateCoverImage
+    updateCoverImage,
+    getUserChannelProfile,
+    getWatchHistory
 };

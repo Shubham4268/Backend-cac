@@ -26,16 +26,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // Validate input fields - check if any field is empty
     if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required"); // Throw error if any field is missing
-
-    // Extract user details from the request body
-    const { fullName, email, username, password } = req.body;
-
-    // Validate input fields - check if any field is empty
-    if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required"); // Throw error if any field is missing
+        throw new ApiError(400, "All fields are required") // Throw error if any field is missing
     }
-
 
     // Check if a user with the same email or username already exists in the database
     const existedUser = await User.findOne({
@@ -139,7 +131,7 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Username or Email is required")
     // Extract email, username, and password from request body
     const { email, username, password } = req.body;
-
+    }
     // Check if username or email is provided
     if (!username && !email) {
         throw new ApiError(400, "Username or Email is required");

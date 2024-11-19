@@ -40,31 +40,32 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     // Get file paths for avatar and cover image from the uploaded files in the request
-    const avatarLocalPath = req.files?.avatar[0]?.path;
-    let coverImageLocalPath
-    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
-        coverImageLocalPath = req.files.coverImage[0].path
-    }
+    // const avatarLocalPath = req.files?.avatar[0]?.path;
+    // let coverImageLocalPath
+    // if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+    //     coverImageLocalPath = req.files.coverImage[0].path
+    // }
 
-    // Check if avatar image is provided, if not, throw an error
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar image is required");
-    }
 
-    // Upload avatar and cover image to Cloudinary and get the URLs
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+    // // Check if avatar image is provided, if not, throw an error
+    // if (!avatarLocalPath) {
+    //     throw new ApiError(400, "Avatar image is required");
+    // }
 
-    // If avatar upload fails, throw an error
-    if (!avatar) {
-        throw new ApiError(400, "Avatar image is required");
-    }
+    // // Upload avatar and cover image to Cloudinary and get the URLs
+    // const avatar = await uploadOnCloudinary(avatarLocalPath);
+    // const coverImage = await uploadOnCloudinary(coverImageLocalPath);    
+
+    // // If avatar upload fails, throw an error
+    // if (!avatar) {
+    //     throw new ApiError(400, "Avatar image is required");
+    // }
 
     // Create a new user in the database with the provided details
     const user = await User.create({
         fullName,
-        avatar: avatar.url, // Set avatar URL from Cloudinary
-        coverImage: coverImage?.url || "", // Set cover image URL, or empty string if not uploaded
+        avatar: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732014796/y0osickie5jcblv44jly.jpg", // Set avatar URL from Cloudinary
+        coverImage: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-5.jpg" || "", // Set cover image URL, or empty string if not uploaded
         email,
         password,
         username: username.toLowerCase() // Convert username to lowercase
@@ -260,27 +261,32 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user?._id);
 
     // Check if the old password is correct
-    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+    try {
+        const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+        console.log(isPasswordCorrect);
 
-    // If the old password is incorrect, throw an error
-    if (!isPasswordCorrect) {
-        throw new ApiError(400, "Invalid old password");
+        // If the old password is incorrect, throw an error
+        if (!isPasswordCorrect) {
+            throw new ApiError(400, "Invalid old password");
+        }
+
+        // Update user's password with the new password and save changes
+        user.password = newPassword;
+        await user.save({ validateBeforeSave: false });
+
+        // Send success response
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    {},
+                    "Password changed successfully"
+                )
+            );
+    } catch (error) {
+        throw new ApiError(400, "Could not change password")
     }
-
-    // Update user's password with the new password and save changes
-    user.password = newPassword;
-    await user.save({ validateBeforeSave: false });
-
-    // Send success response
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(
-                200,
-                {},
-                "Password changed successfully"
-            )
-        );
 });
 
 // Function to fetch details of the currently logged-in user
@@ -289,9 +295,12 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(
-            200,
-            req.user,
-            "Current user fetched successfully"
+            new ApiResponse(
+                200,
+                req.user,
+                "Current user fetched successfully"
+            )
+
         );
 });
 
@@ -505,8 +514,9 @@ const getWatchHistory = asyncHandler(async (req, res) => {
         {
             // Match the user document by the user's unique ID (from the request)
             $match: {
-                _id : new mongoose.Types.ObjectId(req.user._id)
+                _id: new mongoose.Types.ObjectId(req.user?._id)
             },
+        },{ 
             // Lookup documents in the "videos" collection where the video ID matches an ID in the user's "watchHistory" array
             $lookup: {
                 from: "videos", // Collection to join (videos collection)

@@ -11,7 +11,7 @@ import {
   updateCoverImage,
   getUserChannelProfile,
   getWatchHistory,
-} from "../controllers/users.controller.js";
+} from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 

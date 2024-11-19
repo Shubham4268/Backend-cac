@@ -20,9 +20,11 @@ app.use(cookieParser())            // req gets the Access of cookies via middlew
 // import Routes
 import userRouter from "./routes/user.routes.js"
 
+import tweetRouter from "./routes/tweet.routes.js"
+
 // routes declaration
 
 app.use("/api/v1/users", userRouter)          // The userRouter is imported and mounted on the /api/v1/users path. Any request to this path will be forwarded to userRouter.
-
+app.use("/api/v1/tweets", tweetRouter)
 // URL : http://localhost:8000/api/v1/users/register
 export {app}

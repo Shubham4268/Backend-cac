@@ -40,26 +40,26 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     // Get file paths for avatar and cover image from the uploaded files in the request
-    // const avatarLocalPath = req.files?.avatar[0]?.path;
-    // let coverImageLocalPath
-    // if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
-    //     coverImageLocalPath = req.files.coverImage[0].path
-    // }
+    const avatarLocalPath = req.files?.avatar[0]?.path;
+    let coverImageLocalPath
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
 
 
-    // // Check if avatar image is provided, if not, throw an error
-    // if (!avatarLocalPath) {
-    //     throw new ApiError(400, "Avatar image is required");
-    // }
+    // Check if avatar image is provided, if not, throw an error
+    if (!avatarLocalPath) {
+        throw new ApiError(400, "Avatar image is required");
+    }
 
-    // // Upload avatar and cover image to Cloudinary and get the URLs
-    // const avatar = await uploadOnCloudinary(avatarLocalPath);
-    // const coverImage = await uploadOnCloudinary(coverImageLocalPath);    
+    // Upload avatar and cover image to Cloudinary and get the URLs
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath);    
 
-    // // If avatar upload fails, throw an error
-    // if (!avatar) {
-    //     throw new ApiError(400, "Avatar image is required");
-    // }
+    // If avatar upload fails, throw an error
+    if (!avatar) {
+        throw new ApiError(400, "Avatar image is required");
+    }
 
     // Create a new user in the database with the provided details
     const user = await User.create({

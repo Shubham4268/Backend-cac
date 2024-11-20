@@ -37,22 +37,21 @@ const createTweet = asyncHandler(async (req, res) => {
 })
 
 const getUserTweets = asyncHandler(async (req, res) => {
-    const {userId} = req.params;
-    console.log(userId);
-    
+    const { userId } = req.params;
+
     const tweets = await User.aggregate([
         {
-            $match : {
-                _id : new mongoose.Types.ObjectId(userId)
+            $match: {
+                _id: new mongoose.Types.ObjectId(userId)
             },
         },
         {
-            $lookup : {
-                from : "tweets",
-                localField : "_id",
-                foreignField : "owner",
-                as : "userTweets"
-                
+            $lookup: {
+                from: "tweets",
+                localField: "_id",
+                foreignField: "owner",
+                as: "userTweets"
+
             }
         },
         {
@@ -65,6 +64,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
                         input: "$userTweets",
                         as: "tweet",
                         in: {
+                            _id: "$$tweet._id",
                             content: "$$tweet.content", // Replace 'text' with the desired field name(s)
                         },
                     },
@@ -74,26 +74,69 @@ const getUserTweets = asyncHandler(async (req, res) => {
     ])
 
     console.log(tweets);
-    
-    if (!tweets[0]?.length) {
-        throw new ApiError(404, "No tweets by the user");
-    }
 
     return res.status(200)
-    .json(
-        new ApiResponse(200, tweets[0], "Tweets fetched successfully")
-    )
-
-
-
+        .json(
+            new ApiResponse(200, tweets[0], "Tweets fetched successfully")
+        )
 })
 
 const updateTweet = asyncHandler(async (req, res) => {
-    //TODO: update tweet
+    const { tweetId } = req.params;
+    const { content } = req.body;
+
+    if (!tweetId) {
+        throw new ApiError(400, "No twitter Id")
+    }
+
+    if (!content?.trim()) {
+        return new ApiError(400, "Tweet cannot be empty")
+    }
+
+    const updatedTweet = await Tweet.findByIdAndUpdate(tweetId, {
+        $set: {
+            content
+        }
+    },
+        { new: true }
+    )
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                updatedTweet.content,
+                "Tweet updated successfully"
+            )
+        )
+
+
 })
 
 const deleteTweet = asyncHandler(async (req, res) => {
     //TODO: delete tweet
+    const { tweetId } = req.params;
+
+    if (!tweetId) {
+        throw new ApiError(400, "No twitter Id")
+    }
+
+    const deletedTweet = await Tweet.findByIdAndDelete(tweetId);
+
+    if (!deletedTweet) {
+        throw new ApiError(404, "Tweet not found");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                {},
+                "Tweet deleted successfully"
+            )
+        )
 })
 
 export {

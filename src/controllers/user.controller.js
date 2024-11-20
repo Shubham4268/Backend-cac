@@ -64,8 +64,8 @@ const registerUser = asyncHandler(async (req, res) => {
     // Create a new user in the database with the provided details
     const user = await User.create({
         fullName,
-        avatar: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732014796/y0osickie5jcblv44jly.jpg", // Set avatar URL from Cloudinary
-        coverImage: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-5.jpg" || "", // Set cover image URL, or empty string if not uploaded
+        avatar: avatar.url, // Set avatar URL from Cloudinary
+        coverImage: coverImage.url || "", // Set cover image URL, or empty string if not uploaded
         email,
         password,
         username: username.toLowerCase() // Convert username to lowercase

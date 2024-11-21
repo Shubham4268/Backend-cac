@@ -111,47 +111,126 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 
     const video = await Video.findById(videoId);
     console.log(video);
-    
+
     const updatedPlaylist = await Playlist.findByIdAndUpdate(playlistId, {
         $addToSet: {            // Add only if videoId doesn't already exist
             videos: video
         }
-    }, 
-    { new: true })
+    },
+        { new: true })
 
     if (!updatedPlaylist) {
         throw new ApiError(400, "Unable to add video to the playlist")
     }
 
     console.log(updatedPlaylist);
-    
+
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(
-            200,
-            updatedPlaylist,
-            "Video added to the playlist successfully"
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                updatedPlaylist,
+                "Video added to the playlist successfully"
+            )
         )
-    )
 })
 
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
-    const { playlistId, videoId } = req.params
-    // TODO: remove video from playlist
+    const { playlistId, videoId } = req.params;
 
-})
+    // Validate Object IDs
+    if (!mongoose.isValidObjectId(playlistId) || !mongoose.isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid playlist ID or video ID");
+    }
+
+    // Find and update the playlist in one query
+    const updatedPlaylist = await Playlist.findOneAndUpdate(
+        { _id: playlistId, videos: videoId }, // Ensure the video exists in the playlist
+        { $pull: { videos: new mongoose.Types.ObjectId(videoId) } }, // Update operation
+        { new: true } // Option to return the updated document
+    );
+
+    console.log(updatedPlaylist);
+
+    // Check if the playlist was found
+    const playlistExists = await Playlist.exists({ _id: playlistId });
+    if (!playlistExists) {
+        throw new ApiError(404, "Playlist not found");
+    }
+    if (!updatedPlaylist) {
+        // If no document is returned, either playlist not found or video not in playlist
+        throw new ApiError(400, "Video not found in playlist");
+    }
+    // Return the updated playlist
+    return res.status(200).json(
+        new ApiResponse(200, updatedPlaylist, "Video removed from playlist")
+    );
+});
+
 
 const deletePlaylist = asyncHandler(async (req, res) => {
     const { playlistId } = req.params
-    // TODO: delete playlist
+    if (!mongoose.isValidObjectId(playlistId)) {
+        throw new ApiError(400, "Invalid Playlist Id");
+    }
+
+    const deletedPlaylist = await Playlist.findByIdAndDelete(playlistId)
+
+    if (!deletedPlaylist) {
+        throw new ApiError(400, "Unable to delete playlist")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                deletedPlaylist,
+                "Playlist deleted successfully"
+            )
+        )
+
 })
 
 const updatePlaylist = asyncHandler(async (req, res) => {
     const { playlistId } = req.params
     const { name, description } = req.body
     //TODO: update playlist
+
+    if (!mongoose.isValidObjectId(playlistId)) {
+        throw new ApiError(400, "Invalid playlist Id");
+    }
+
+    if (!name || !description) {
+        throw new ApiError(400, "All fields are required")
+    }
+
+    const updatedPlaylist = await Playlist.findByIdAndUpdate(playlistId,
+        {
+            $set: {
+                name,
+                description
+            }
+        }, { new: true }
+    )
+
+    if (!updatedPlaylist) {
+        throw new ApiError(400, "Could not update playlist")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                updatedPlaylist,
+                "Playlist updated successfully"
+            )
+
+        )
+
 })
 
 export {

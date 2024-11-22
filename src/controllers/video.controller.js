@@ -11,9 +11,12 @@ const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query = "", sortBy = "createdAt", sortType = "desc", userId } = req.query;
 
     // Construct the filter object
+<<<<<<< HEAD
     // filter is an object that defines the search criteria for the database query:
     // If query is provided, it searches for video titles that match the string using a regular expression ($regex) for partial matching. The $options: "i" makes the search case-insensitive.
     // If userId is provided, it adds a filter to match videos by the user’s ID.
+=======
+>>>>>>> 81a61bf3ec9ae232501b486c57dc23273e33a7c2
     const filter = {};
     if (query) {
         filter.title = { $regex: query, $options: "i" }; // Case-insensitive search by title

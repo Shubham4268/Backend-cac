@@ -7,7 +7,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 const getVideoComments = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
     const {videoId} = req.params
-    const {page = 1, limit = 10} = req.query
+    const {page = 3, limit = 5} = req.query
 
     const comments = await Comment.aggregate([
         {
@@ -20,22 +20,40 @@ const getVideoComments = asyncHandler(async (req, res) => {
                 _id : 0,
                 content : 1
             }
-        }
+        },
+        {
+            $skip: (page - 1) * limit,
+        },
+        {
+            $limit: parseInt(limit),
+        },
     ])
     
-    if (!comments?.length) {
-        throw new ApiError(400, "Unable to fetch comments")
+    const totalComments = await Comment.countDocuments({
+        video: videoId,
+    });
+
+    if (!comments.length) {
+        throw new ApiError(404, "No comments found for this video");
     }
 
-    return res
-    .status(200)
-    .json(
+    const hasNextPage = page * limit < totalComments;
+    const hasPreviousPage = page > 1;
+
+    return res.status(200).json(
         new ApiResponse(
             200,
-            comments,
+            {
+                totalComments,
+                currentPage: parseInt(page),
+                limit: parseInt(limit),
+                nextPage: hasNextPage ? parseInt(page) + 1 : null,
+                previousPage: hasPreviousPage ? parseInt(page) - 1 : null,
+                comments,
+            },
             "Comments fetched successfully"
         )
-    )
+    );
 })
 
 const addComment = asyncHandler(async (req, res) => {

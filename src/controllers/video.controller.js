@@ -34,27 +34,29 @@ const publishAVideo = asyncHandler(async (req, res) => {
         throw new ApiError(400, "All fields are required")
     }
     
-    const videoLocalPath = req.files?.videoFile[0]?.path
-    const thumbnailLocalPath = req.files?.thumbnail[0]?.path
+    // const videoLocalPath = req.files?.videoFile[0]?.path
+    // const thumbnailLocalPath = req.files?.thumbnail[0]?.path
     
 
-    if (!videoLocalPath || !thumbnailLocalPath) {
-        throw new ApiError(400, "Video and thumbnail are required")
-    }
+    // if (!videoLocalPath || !thumbnailLocalPath) {
+    //     throw new ApiError(400, "Video and thumbnail are required")
+    // }
 
-    const video = await uploadOnCloudinary(videoLocalPath);
-    const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+    // const video = await uploadOnCloudinary(videoLocalPath);
+    // const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
 
-    if (!video || !thumbnail) {
-        throw new ApiError(400, "Video and thumbnail are required")
-    }
+    // if (!video || !thumbnail) {
+    //     throw new ApiError(400, "Video and thumbnail are required")
+    // }
 
+    const video = "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4"
     const createdVideo = await Video.create({
         title,
         description,
-        videoFile: video.url,
-        thumbnail: thumbnail.url,
-        duration: video.duration,
+        videoFile: "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4",
+        thumbnail: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013163/samples/landscapes/landscape-panorama.jpg",
+        // duration: videoFile.duration,
+        duration : 10,
         owner: req.user?._id
     })
 

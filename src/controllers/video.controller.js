@@ -8,24 +8,70 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js"
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
-    //TODO: get all videos based on query, sort, pagination
-    const videos = await Video.find();
-    videos.map((video)=>{
-        console.log(video)
-    }) ;
+    const { page = 1, limit = 10, query = "", sortBy = "createdAt", sortType = "desc", userId } = req.query;
 
-    return res
-    .status(200)
-    .json(
+    // Construct the filter object
+    // filter is an object that defines the search criteria for the database query:
+    // If query is provided, it searches for video titles that match the string using a regular expression ($regex) for partial matching. The $options: "i" makes the search case-insensitive.
+    // If userId is provided, it adds a filter to match videos by the user’s ID.
+    const filter = {};
+    if (query) {
+        filter.title = { $regex: query, $options: "i" }; // Case-insensitive search by title
+    }
+    if (userId) {
+        filter.user = userId; // Filter by userId if provided
+    }
+
+    // Count total videos matching the filter
+    const totalVideos = await Video.countDocuments(filter);
+
+    // Fetch videos with aggregation for pagination and sorting
+    const videos = await Video.aggregate([
+        { $match: filter },
+        {
+            $sort: {
+                [sortBy]: sortType === "asc" ? 1 : -1, // Dynamic sorting
+            },
+        },
+        { $skip: (page - 1) * parseInt(limit) },
+        { $limit: parseInt(limit) },
+        {
+            $project: {
+                _id: 1,
+                title: 1,
+                description: 1,
+                user: 1,
+                createdAt: 1,
+            },
+        },
+    ]);
+
+    // Check if videos exist
+    if (!videos.length) {
+        throw new ApiError(404, "No videos found");
+    }
+
+    // Pagination indicators
+    const hasNextPage = page * limit < totalVideos;
+    const hasPreviousPage = page > 1;
+
+    // Send response
+    return res.status(200).json(
         new ApiResponse(
             200,
-            videos,
-            "Videos fetched"
+            {
+                totalVideos,
+                currentPage: parseInt(page),
+                limit: parseInt(limit),
+                nextPage: hasNextPage ? parseInt(page) + 1 : null,
+                previousPage: hasPreviousPage ? parseInt(page) - 1 : null,
+                videos,
+            },
+            "Videos fetched successfully"
         )
-    )
-    
-})
+    );
+});
+
 
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body
@@ -33,10 +79,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
     if (!title || !description) {
         throw new ApiError(400, "All fields are required")
     }
-    
+
     // const videoLocalPath = req.files?.videoFile[0]?.path
     // const thumbnailLocalPath = req.files?.thumbnail[0]?.path
-    
+
 
     // if (!videoLocalPath || !thumbnailLocalPath) {
     //     throw new ApiError(400, "Video and thumbnail are required")
@@ -56,7 +102,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
         videoFile: "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4",
         thumbnail: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013163/samples/landscapes/landscape-panorama.jpg",
         // duration: videoFile.duration,
-        duration : 10,
+        duration: 10,
         owner: req.user?._id
     })
 
@@ -167,29 +213,29 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
-    
+
     if (!mongoose.isValidObjectId(videoId)) {
         throw new ApiError(400, "Invalid video ID");
     }
-    
+
     const getVideo = await Video.findById(videoId);
 
     if (!getVideo) {
         throw new ApiError(200, "Video not found")
     }
 
-    getVideo.isPublished  = !getVideo.isPublished;
+    getVideo.isPublished = !getVideo.isPublished;
     await getVideo.save();
 
     res.
-    status(200)
-    .json(
-        new ApiResponse(
-            200, 
-            getVideo.isPublished,
-            "Publish status toggled successfully"
+        status(200)
+        .json(
+            new ApiResponse(
+                200,
+                getVideo.isPublished,
+                "Publish status toggled successfully"
+            )
         )
-    )
 
 });
 

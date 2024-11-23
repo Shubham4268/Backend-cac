@@ -42,7 +42,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
                 description: 1,
                 user: 1,
                 createdAt: 1,
-                owner : 1
+                owner : 1,
+                views : 1
             },
         },
     ]);
@@ -102,8 +103,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
         description,
         videoFile: video.url,
         thumbnail: thumbnail.url,
-        // duration: videoFile.duration,
-        duration: 10,
+        duration: videoFile.duration,
+        // duration: 10,
         owner: req.user?._id
     })
 

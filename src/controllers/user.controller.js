@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 
 // Register a new user using the asyncHandler to manage asynchronous errors.
 // If the request is successful, the server responds with status 200 and a JSON message.
-const registerUser = asyncHandler(async (req, res) => { 
+const registerUser = asyncHandler(async (req, res) => {
     /*  Steps - 
     get user details from frontend
     validate the inputs - not empty
@@ -40,26 +40,26 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     // Get file paths for avatar and cover image from the uploaded files in the request
-    const avatarLocalPath = req.files?.avatar[0]?.path;
-    let coverImageLocalPath
-    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
-        coverImageLocalPath = req.files.coverImage[0].path
-    }
+    // const avatarLocalPath = req.files?.avatar[0]?.path;
+    // let coverImageLocalPath
+    // if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+    //     coverImageLocalPath = req.files.coverImage[0].path
+    // }
 
 
-    // Check if avatar image is provided, if not, throw an error
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar image is required");
-    }
+    // // Check if avatar image is provided, if not, throw an error
+    // if (!avatarLocalPath) {
+    //     throw new ApiError(400, "Avatar image is required");
+    // }
 
-    // Upload avatar and cover image to Cloudinary and get the URLs
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath);    
+    // // Upload avatar and cover image to Cloudinary and get the URLs
+    // const avatar = await uploadOnCloudinary(avatarLocalPath);
+    // const coverImage = await uploadOnCloudinary(coverImageLocalPath);    
 
-    // If avatar upload fails, throw an error
-    if (!avatar) {
-        throw new ApiError(400, "Avatar image is required");
-    }
+    // // If avatar upload fails, throw an error
+    // if (!avatar) {
+    //     throw new ApiError(400, "Avatar image is required");
+    // }
 
     // Create a new user in the database with the provided details
     const user = await User.create({
@@ -68,7 +68,7 @@ const registerUser = asyncHandler(async (req, res) => {
         coverImage: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-4.jpg" || "", // Set cover image URL, or empty string if not uploaded
         email,
         password,
-        username: username.toLowerCase() // Convert username to lowercase
+        username: username?.toLowerCase() // Convert username to lowercase
     });
 
     // Fetch the created user from the database without sensitive fields (password, refreshToken)
@@ -167,10 +167,12 @@ const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set: { refreshToken: undefined }
+            $unset: {
+                refreshToken: 1 // this removes the field from document
+            }
         },
         {
-            new: true  // Return the updated user object
+            new: true
         }
     );
 
@@ -516,7 +518,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
             $match: {
                 _id: new mongoose.Types.ObjectId(req.user?._id)
             },
-        },{ 
+        }, {
             // Lookup documents in the "videos" collection where the video ID matches an ID in the user's "watchHistory" array
             $lookup: {
                 from: "videos", // Collection to join (videos collection)

@@ -6,6 +6,9 @@ To use import we add  type : "Module" in package.json files
 Axios: A Promise-based HTTP Client for Node.js and the Browser
 Axios is a popular JavaScript library used for making HTTP requests from both the browser and Node.js. It simplifies the process of making HTTP requests and handling responses, providing an easy-to-use API.
 
+When connecting two servers of backend and frontend, we can get a CORS error, to resolve it we need to set a proxy server in vite config file.
+CORS error occurs because both servers are running on different ports. (Outsiders are not allowed in a family)  
+
 Cross-Origin Resource Sharing (CORS) is a mechanism that allows web servers to control how resources are shared across different origins. It is implemented via HTTP headers and is crucial for web security, ensuring that only authorized domains can access resources while protecting users from malicious actions.
 
 In simple language, CORS does not allow someone that is not from the same home. 
@@ -150,3 +153,13 @@ The client replaces the expired access token with the new one, allowing the user
 3. Error Handling:
 If the refresh token is invalid or expired, the server will respond with a 401 Unauthorized message, requiring the user to log in again. This could happen if the refresh token has been revoked (e.g., if the user logged out) or expired.
 
+Basic steps to create Backend
+1. Create detailed Model for every required controller
+2. Setup MongoDB
+3. Create customized API error, response, TryCatch handler (asyncHandler)
+4. Create authorization methods like access tokens, refresh tokens and setting cookies
+5. Create middlewares like verifying JWTs, sending logged in user through response of a middleware and creating 
+6. Create all the controllers and routes
+7. Debug using Postman
+8. Understand and implement MongoDB Pipelines
+9. Import and export all routes from app.js

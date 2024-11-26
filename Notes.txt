@@ -11,9 +11,7 @@ CORS error occurs because both servers are running on different ports. (Outsider
 
 Cross-Origin Resource Sharing (CORS) is a mechanism that allows web servers to control how resources are shared across different origins. It is implemented via HTTP headers and is crucial for web security, ensuring that only authorized domains can access resources while protecting users from malicious actions.
 
-In simple language, CORS does not allow someone that is not from the same home. 
-
-One of the solution is to install a CORS package, we can white list the urls using it. but we need to take care of these urls and ports while deploying applications.
+One of the solution is to install a CORS package, we can white-list the urls using it. but we need to take care of these urls and ports while deploying applications.
 
 To reduce the repeated writing of url, Proxy is used. 
 
@@ -153,6 +151,55 @@ The client replaces the expired access token with the new one, allowing the user
 3. Error Handling:
 If the refresh token is invalid or expired, the server will respond with a 401 Unauthorized message, requiring the user to log in again. This could happen if the refresh token has been revoked (e.g., if the user logged out) or expired.
 
+
+1. JWT (JSON Web Token)
+JWT is a compact and self-contained token format used for securely transmitting information between parties as a JSON object. It's widely used for authentication and data exchange.
+
+Key Features:
+Structure: Consists of three parts:
+Header: Specifies the token type (JWT) and signing algorithm (e.g., HMAC, RSA).
+Payload: Contains claims, which are pieces of information (e.g., user ID, roles).
+
+Signature: Ensures the token is untampered by encoding the header, payload, and a secret/key.
+Stateless: Does not require server-side storage.
+Use Cases: API authentication, session management, secure data transfer.
+
+2. Access Tokens
+Access tokens are credentials issued after authentication to authorize specific actions or resources on a server. Often, they are JWTs.
+
+Key Features:
+Purpose: Grants permission to access specific resources (e.g., APIs).
+Scope: Defines what the token can do (e.g., read-only or admin access).
+Short-lived: Usually has a limited lifespan for security reasons.
+Use Cases: API requests, secure communication.
+
+3. Refresh Tokens
+Refresh tokens are long-lived tokens used to obtain new access tokens when the original ones expire.
+
+Key Features:
+Purpose: Reduces the need for users to reauthenticate frequently.
+Storage: Often stored securely on the client-side (e.g., HttpOnly cookies).
+Lifespan: Longer than access tokens but still limited.
+Use Cases: Keeps user sessions active while maintaining short-lived access tokens for better security.
+
+4. Cookies
+Cookies are small pieces of data stored on the client’s browser, often used to track sessions or store small bits of information.
+
+Key Features:
+Storage: Stored in the browser, attached to HTTP requests sent to the same domain.
+Types:
+Session Cookies: Deleted when the browser is closed.
+Persistent Cookies: Remain until manually deleted or expired.
+HttpOnly: Cannot be accessed via JavaScript, enhancing security.
+Secure: Only sent over HTTPS.
+Use Cases: Session management, storing preferences, tracking user behavior.
+
+Relationships:
+JWT: Can be used as both access and refresh tokens.
+Access Tokens & Refresh Tokens: Often stored in cookies for security in web applications.
+Cookies: Can carry JWTs or session identifiers for user authentication.
+
+
 Basic steps to create Backend
 1. Create detailed Model for every required controller
 2. Setup MongoDB
@@ -163,3 +210,157 @@ Basic steps to create Backend
 7. Debug using Postman
 8. Understand and implement MongoDB Pipelines
 9. Import and export all routes from app.js
+
+
+
+MongoDb operators:
+1. Query Operators
+Used to filter documents during queries.
+
+Comparison Operators
+$eq: Matches values equal to a specified value.
+db.users.find({ age: { $eq: 25 } });
+// Finds all users with age equal to 25.
+
+$ne: Matches values not equal to a specified value.
+db.users.find({ age: { $ne: 25 } });
+// Finds all users where age is not 25.
+
+$gt, $gte: Matches values greater than (or greater than or equal to) a specified value.
+db.users.find({ age: { $gt: 25 } });
+// Finds users with age greater than 25.
+
+$lt, $lte: Matches values less than (or less than or equal to) a specified value.
+db.users.find({ age: { $lte: 30 } });
+// Finds users with age less than or equal to 30.
+
+Logical Operators
+$and: Combines multiple conditions; all must be true.
+db.users.find({
+  $and: [{ age: { $gte: 25 } }, { city: "New York" }]
+});
+// Finds users aged 25 or older living in New York.
+
+$or: Combines multiple conditions; at least one must be true.
+db.users.find({
+  $or: [{ age: { $lte: 20 } }, { city: "San Francisco" }]
+});
+// Finds users aged 20 or younger OR living in San Francisco.
+
+$not: Negates a condition.
+db.users.find({ age: { $not: { $gte: 30 } } });
+// Finds users with age less than 30.
+
+Element Operators
+$exists: Checks if a field exists or not.
+db.users.find({ phone: { $exists: true } });
+// Finds users who have a phone field.
+
+$type: Matches documents with a specified field type.
+db.users.find({ age: { $type: "number" } });
+// Finds documents where the age field is a number.
+
+Array Operators
+$in: Matches any value in an array of values.
+db.users.find({ role: { $in: ["admin", "manager"] } });
+// Finds users with a role of admin or manager.
+
+$nin: Matches none of the values in an array of values.
+db.users.find({ role: { $nin: ["guest", "visitor"] } });
+// Finds users whose role is neither guest nor visitor.
+
+$all: Matches arrays containing all specified elements.
+db.products.find({ tags: { $all: ["electronics", "new"] } });
+// Finds products tagged with both "electronics" and "new".
+
+$size: Matches arrays of a specified length.
+db.products.find({ tags: { $size: 3 } });
+// Finds products with exactly 3 tags.
+
+2. Update Operators
+Used to modify documents.
+
+Field Update Operators
+$set: Updates or adds a field with a specified value.
+db.users.updateOne({ username: "john_doe" }, { $set: { age: 30 } });
+// Sets the age of user john_doe to 30.
+
+$unset: Removes a field.
+db.users.updateOne({ username: "john_doe" }, { $unset: { age: "" } });
+// Removes the age field from john_doe.
+
+$inc: Increments a field by a specified value.
+db.users.updateOne({ username: "john_doe" }, { $inc: { loginAttempts: 1 } });
+// Increments loginAttempts by 1 for john_doe.
+
+$rename: Renames a field.
+db.users.updateOne({ username: "john_doe" }, { $rename: { age: "yearsOld" } });
+// Renames the age field to yearsOld for john_doe.
+
+Array Update Operators
+$push: Adds an element to an array.
+db.users.updateOne({ username: "john_doe" }, { $push: { hobbies: "reading" } });
+// Adds "reading" to the hobbies array for john_doe.
+
+$pull: Removes an element from an array.
+db.users.updateOne({ username: "john_doe" }, { $pull: { hobbies: "reading" } });
+// Removes "reading" from the hobbies array for john_doe.
+
+$addToSet: Adds an element to an array only if it does not already exist.
+db.users.updateOne({ username: "john_doe" }, { $addToSet: { hobbies: "cycling" } });
+// Adds "cycling" to the hobbies array only if it doesn't already exist.
+
+3. Aggregation Operators
+Used in aggregation pipelines for advanced data processing.
+
+$match: Filters documents by criteria (like find).
+db.orders.aggregate([{ $match: { status: "shipped" } }]);
+// Filters orders with a status of shipped.
+
+$group: Groups documents by a field and applies aggregation functions.
+db.orders.aggregate([
+  { $group: { _id: "$customerId", totalAmount: { $sum: "$amount" } } }
+]);
+// Groups orders by customerId and calculates the total amount per customer.
+
+$sort: Sorts documents by a field.
+db.users.aggregate([{ $sort: { age: -1 } }]);
+// Sorts users by age in descending order.
+
+$project: Reshapes the document to include/exclude specific fields.
+db.users.aggregate([{ $project: { username: 1, age: 1, _id: 0 } }]);
+// Includes only the username and age fields in the output.
+
+4. Indexing Operators
+Text Search ($text): Finds documents using a text index.
+db.articles.find({ $text: { $search: "mongodb" } });
+// Finds articles containing the word "mongodb".
+
+Geospatial Queries ($geoWithin, $near):
+
+db.places.find({
+  location: {
+    $geoWithin: {
+      $centerSphere: [[-73.97, 40.77], 10 / 3963.2]
+    }
+  }
+});
+// Finds places within 10 miles of the given coordinates.
+
+$setOnInsert
+Used Exclusively with Upserts:
+
+The operation must have upsert: true for $setOnInsert to take effect.
+Insert Behavior:
+
+When the document does not exist, MongoDB creates a new document and sets the fields specified in $setOnInsert.
+Update Behavior:
+
+If the document exists, only fields specified in other operators (like $set, $inc, etc.) are updated. $setOnInsert does not affect existing documents.
+
+const addedView = await View.updateOne(
+        { video: videoId, viewer: userId },
+        { $setOnInsert: { video: videoId, viewer: userId, createdAt: new Date() } },
+        { upsert: true }
+    );
+

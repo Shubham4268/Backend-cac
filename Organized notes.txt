@@ -1,0 +1,118 @@
+Organized Notes
+JavaScript Import Syntax
+Module JS (import):
+
+Syntax: import "" from "";
+Asynchronous import of modules.
+Requires type: "module" in package.json.
+CommonJS (require()):
+
+Syntax: require("");
+Synchronous import of modules.
+Axios
+Definition: A Promise-based HTTP client for Node.js and the browser.
+Purpose: Simplifies making HTTP requests and handling responses.
+Usage: Supports features like interceptors, request cancellation, and automatic JSON transformation.
+CORS (Cross-Origin Resource Sharing)
+Definition: Mechanism to control resource sharing across origins using HTTP headers.
+CORS Error Causes: Occurs when frontend and backend servers run on different ports.
+Solutions:
+Proxy: Configure a proxy in tools like Vite to bypass the same-origin policy.
+CORS Package: Use a middleware to whitelist specific URLs and ports.
+Deployment Considerations: Ensure CORS configurations are managed carefully to avoid exposing sensitive data.
+Proxy Server
+Definition: An intermediary server to bypass CORS errors by rerouting requests.
+How It Works:
+Frontend communicates with a proxy (same origin as the frontend).
+Proxy forwards requests to the backend server.
+Proxy relays backend responses to the frontend.
+Database Handling
+Error Management: Use try/catch blocks or Promises to handle scenarios where data is not found.
+Latency: Employ async/await for non-blocking database operations.
+Connection Methods:
+Directly in the index file.
+In a separate database configuration file.
+Password Hashing and Authentication
+Libraries:
+
+bcrypt/bcryptjs: For hashing passwords securely.
+JWT (JSON Web Tokens):
+Tokens have three parts: Header, Payload, Signature.
+Used for session management and authentication.
+JWT Structure:
+Header: Specifies the algorithm and token type.
+Payload: Stores claims (e.g., user details).
+Signature: Ensures integrity.
+Bearer Token: Anyone with the token can access the data, similar to having a key.
+
+File Uploads
+Libraries Used:
+Multer: For handling file uploads.
+Cloudinary: For cloud-based file storage.
+HTTP Protocol Basics
+HTTP Headers:
+
+Metadata in key-value pairs sent with requests/responses.
+Types:
+Request Headers: From the client.
+Response Headers: From the server.
+Representation Headers: Encoding/compression details.
+Payload Headers: Contain the actual data.
+HTTP Methods:
+
+GET: Retrieve data.
+POST: Create/modify resources.
+PUT: Replace resources entirely.
+PATCH: Partially update a resource.
+DELETE: Remove a resource.
+HEAD, OPTIONS, TRACE: For diagnostics and informational purposes.
+HTTP Status Codes:
+
+Informational (1xx): 100 (Continue), 102 (Processing).
+Success (2xx): 200 (OK), 201 (Created).
+Redirection (3xx): 307 (Temporary Redirect).
+Client Error (4xx): 400 (Bad Request), 401 (Unauthorized), 404 (Not Found).
+Server Error (5xx): 500 (Internal Server Error), 504 (Gateway Timeout).
+Router and Controller Guide
+App File (app.js): Set up main Express app and mount routes.
+Routes (e.g., user.routes.js): Define endpoints like /register and connect them to controllers.
+Controller (e.g., users.controller.js): Handle business logic for endpoints.
+Access and Refresh Tokens
+Access Token: Short-lived token used for authentication.
+Refresh Token: Long-lived token to generate new access tokens.
+Flow:
+Access token expires → Client requests a new one using the refresh token.
+Invalid refresh token → User must log in again.
+MongoDB Operators
+Query Operators: $eq, $ne, $gt, $lt, $in, $exists.
+Update Operators: $set, $unset, $inc, $rename.
+Array Operators: $push, $pull, $addToSet.
+Aggregation Operators: $match, $group, $sort, $project.
+Text Search: $text operator for indexed text search.
+New Additions
+Backend Development Workflow
+Planning:
+Define the schema for models.
+Identify endpoints and their logic.
+Database Setup:
+Use environment variables for sensitive credentials.
+Enable replication for reliability in production.
+Error Handling:
+Create custom middleware for handling errors globally.
+Log errors to a monitoring service (e.g., Sentry).
+Security Best Practices:
+Use HTTPS for communication.
+Implement rate limiting to prevent abuse.
+Sanitize inputs to avoid SQL/NoSQL injection attacks.
+Debugging Tools:
+Use Postman or Insomnia for testing APIs.
+Log requests/responses during development for insights.
+API Documentation:
+Use tools like Swagger for interactive API documentation.
+Middleware Examples
+JWT Verification:
+Decode and validate tokens before allowing access to protected routes.
+Logger Middleware:
+Log incoming requests for debugging and monitoring.
+Rate Limiting:
+Use libraries like express-rate-limit to restrict the number of requests.

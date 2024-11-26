@@ -96,7 +96,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
         user.refreshToken = refreshToken
         await user.save({ validateBeforeSave: false }); // save method validates for each field while saving everytime, so to avoid needless validation, validateBeforeSave is set to false.
-
+ 
         return { accessToken, refreshToken }
 
 

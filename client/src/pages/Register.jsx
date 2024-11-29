@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import {login} from "../features/slices/authSlice.js"
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -7,6 +9,8 @@ const Register = () => {
     email: "",
     password: "",
   });
+
+  const dispatch = useDispatch();
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,16 +29,17 @@ const Register = () => {
         },
       }
     );
-
-    // const response = await fetch('http://localhost:8000/api/v1/users/register', {
-
-    // })
-
+    
+    console.log(response);
+    
+    
     const json = await response.json();
-
+    
+    dispatch(login(json))
+    
     if (json.success) {
-      alert('User registered successfully...')
-      e.target.reset()  
+      alert("User registered successfully...");
+      e.target.reset();
     }
   };
 

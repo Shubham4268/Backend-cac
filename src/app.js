@@ -28,6 +28,7 @@ import likeRouter from "./routes/like.routes.js"
 import viewRouter from "./routes/view.routes.js"
 import healthcheckRouter from "./routes/healthcheck.routes.js"
 import dashboardRouter from "./routes/dashboard.routes.js"
+import { ApiError } from "./utils/ApiError.js"
 
 // routes declaration
 
@@ -42,4 +43,22 @@ app.use("/api/v1/views", viewRouter)
 app.use("/api/v1/healthchecks", healthcheckRouter)
 app.use("/api/v1/dashboards", dashboardRouter)
 // URL : http://localhost:8000/api/v1/users/register
+
+app.use((err, req, res, next) => {
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({
+      success: err.success,
+      message: err.message,
+      errors: err.errors,
+      data: err.data,
+    });
+  }
+
+  // Handle other errors
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+  });
+});
+
 export {app}

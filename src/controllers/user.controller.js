@@ -25,8 +25,11 @@ const registerUser = asyncHandler(async (req, res) => {
     const { fullName, email, username, password } = req.body;
 
     // Validate input fields - check if any field is empty
+    // if(!fullName){
+    //     throw new ApiError(400, "Fullname required");
+    // }
     if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required"); // Throw error if any field is missing
+        throw new ApiError(400,"All fields are required"); // Throw error if any field is missing
     }
 
     // Check if a user with the same email or username already exists in the database
@@ -78,6 +81,8 @@ const registerUser = asyncHandler(async (req, res) => {
     if (!createdUser) {
         throw new ApiError(500, "Something went wrong while registering the user");
     }
+    console.log(createdUser);
+    
 
     // Return a successful response with the created user details
 

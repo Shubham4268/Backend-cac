@@ -1,29 +1,62 @@
-import React from "react";
-
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
+import { handleApiError } from "../utils/errorHandler.js";
+import { useDispatch } from "react-redux";
+import { logout } from "../features/slices/authSlice.js";
 const Navbar = () => {
-  return (
-    <nav>
-      <h1>User Login</h1>
 
-      <ul className="nav-list">
-        <li className="nav-item">
-          <a href="" className="navlink">
-            Home
-          </a>
-        </li>
-        <li className="nav-item">
-          <a href="" className="navlink">
-            Login
-          </a>
-        </li>
-        <li className="nav-item">
-          <a href="" className="navlink">
-            Register
-          </a>
-        </li>
-      </ul>
-    </nav>
+  const [error, setError] = useState(null)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const logoutHandler = ()=>{
+    setError(null);
+    try {
+      const loggetOutUser = axios.get("http://localhost:8000/api/v1/users/logout")
+      if(loggetOutUser){
+        dispatch(logout())
+        navigate("/")
+      }
+    } catch (error) {
+      handleApiError(error, setError);
+    }
+  }
+
+
+  return (
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <div className="w-52 bg-gray-800 text-white h-full">
+        <div className="flex items-center justify-center p-4">
+          <span className="text-2xl font-bold">Dashboard</span>
+        </div>
+        <nav className="mt-10 space-y-2">
+          <Link to="/home">
+            <NavItem label="Home" icon="🏠" />
+          </Link>
+          <Link to="/profile">
+            <NavItem label="Your Profile" icon="👤" />
+          </Link>
+          <Link to="/addVideo">
+            <NavItem label="Add a Video" icon="📹" />
+          </Link>
+          <Link to="/addTweet">
+            <NavItem label="Add a Tweet" icon="➕" />
+          </Link>
+          <button className="w-full" onClick={logoutHandler}>
+            <NavItem label="Logout" icon="🚪" />
+          </button>
+        </nav>
+      </div>
+    </div>
   );
 };
+
+const NavItem = ({ label, icon }) => (
+  <div className="flex items-center p-2 hover:bg-gray-700 cursor-pointer">
+    <span className="text-xl">{icon}</span>
+    <span className="ml-4">{label}</span>
+  </div>
+);
 
 export default Navbar;

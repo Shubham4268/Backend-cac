@@ -1,17 +1,50 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-// import App from './App.jsx'
-import Register from './pages/Register.jsx'
-import { Provider } from 'react-redux'
-import { store } from './app/store.js'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
+import { AuthLayout } from "./components/index.js";
+import { Register, Home, Login } from "./pages/index.js";
+import { Provider } from "react-redux";
+import store from "./app/store.js";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-createRoot(document.getElementById('root')).render(
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <Register />,
+      },
+      {
+        path: "/login",
+        element: (
+          <AuthLayout authentication={false}>
+            <Login />
+          </AuthLayout>
+          // Authentication false means authentication is not required to access that page.
+        ),
+      },
+      {
+        path: "/home",
+        element: (
+          <AuthLayout authentication>
+            <Home />
+          </AuthLayout>
+          // Authentication false means authentication is not required to access that page.
+        ),
+      },
+    ],
+  },
+]);
+
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    {/* <App /> */}
     <Provider store={store}>
-      <Register />
+      <RouterProvider router={router}>
+        <App />
+      </RouterProvider>
     </Provider>
-    
-  </StrictMode>,
-)
+  </StrictMode>
+);

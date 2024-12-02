@@ -142,17 +142,23 @@ const loginUser = asyncHandler(async (req, res) => {
     // Retrieve the logged-in user details, excluding sensitive fields
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-    // Cookie options to secure access and refresh tokens
-    const options = {
-        httpOnly: true,        // Accessible only by the server
-        sameSite: "None"
-    };
-
     // Respond with the user details and set cookies with the tokens
+    // debugger;
+    res.cookie('accessToken', accessToken, {
+        httpOnly: true,  // Prevent access to the cookie via JavaScript (helps mitigate XSS attacks)
+        secure: true,    // Only send the cookie over HTTPS (for security)
+        sameSite: 'Strict', // Prevent the cookie from being sent in cross-origin requests (helps mitigate CSRF attacks)
+        maxAge: 24 * 60 * 60 * 1000  // Cookie expires in 1 day
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,  // Prevent access to the cookie via JavaScript
+        secure: true,    // Only send the cookie over HTTPS
+        sameSite: 'Strict', // SameSite strategy
+        maxAge: 7 * 24 * 60 * 60 * 1000  // Refresh token cookie expires in 7 days
+    });
     return res
         .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
         .json(
             new ApiResponse(
                 200,
@@ -187,11 +193,11 @@ const logoutUser = asyncHandler(async (req, res) => {
         secure: true            // HTTPS only
     };
 
+    res.clearCookie("accessToken")
+    res.clearCookie("refreshToken")
     // Clear cookies and respond with logout success message
     return res
         .status(200)
-        .clearCookie("accessToken")
-        .clearCookie("refreshToken")
         .json(
             new ApiResponse(
                 200,

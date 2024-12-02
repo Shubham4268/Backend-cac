@@ -24,9 +24,9 @@ const Navbar = () => {
 
 
   return (
-    <div className="flex h-screen">
+    <div className="flex">
       {/* Sidebar */}
-      <div className="w-52 bg-gray-800 text-white h-full">
+      <div className="w-52 bg-gray-800 text-white h-screen ">
         <div className="flex items-center justify-center p-4">
           <span className="text-2xl font-bold">Dashboard</span>
         </div>

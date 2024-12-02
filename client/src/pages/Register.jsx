@@ -49,9 +49,9 @@ const Register = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen w-screen">
-      <div className="shadow-lg w-2/5 p-5 bg-gray-800 rounded-lg text-white">
-      <h2 className="mt-12 text-center text-2xl/9 font-bold tracking-tight text-white">
+    <div className="flex flex-col justify-center items-center w-full">
+      <div className="my-12 shadow-lg w-2/5 p-5 bg-gray-800 rounded-lg text-white">
+      <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
             Sign in to your account
           </h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -97,7 +97,7 @@ const Register = () => {
             </button>
           </div>
         </form>
-        <p className="m-10 text-center text-sm/6 text-gray-500">
+        <p className="m-5 text-center text-sm/6 text-gray-500">
           Already have an account?{" "}
           <Link
             to="/login"
@@ -113,7 +113,7 @@ const Register = () => {
 
 const InputField = ({ label, type, name, value, onChange }) => (
   <div className="input-group flex flex-col w-full">
-    <label htmlFor={name} className="input-label">
+    <label htmlFor={name} className="input-label font- ">
       {label}
     </label>
     <input

@@ -127,7 +127,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     // If user does not exist, throw error
     if (!user) {
-        throw new ApiError(404, "User does not exist");
+        throw new ApiError(404, "User does not exist!! Please Register.");
     }
 
     // Verify if the provided password is correct
@@ -145,7 +145,7 @@ const loginUser = asyncHandler(async (req, res) => {
     // Cookie options to secure access and refresh tokens
     const options = {
         httpOnly: true,        // Accessible only by the server
-        secure: true           // Transmitted only over HTTPS
+        sameSite: "None"
     };
 
     // Respond with the user details and set cookies with the tokens
@@ -157,7 +157,7 @@ const loginUser = asyncHandler(async (req, res) => {
             new ApiResponse(
                 200,
                 {
-                    user: loggedInUser,
+                    loggedInUser,
                     accessToken,
                     refreshToken  // Tokens also included for mobile clients where cookies may not be set
                 },

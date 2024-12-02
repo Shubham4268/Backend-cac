@@ -18,20 +18,20 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const onSubmit = async (e)=>{
-    e.preventDefault()
-    setError(null)
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
 
     try {
       const loggedInUser = await axios.post(
-        "http://localhost:8000/api/v1/users/login",
+        "http://localhost:8000/api/v1/users/login", 
         formData,
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
-      )
+      );
 
       if (loggedInUser.data.success) {
         dispatch(login(loggedInUser.data)); // Adjust based on API response structure
@@ -39,21 +39,22 @@ const Login = () => {
         navigate("/home");
         setFormData({ fullName: "", username: "", email: "", password: "" }); // Reset form state
       }
-
     } catch (error) {
-      handleApiError(error,setError)
+      handleApiError(error, setError);
     }
-  }
+  };
   return (
     <>
       <div className="h-screen w-screen flex ">
-        <div className="h-2/3 w-1/3 m-auto flex-col justify-center bg-gray-800 ">
-          <h2 className="mt-12 text-center text-2xl/9 font-bold tracking-tight text-white">
+        <div className="w-2/5 m-auto flex-col justify-center rounded-lg bg-gray-800 ">
+          <h2 className="mt-12 mb-6 text-center text-2xl/9 font-bold tracking-tight text-white">
             Log in to your account
           </h2>
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm ">
-            <form onSubmit={onSubmit} className="space-y-6">
+          {error && (
+            <p className="mb-4 text-red-500 text-center text-sm">{error}</p>
+          )}
+          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+            <form onSubmit={onSubmit} className="space-y-6 w-2/3 m-auto">
               <div>
                 <label
                   htmlFor="email"
@@ -130,6 +131,6 @@ const Login = () => {
       </div>
     </>
   );
-}
+};
 
-export default Login
+export default Login;

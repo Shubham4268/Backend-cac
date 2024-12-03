@@ -50,54 +50,54 @@ const Register = () => {
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
-      <div className="my-12 shadow-lg w-2/5 p-5 bg-gray-800 rounded-lg text-white">
+      <div className="mt-28 mb-12 shadow-lg w-2/5 p-5 bg-gray-800 rounded-lg text-white ">
       <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
             Sign in to your account
           </h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
         <form
-          className="w-2/3 h-2/3 p-5 flex flex-col items-center mx-auto space-y-5"
+          className="w-2/3 h-fit p-5 flex flex-col items-center mx-auto space-y-3 "
           onSubmit={onSubmit}
         >
           <InputField
-            label="Full Name"
+            placeholder="Full Name"
             type="text"
             name="fullName"
             value={formData.fullName}
             onChange={onChange}
           />
           <InputField
-            label="Username"
+            placeholder="Username"
             type="text"
             name="username"
             value={formData.username}
             onChange={onChange}
           />
           <InputField
-            label="Email"
+            placeholder="Email"
             type="email"
             name="email"
             value={formData.email}
             onChange={onChange}
           />
           <InputField
-            label="Password"
+            placeholder="Password"
             type="password"
             name="password"
             value={formData.password}
             onChange={onChange}
           />
 
-          <div className="input-group flex flex-col w-full">
+          <div className="input-group flex flex-col w-full items-center">
             <button
               type="submit"
-              className="w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="mt-3 w-fit ustify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Register
             </button>
           </div>
         </form>
-        <p className="m-5 text-center text-sm/6 text-gray-500">
+        <p className="text-center text-sm/6 text-gray-500">
           Already have an account?{" "}
           <Link
             to="/login"
@@ -111,12 +111,11 @@ const Register = () => {
   );
 };
 
-const InputField = ({ label, type, name, value, onChange }) => (
+const InputField = ({ type, name, value, onChange, placeholder }) => (
   <div className="input-group flex flex-col w-full">
-    <label htmlFor={name} className="input-label font- ">
-      {label}
-    </label>
+  
     <input
+      placeholder = {placeholder}
       type={type}
       name={name}
       value={value}

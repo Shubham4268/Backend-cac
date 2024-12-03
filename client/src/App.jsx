@@ -8,14 +8,9 @@ axios.defaults.withCredentials = true; // This ensures that cookies are sent wit
 function App() {
   return (
     <>
-      <div className="flex flex-row ">
-        <Navbar />
-        <div className = "bg-gray-900 flex flex-col w-full justify-between relative ">
-          <Header />
+      <div className="bg-gray-900 w-full flex flex-row ">
+        <Header />
         <Outlet />
-        <Footer />
-        </div>
-        
       </div>
     </>
   );

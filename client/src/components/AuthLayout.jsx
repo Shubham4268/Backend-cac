@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 export default function Protected({ children, authentication = true }) {
   const navigate = useNavigate();
-  const authStatus = useSelector((state) => state.auth.status);
+  const authStatus = useSelector((state) => state.user.status);
 
   useEffect(() => {
     // Check if authentication is required and user is not authenticated

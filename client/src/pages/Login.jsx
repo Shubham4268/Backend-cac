@@ -48,7 +48,7 @@ const Login = () => {
   };
   return (
     <>
-      <div className="h-screen w-screen flex ">
+      <div className="mt-10 h-screen w-screen flex ">
         <div className="w-2/5 m-auto flex-col justify-center rounded-lg bg-gray-800 ">
           <h2 className="mt-12 mb-6 text-center text-2xl/9 font-bold tracking-tight text-white">
             Log in to your account

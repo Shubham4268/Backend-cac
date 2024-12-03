@@ -5,10 +5,13 @@ import { handleApiError } from "../utils/errorHandler.js";
 import { useDispatch } from "react-redux";
 import { logout } from "../features/slices/authSlice.js";
 
+
 const Navbar = () => {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  
   const logoutHandler = async () => {
     setError(null);
     try {
@@ -27,15 +30,12 @@ const Navbar = () => {
       handleApiError(error, setError);
     }
   };
-
+  
   return (
-    <div className="flex">
+    <div className="flex fixed max-h-full min-h-full  overflow-auto no-scrollbar bg-gray-800">
       {/* Sidebar */}
-      <div className="w-52 bg-gray-800 text-white h-screen ">
-        <div className="flex items-center justify-center p-4">
-          <span className="text-2xl font-bold">Dashboard</span>
-        </div>
-        <nav className="mt-10 space-y-2">
+      <div className="w-52 mt-14 text-white ">
+        <nav className="mt-6 space-y-2">
           <Link to="/home">
             <NavItem label="Home" icon="🏠" />
           </Link>
@@ -48,7 +48,7 @@ const Navbar = () => {
           <Link to="/addTweet">
             <NavItem label="Add a Tweet" icon="➕" />
           </Link>
-          <button className="w-full" onClick={logoutHandler}>
+          <button className="w-full pb-10" onClick={logoutHandler}>
             <NavItem label="Logout" icon="🚪" />
           </button>
         </nav>

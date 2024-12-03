@@ -24,7 +24,7 @@ const Login = () => {
 
     try {
       const loggedInUser = await axios.post(
-        "http://localhost:8000/api/v1/users/login", 
+        "http://localhost:8000/api/v1/users/login",
         formData,
         {
           headers: {
@@ -32,10 +32,13 @@ const Login = () => {
           },
         }
       );
+      const { data: response } = loggedInUser || {};
+      const { success } = response || false;
+      const { data } = response || {};
+      // const { accessToken } = data || "";
 
-      if (loggedInUser.data.success) {
-        dispatch(login(loggedInUser.data)); // Adjust based on API response structure
-        console.log(loggedInUser.data);
+      if (success) {
+        dispatch(login(data)); // Adjust based on API response structure
         navigate("/home");
         setFormData({ fullName: "", username: "", email: "", password: "" }); // Reset form state
       }

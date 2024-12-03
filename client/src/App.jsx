@@ -2,6 +2,8 @@
 
 import { Outlet } from "react-router-dom";
 import { Footer, Header, Navbar } from "./components/index.js";
+import axios from "axios";
+axios.defaults.withCredentials = true; // This ensures that cookies are sent with each request
 
 function App() {
   return (

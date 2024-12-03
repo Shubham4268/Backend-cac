@@ -4,22 +4,29 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { handleApiError } from "../utils/errorHandler.js";
 
+axios.defaults.withCredentials = true;  // This ensures that cookies are sent with each request
+
+// Base URL of your backend API
+
 function Home() {
   const [videos, setVideos] = useState([]);
 
   const [error, setError] = useState(null);
   useEffect(() => {
+
     const fetchVideos = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8000/api/v1/videos/",
-        );
-        console.log(response.data);
-        
-        setVideos(response.data.videos);
-        
+        const allVideos = await axios.get(
+          "http://localhost:8000/api/v1/videos");
+
+        const { data: response } = allVideos || {};
+        const { success } = response || false;
+        const { data } = response || {};
+
+        if (success) {
+          setVideos(data.videos);
+        }
       } catch (error) {
-        console.error(error);
         handleApiError(error, setError);
       }
     };
@@ -32,9 +39,8 @@ function Home() {
       {/* <Navbar /> */}
       <div className="text-white">
         {error && <p className="text-red-500 text-center">{error}</p>}
-        {videos.map((video) => (
+        {videos?.map((video) => (
           <div key={video._id} className="p-2 max-w-72 mx-3">
-            {console.log(video)}
             <VideoComponent {...video} />
           </div>
         ))}

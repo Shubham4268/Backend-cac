@@ -4,24 +4,29 @@ import { useState } from "react";
 import { handleApiError } from "../utils/errorHandler.js";
 import { useDispatch } from "react-redux";
 import { logout } from "../features/slices/authSlice.js";
-const Navbar = () => {
 
-  const [error, setError] = useState(null)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const logoutHandler = ()=>{
+const Navbar = () => {
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const logoutHandler = async () => {
     setError(null);
     try {
-      const loggetOutUser = axios.get("http://localhost:8000/api/v1/users/logout")
-      if(loggetOutUser){
-        dispatch(logout())
-        navigate("/")
+      const loggedOutUser = await axios.post(
+        "http://localhost:8000/api/v1/users/logout"
+      );
+
+      const { data: response } = loggedOutUser || {};
+      const { success } = response || false;
+      
+      if (success) {
+        dispatch(logout());
+        navigate("/login");
       }
     } catch (error) {
       handleApiError(error, setError);
     }
-  }
-
+  };
 
   return (
     <div className="flex">
@@ -47,6 +52,11 @@ const Navbar = () => {
             <NavItem label="Logout" icon="🚪" />
           </button>
         </nav>
+      </div>
+      <div>
+        {error && (
+          <p className="mb-4 text-red-500 text-center text-sm">{error}</p>
+        )}
       </div>
     </div>
   );

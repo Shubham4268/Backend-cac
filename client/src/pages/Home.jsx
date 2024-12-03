@@ -38,10 +38,10 @@ function Home() {
 
   return (
     <>
-        <div className="flex flex-wrap h-screen mt-24 ml-56 pt-6 text-white  w-full bg-red-400 ">
+        <div className=" grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 justify-items-center gap-4 h-screen w-full mt-24 ml-56 pt-6 text-white  bg-red-400 ">
           {error && <p className="text-red-500 text-center">{error}</p>}
           {videos?.map((video) => (
-            <div key={video._id} className="p-2 mx-11 my-5 max-w-64 min-w-64 bg-green-800">
+            <div key={video._id} className="p-2 items-center  my-5 w-3/5 md:w-3/4  bg-green-800">
               <VideoComponent {...video} />
             </div>
           ))}

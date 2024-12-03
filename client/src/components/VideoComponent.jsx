@@ -1,9 +1,9 @@
 function VideoComponent(video) {
   return (
     <div>
-      <div className="w-64 max-h-32 center">
+      <div >
         <img
-          className="object-cover max-h-40 min-w-60"
+          className="object-cover h-1/2 max-h-48 w-full max-w-80 min-w-64"
           src={video.thumbnail}
           alt={video.title}
         />

@@ -49,8 +49,8 @@ const Register = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full">
-      <div className="mt-28 mb-12 shadow-lg w-2/5 p-5 bg-gray-800 rounded-lg text-white ">
+    <div className="flex flex-col justify-center items-center w-full h-screen">
+      <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white ">
       <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
             Sign in to your account
           </h2>
@@ -91,7 +91,7 @@ const Register = () => {
           <div className="input-group flex flex-col w-full items-center">
             <button
               type="submit"
-              className="mt-3 w-fit ustify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="mt-3 w-fit justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Register
             </button>

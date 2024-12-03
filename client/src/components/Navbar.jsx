@@ -34,7 +34,7 @@ const Navbar = () => {
   return (
     <div className="flex fixed max-h-full min-h-full  overflow-auto no-scrollbar bg-gray-800">
       {/* Sidebar */}
-      <div className="w-52 mt-14 text-white ">
+      <div className="w-36 md:w-52 sm:w-44 mt-14 text-white ">
         <nav className="mt-6 space-y-2">
           <Link to="/home">
             <NavItem label="Home" icon="🏠" />

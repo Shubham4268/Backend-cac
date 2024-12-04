@@ -29,6 +29,6 @@ user profile
     Tweets
     Liked Videos
     Watch history
-    DashBoard    
+    DashBoard
         Subscribed channels
         Subscribers

@@ -2,8 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { AuthLayout, ShowNavbar } from "./components/index.js";
-import { Register, Home, Login, Profile } from "./pages/index.js";
+import { AuthLayout, ChangePassword, ShowNavbar, Successmsg } from "./components/index.js";
+import { Register, Home, Login, Profile, Video, Settings } from "./pages/index.js";
 import { Provider } from "react-redux";
 import store from "./app/store.js";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -45,6 +45,33 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
+      {
+        path: "/video/:id",
+        element : (
+          <AuthLayout authentication>
+            <Video/>
+          </AuthLayout>
+        )
+      },
+      {
+        path: "/settings",
+        element : (
+          <AuthLayout authentication>
+            <Settings/>
+          </AuthLayout>
+        )
+      },
+      {
+        path : "/change-password",
+        element : (
+          <AuthLayout authentication>
+            <ChangePassword />
+          </AuthLayout>
+        )
+      },
+      {
+        element : (<Successmsg text/>)
+      }
     ],
   },
 ]);

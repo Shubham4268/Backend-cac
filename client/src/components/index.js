@@ -5,7 +5,7 @@ import Footer from "./Footer/Footer"
 import ShowNavbar from "./ShowNavbar";
 import ChangePassword from "./Settings/ChangePassword";
 import Successmsg from "./Successmsg";
-
+import UpdateAccount from "./Settings/UpdateAccount";
 export { 
     Navbar, 
     AuthLayout, 
@@ -13,6 +13,7 @@ export {
     Footer,
     ShowNavbar,
     ChangePassword,
-    Successmsg
+    Successmsg,
+    UpdateAccount
 
 }

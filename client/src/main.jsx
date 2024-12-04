@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { AuthLayout, ChangePassword, ShowNavbar, Successmsg } from "./components/index.js";
+import { AuthLayout, ChangePassword, ShowNavbar, Successmsg, UpdateAccount } from "./components/index.js";
 import { Register, Home, Login, Profile, Video, Settings } from "./pages/index.js";
 import { Provider } from "react-redux";
 import store from "./app/store.js";
@@ -66,6 +66,14 @@ const router = createBrowserRouter([
         element : (
           <AuthLayout authentication>
             <ChangePassword />
+          </AuthLayout>
+        )
+      },
+      {
+        path : "/update-account",
+        element : (
+          <AuthLayout authentication>
+            <UpdateAccount />
           </AuthLayout>
         )
       },

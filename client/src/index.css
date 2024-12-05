@@ -2,10 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-.no-scrollbar::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Edge */
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
-  }
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

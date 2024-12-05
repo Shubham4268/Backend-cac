@@ -6,6 +6,9 @@ import ShowNavbar from "./ShowNavbar";
 import ChangePassword from "./Settings/ChangePassword";
 import Successmsg from "./Successmsg";
 import UpdateAccount from "./Settings/UpdateAccount";
+import VideoFile from "./VideoFile";
+import VideoDetails from "./VideoDetails";
+
 export { 
     Navbar, 
     AuthLayout, 
@@ -14,6 +17,8 @@ export {
     ShowNavbar,
     ChangePassword,
     Successmsg,
-    UpdateAccount
+    UpdateAccount,
+    VideoFile,
+    VideoDetails
 
 }

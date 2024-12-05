@@ -3,24 +3,34 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { handleApiError } from "../../utils/errorHandler";
 import { login } from "../../features/slices/authSlice";
+import Successmsg from "../Successmsg";
+import { useNavigate } from "react-router-dom";
 
 function UpdateAccount() {
   const response = useSelector((state) => state.user.userData);
   const { loggedInUser: user } = response || {};
+  const [successAlert, setSuccessAlert] = useState(false);
+
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
 
   const [formData, setFormData] = useState({
     fullName: user.fullName || "",
-    username: user.username || "",
     email: user.email || "",
   });   
   const [error, setError] = useState(null);
-  console.log(formData);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  const handleNavigation = () => {
+    setTimeout(() => {
+      
+      navigate("/settings");
+    }, 4000); // 3000ms = 3 seconds
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
     setError(null); // Clear previous errors
@@ -36,17 +46,18 @@ function UpdateAccount() {
         }
       );
   
-      if (response.data.success) {
-        console.log(response.data.data);
+      if (response.data.success) {        
         // Dispatch the updated user data to Redux store
         dispatch(login(response.data.data)); // Assuming updated user data is in `data` field
-  
         // Optionally reset the form state to match the updated data
+        setSuccessAlert(true);
+
         setFormData({
           fullName: response.data.data.fullName || "",
-          username: response.data.data.username || "",
           email: response.data.data.email || "",
         });
+        handleNavigation()
+        
       }
     } catch (err) {
       handleApiError(err, setError);
@@ -57,7 +68,8 @@ function UpdateAccount() {
   return (
     <div className="flex flex-col justify-center items-center w-full h-screen">
       <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white ">
-        <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
+      {successAlert && <Successmsg text = "Password changed Successfully!!"/>}
+      <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
           Update your account details
         </h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -70,13 +82,6 @@ function UpdateAccount() {
             type="text"
             name="fullName"
             value={formData.fullName}
-            onChange={onChange}
-          />
-          <InputField
-            placeholder="Username"
-            type="text"
-            name="username"
-            value={formData.username}
             onChange={onChange}
           />
           <InputField

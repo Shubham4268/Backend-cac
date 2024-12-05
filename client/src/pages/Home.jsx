@@ -1,4 +1,3 @@
-import Navbar from "../components/Navbar";
 import VideoComponent from "../components/VideoComponent";
 import { useEffect, useState } from "react";
 import axios from "axios";

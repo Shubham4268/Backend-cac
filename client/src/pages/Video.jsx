@@ -29,14 +29,14 @@ function Video() {
   }, [id]);
 
   return (
-    <div className="flex flex-row mt-28 ml-10 w-full">
+    <div className="flex flex-col md:flex-row mt-28 ml-10 md:w-full justify-evenly h-screen">
       {error && (
         <p className="text-red-500 text-center mb-5">
           {error || "Failed to load video"}
         </p>
       )}
       <div className="gap-20">
-        <div className="w-[44rem] h-[26rem] rounded-xl ">
+        <div className="w-[44rem] h-3/4 bg-gray-800 rounded-xl ">
           {video ? (
             <VideoFile video={video} />
           ) : (
@@ -45,7 +45,7 @@ function Video() {
         </div>
       </div>
 
-      <div className="text-white w-1/2 mx-10 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl  dark:border-gray-700 dark:bg-gray-800 ">
+      <div className="text-white h-3/4 w-full md:w-1/2 md:mx-10 mx-10 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl  dark:border-gray-700 dark:bg-gray-800 ">
       {video ? (
             < VideoDetails video={video}/>
           ) : (

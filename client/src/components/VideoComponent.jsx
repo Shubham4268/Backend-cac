@@ -31,7 +31,9 @@ function VideoComponent(video) {
         <div className="flex flex-col mt-2 mx-1">
           <span className="font-semibold overflow-x-hidden text-nowrap overflow-ellipsis">{video.title}</span>
           <div className="flex flex-row justify-between">
-            <span className="text-sm text-gray-400">{video.views} views</span>
+            <span className="text-sm text-gray-400">
+        {video.views === 0 ? "no views yet" : `${video.views} Views`}
+      </span>
             <span className="text-sm text-gray-400">{getTimeDifference(video.createdAt)}</span>
           </div>
         </div>

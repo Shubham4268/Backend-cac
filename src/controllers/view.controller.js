@@ -88,12 +88,15 @@ const addVideoView = asyncHandler(async (req, res) => {
         { new: true } // Return updated document (optional, depends on need)
     );
 
-    await Video.findByIdAndUpdate(videoId,
-        {
-            $inc: { views: 1 }, // Increment the views field by 1
-        },
-        { new: true } // Return the updated document
-    );
+    if (wasNew) {
+        await Video.findByIdAndUpdate(videoId,
+            {
+                $inc: { views: 1 }, // Increment the views field by 1
+            },
+            { new: true } // Return the updated document
+        );
+    }
+
 
     // Return appropriate response
     const message = wasNew

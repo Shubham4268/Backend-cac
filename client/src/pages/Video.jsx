@@ -12,14 +12,22 @@ function Video() {
   useEffect(() => {
     const fetchVideo = async () => {
       try {
+        // First, fetch the video details
         const response = await axios.get(
           `http://localhost:8000/api/v1/videos/${id}`
         );
 
         const { data } = response || {};
         const { data: videoData } = data || {};
-        console.log(videoData);
-        setVideo(videoData);
+
+        // Check if video was fetched successfully
+        if (data.success) {
+          setVideo(videoData); // Set the fetched video data
+          // Increment the view count on the server
+          await axios.post(`http://localhost:8000/api/v1/views/${id}`);
+        } else {
+          throw new Error("Failed to fetch video");
+        }
       } catch (error) {
         handleApiError(error, setError);
       }
@@ -46,12 +54,12 @@ function Video() {
       </div>
 
       <div className="text-white h-3/4 w-full md:w-1/2 md:mx-10 mx-10 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl  dark:border-gray-700 dark:bg-gray-800 ">
-      {video ? (
-            < VideoDetails video={video}/>
-          ) : (
-            <p className="text-white">Loading Details...</p>
-          )}
-        </div>
+        {video ? (
+          <VideoDetails video={video} />
+        ) : (
+          <p className="text-white">Loading Details...</p>
+        )}
+      </div>
     </div>
   );
 }

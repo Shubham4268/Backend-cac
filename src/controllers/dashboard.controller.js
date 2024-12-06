@@ -70,7 +70,6 @@ const getChannelStats = asyncHandler(async (req, res) => {
         ],
         { maxTimeMS: 60000, allowDiskUse: true }
     );
-    console.log(getTotalViewsObject);
 
     const getTotalViews = getTotalViewsObject.length > 0 ? getTotalViewsObject[0].totalViews : 0;
 

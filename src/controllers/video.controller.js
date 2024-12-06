@@ -123,7 +123,7 @@ const getVideoById = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid video ID");
     }
 
-    const videoFile = await Video.findById(videoId)
+    const videoFile = await Video.findById(videoId).populate('owner','fullName avatar')
 
     if (!videoFile) {
         throw new ApiError(400, "Couldn't find the video")

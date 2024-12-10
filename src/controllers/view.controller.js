@@ -78,7 +78,6 @@ const addVideoView = asyncHandler(async (req, res) => {
     );
 
     const wasNew = !!addedView.upsertedCount; // `true` if a new document was inserted
-    console.log(addedView);
 
 
     // Add video to user's watch history (idempotent using $addToSet)
@@ -121,7 +120,6 @@ const removeView = asyncHandler(async (req, res) => {
         viewer: userId
     })
 
-    console.log(removedView);
 
     if (!removedView) {
         throw new ApiError(400, "No view to remove")

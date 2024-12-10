@@ -73,6 +73,9 @@ const getChannelStats = asyncHandler(async (req, res) => {
 
     const getTotalViews = getTotalViewsObject.length > 0 ? getTotalViewsObject[0].totalViews : 0;
 
+    const user = req?.user;
+    const subscribed = await Subscription.findOne({ channel: channelId, subscriber: user })
+    const subscribedStatus = subscribed ? true : false
 
     return res
         .status(200)
@@ -83,7 +86,8 @@ const getChannelStats = asyncHandler(async (req, res) => {
                     getTotalVideos,
                     getTotalSubscribers,
                     getTotalLikes,
-                    getTotalViews
+                    getTotalViews,
+                    subscribedStatus
                 },
                 "Le bhai dekh le"
             )

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { handleApiError } from "../../utils/errorHandler";
 import { login } from "../../features/slices/authSlice";
-import Successmsg from "../Successmsg";
+import Successmsg from "../Common/Successmsg";
 import { useNavigate } from "react-router-dom";
 
 function UpdateAccount() {

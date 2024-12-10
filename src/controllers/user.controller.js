@@ -83,7 +83,6 @@ const registerUser = asyncHandler(async (req, res) => {
     if (!createdUser) {
         throw new ApiError(500, "Something went wrong while registering the user");
     }
-    console.log(createdUser);
     
 
     // Return a successful response with the created user details
@@ -278,7 +277,6 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     // Check if the old password is correct
     try {
         const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
-        console.log(isPasswordCorrect);
 
         // If the old password is incorrect, throw an error
         if (!isPasswordCorrect) {
@@ -508,7 +506,6 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     ]);
 
     // Logs the retrieved channel data to the console (for debugging purposes)
-    console.log(channel);
 
     // Checks if no channel was found (empty array), and if so, throws a 404 Not Found error
     if (!channel?.length) {

@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { AuthLayout, ChangePassword, ShowNavbar, Successmsg, UpdateAccount, VideoDetails, VideoFile } from "./components/index.js";
-import { Register, Home, Login, Profile, Video, Settings } from "./pages/index.js";
+import { Register, Home, Login, Profile, Video, Settings, AddVideo } from "./pages/index.js";
 import { Provider } from "react-redux";
 import store from "./app/store.js";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -74,6 +74,14 @@ const router = createBrowserRouter([
         element : (
           <AuthLayout authentication>
             <UpdateAccount />
+          </AuthLayout>
+        )
+      },
+      {
+        path : "/addVideo",
+        element : (
+          <AuthLayout>
+            <AddVideo />
           </AuthLayout>
         )
       },

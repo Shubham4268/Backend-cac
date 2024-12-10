@@ -64,7 +64,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
     );
 });
 
-
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body
 
@@ -86,17 +85,18 @@ const publishAVideo = asyncHandler(async (req, res) => {
     if (!video || !thumbnail) {
         throw new ApiError(400, "Video and thumbnail are required")
     }
+    
 
     // const video = "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4"
     const createdVideo = await Video.create({
         title,
         description,
-        videoFile: "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4",
-        thumbnail: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-4.jpg",
-        duration: 10,
-        // videoFile : video.url,
-        // thumbnail: thumbnail.url,
-        // duration: videoFile.duration,
+        // videoFile: "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4",
+        // thumbnail: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-4.jpg",
+        // duration: 10,
+        videoFile : video.url,
+        thumbnail: thumbnail.url,
+        duration: video.duration,
         
         owner: req.user?._id
     })

@@ -28,8 +28,8 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
             .json(
                 new ApiResponse(
                     200,
-                    like,
-                    "Video Liked"
+                    ifLiked,
+                    "Video liked"
                 )
             )
     }
@@ -43,7 +43,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
             .json(
                 new ApiResponse(
                     200,
-                    unlike,
+                    ifLiked,
                     "Video unliked"
                 )
             )
@@ -200,9 +200,39 @@ const getLikedVideos = asyncHandler(async (req, res) => {
         )
 })
 
+const userLikeStatus = asyncHandler(async (req, res) => {
+    const { videoId } = req.params;
+
+    if (!mongoose.isValidObjectId(videoId)) {
+        throw new ApiError(400, "Video Id is invalid")
+    }
+
+    const userId = req.user?._id;
+
+    const likeStatus = await Like.findOne({ video: videoId, likedBy: userId })
+
+    const likesOnVideo = await Like.countDocuments({ video: videoId })
+
+    const statusOfLike = likeStatus ? true : false  
+
+    const returnObject = { statusOfLike, likesOnVideo }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                returnObject,
+                "Current video is Liked"
+            )
+        )
+
+})
+
 export {
     toggleCommentLike,
     toggleTweetLike,
     toggleVideoLike,
-    getLikedVideos
+    getLikedVideos,
+    userLikeStatus
 }

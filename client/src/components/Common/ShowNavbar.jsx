@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import Navbar from "./Navbar"; // Adjust the import as per your setup
+import Navbar from "../Navbar"; // Adjust the import as per your setup
 import { matchPath } from "react-router-dom"; // To match dynamic routes
 
 const ShowNavbar = ({ children }) => {

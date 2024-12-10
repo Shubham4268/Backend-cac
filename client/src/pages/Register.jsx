@@ -43,17 +43,18 @@ const Register = () => {
         navigate("/home");
         setFormData({ fullName: "", username: "", email: "", password: "" }); // Reset form state
       }
-    } catch (err) {      
-      handleApiError(err,setError)
+    } catch (err) {
+      handleApiError(err, setError);
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-screen">
+    <div className="flex flex-col justify-center items-center w-full h-screen ">
       <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white ">
-      <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
-            Sign in to your account
-          </h2>
+      
+        <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
+          Sign in to your account
+        </h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
         <form
           className="w-2/3 h-fit p-5 flex flex-col items-center mx-auto space-y-3 "
@@ -113,9 +114,8 @@ const Register = () => {
 
 const InputField = ({ type, name, value, onChange, placeholder }) => (
   <div className="input-group flex flex-col w-full">
-  
     <input
-      placeholder = {placeholder}
+      placeholder={placeholder}
       type={type}
       name={name}
       value={value}
@@ -123,9 +123,7 @@ const InputField = ({ type, name, value, onChange, placeholder }) => (
       required
       className="mt-2 block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base  outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
     />
-    
   </div>
-  
 );
 
 export default Register;

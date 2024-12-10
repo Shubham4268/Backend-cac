@@ -5,17 +5,37 @@ function VideoComponent(video) {
     const createdDate = new Date(createdAt);
     const currentDate = new Date();
     const diffInMs = currentDate - createdDate; // Difference in milliseconds
-    const diffInHours = diffInMs / (1000 * 60 * 60); // Convert to hours
+    
+    const diffInSeconds = Math.floor(diffInMs / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+    const diffInYears = Math.floor(diffInDays / 365);
   
-    if (diffInHours >= 24) {
-      const diffInDays = Math.floor(diffInHours / 24); // Convert to days
+    if (diffInSeconds < 60) {
+      return `${diffInSeconds} seconds ago`;
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes} minutes ago`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hours ago`;
+    } else if (diffInDays < 365) {
       return `${diffInDays} days ago`;
     } else {
-      const hoursAgo = Math.floor(diffInHours);
-      return `${hoursAgo} hours ago`;
+      return `${diffInYears} years ago`;
     }
   };
-  const to = `/video/${video._id}`
+
+  const formatDuration = (durationInSeconds) => {
+    
+    const roundedSeconds = Math.round(durationInSeconds); // Round to the nearest whole second
+    const minutes = Math.floor(roundedSeconds / 60); // Extract whole minutes
+    const seconds = roundedSeconds % 60; // Remaining seconds
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+  
+  
+
+  const to = `/video/${video?._id}`
 
   return (
     <Link to={to}>
@@ -26,7 +46,7 @@ function VideoComponent(video) {
           alt={video.title}
         />
         <span className="absolute top-36 right-1 bg-gray-900 text-white text-sm px-3 py-1 rounded">
-          {video.duration}:00
+          {formatDuration(video.duration)}
         </span>
         <div className="flex flex-col mt-2 mx-1">
           <span className="font-semibold overflow-x-hidden text-nowrap overflow-ellipsis">{video.title}</span>

@@ -8,7 +8,6 @@ import { Video } from "../models/video.model.js"
 
 const createPlaylist = asyncHandler(async (req, res) => {
     const { name, description } = req.body
-    console.log(name, description);
 
     if (!name || !description) {
         throw new ApiError(400, "All fields are required")
@@ -57,7 +56,6 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
             }
         }
     ])
-    console.log(userPlaylist);
 
 
     if (!userPlaylist) {
@@ -110,7 +108,6 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     }
 
     const video = await Video.findById(videoId);
-    console.log(video);
 
     const updatedPlaylist = await Playlist.findByIdAndUpdate(playlistId, {
         $addToSet: {            // Add only if videoId doesn't already exist
@@ -122,9 +119,6 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     if (!updatedPlaylist) {
         throw new ApiError(400, "Unable to add video to the playlist")
     }
-
-    console.log(updatedPlaylist);
-
 
     return res
         .status(200)
@@ -151,8 +145,6 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
         { $pull: { videos: new mongoose.Types.ObjectId(videoId) } }, // Update operation
         { new: true } // Option to return the updated document
     );
-
-    console.log(updatedPlaylist);
 
     // Check if the playlist was found
     const playlistExists = await Playlist.exists({ _id: playlistId });

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { handleApiError } from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
-import Successmsg from "../Successmsg";
+import Successmsg from "../Common/Successmsg";
 
 function ChangePassword() {
   const [error, setError] = useState(null);

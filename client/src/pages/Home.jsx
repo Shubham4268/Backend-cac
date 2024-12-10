@@ -1,4 +1,4 @@
-import VideoComponent from "../components/VideoComponent";
+import VideoComponent from "../components/VideoComponents/VideoComponent.jsx";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { handleApiError } from "../utils/errorHandler.js";
@@ -24,7 +24,6 @@ function Home() {
 
         if (success) {
           setVideos(data.videos);
-          console.log(data);
           
         }
       } catch (error) {

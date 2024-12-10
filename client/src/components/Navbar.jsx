@@ -39,13 +39,6 @@ const Navbar = () => {
           <NavLinkItem to="/addVideo" label="Add a Video" icon="📹" />
           <NavLinkItem to="/addTweet" label="Add a Tweet" icon="➕" />
           <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
-          <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
-          <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
-          <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
-          <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
-          <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
-          <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
-          <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
           <button className="w-full pb-10" onClick={logoutHandler}>
             <NavItem label="Logout" icon="🚪" />
           </button>

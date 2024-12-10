@@ -3,11 +3,11 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { AuthLayout, ChangePassword, ShowNavbar, Successmsg, UpdateAccount, VideoDetails, VideoFile } from "./components/index.js";
-import { Register, Home, Login, Profile, Video, Settings, AddVideo } from "./pages/index.js";
+import { Register, Home, Login, Profile, Video, Settings, AddVideo, AddTweet } from "./pages/index.js";
 import { Provider } from "react-redux";
 import store from "./app/store.js";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
+import 'react-toastify/dist/ReactToastify.css';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -82,6 +82,14 @@ const router = createBrowserRouter([
         element : (
           <AuthLayout>
             <AddVideo />
+          </AuthLayout>
+        )
+      },
+      {
+        path : "/addTweet",
+        element : (
+          <AuthLayout>
+            <AddTweet />
           </AuthLayout>
         )
       },

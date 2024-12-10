@@ -12,7 +12,7 @@ import SubscribeButton from "./Common/SubscribeButton";
 import LikeButton from "./Common/LikeButton";
 import VideoComponent from "./VideoComponents/VideoComponent";
 import DragAndDrop from "./Common/DragAndDrop";
-
+import AddTweetForm from "./AddTweetForm";
 export {
     Navbar,
     AuthLayout,
@@ -27,5 +27,6 @@ export {
     SubscribeButton,
     LikeButton,
     VideoComponent,
-    DragAndDrop
+    DragAndDrop,
+    AddTweetForm
 }

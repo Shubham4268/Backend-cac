@@ -18,9 +18,8 @@ const InputField = ({ type, name, value, onChange, placeholder }) => (
   </div>
 );
 
-
 function AddVideoForm() {
-    const [successAlert, setSuccessAlert] = useState(false);
+  const [successAlert, setSuccessAlert] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -79,10 +78,10 @@ function AddVideoForm() {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center w-full h-full ">
-        {successAlert && <Successmsg text = "Video uploaded Successfully!!"/>}
+      <div className="flex flex-col justify-center items-center w-full h-fit ">
+        {successAlert && <Successmsg text="Video uploaded Successfully!!" />}
         <div className="mt-28 mb-12 shadow-lg w-2/5 h-2/3 p-5 bg-gray-800 rounded-lg text-white ">
-        <h2 className="text-center text-2xl/9 font-bold text-white my-6">
+          <h2 className="text-center text-2xl/9 font-bold text-white my-3">
             Upload Your Video
           </h2>
           {error && <p className="text-red-500 text-center">{error}</p>}
@@ -155,4 +154,3 @@ function AddVideoForm() {
 }
 
 export default AddVideoForm;
-

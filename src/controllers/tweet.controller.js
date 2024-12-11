@@ -56,8 +56,9 @@ const getUserTweets = asyncHandler(async (req, res) => {
         },
         {
             $project: {
-                username: 1,
+                fullName: 1,
                 avatar: 1,
+                createdAt : 1,
                 // Only include specific fields in userTweets (e.g., text)
                 userTweets: {
                     $map: {
@@ -106,7 +107,7 @@ const updateTweet = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
-                updatedTweet.content,
+                updatedTweet,
                 "Tweet updated successfully"
             )
         )

@@ -37,6 +37,7 @@ const Navbar = () => {
           <NavLinkItem to="/home" label="Home" icon="🏠" />
           <NavLinkItem to="/profile" label="Your Profile" icon="👤" />
           <NavLinkItem to="/addVideo" label="Add a Video" icon="📹" />
+          <NavLinkItem to="/tweets" label="Tweets" icon="📹" />
           <NavLinkItem to="/addTweet" label="Add a Tweet" icon="➕" />
           <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
           <button className="w-full pb-10" onClick={logoutHandler}>

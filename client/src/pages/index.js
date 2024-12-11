@@ -5,6 +5,7 @@ import Login from "./Login";
 import Profile from "./Profile";
 import Register from "./Register";
 import Settings from "./Settings";
+import TweetsPage from "./TweetsPage";
 import Video from "./Video";
 export { 
     Home, 
@@ -14,5 +15,6 @@ export {
     Video,
     Settings,
     AddVideo,
-    AddTweet
+    AddTweet,
+    TweetsPage
 }

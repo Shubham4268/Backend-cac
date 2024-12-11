@@ -3,15 +3,13 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { handleApiError } from "../utils/errorHandler";
 
-function TweetComponent({ tweet, tweetData, handleDelete }) {
+function TweetComponent({ tweet, tweetData }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [error, setError] = useState(null);
   const usersTweetData = tweetData;
   const userTweet = tweet;
 
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
   const isCurrentUser = user?._id === usersTweetData._id;
-  const onDelete = handleDelete(userTweet);
   const formatDate = (date) => {
     if (!date) return "Unknown Date";
     const now = new Date(date);
@@ -26,7 +24,8 @@ function TweetComponent({ tweet, tweetData, handleDelete }) {
 
   return (
     <div className="flex flex-col w-5/6 m-auto h-fit border border-1 bg-gray-800 px-5 pb-5 rounded-lg">
-      {error && <p className="text-red-500 text-center">{error}</p>}
+      {//edit 
+      }
       <div className="flex justify-between mt-5">
         <div className="flex self-start">
           <img
@@ -68,7 +67,7 @@ function TweetComponent({ tweet, tweetData, handleDelete }) {
                     </li>
                     <li>
                       <a
-                        onClick={onDelete}
+                        // onClick={onDelete}
                         className="block px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
                         Delete
@@ -81,10 +80,10 @@ function TweetComponent({ tweet, tweetData, handleDelete }) {
           )}
         </div>
       </div>
-      <div className="text-white ml-5 mt-2">
+      {/*shouldTweetBeVisible*/true && <div className="text-white ml-5 mt-2">
         {/* <form onSubmit><input type="text" /></form> */}
         {userTweet?.content}
-      </div>
+      </div>}
     </div>
   );
 }

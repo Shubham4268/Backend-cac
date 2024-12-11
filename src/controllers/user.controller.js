@@ -43,34 +43,34 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     // Get file paths for avatar and cover image from the uploaded files in the request
-    const avatarLocalPath = req.files?.avatar[0]?.path;
-    let coverImageLocalPath
-    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
-        coverImageLocalPath = req.files.coverImage[0].path
-    }
+    // const avatarLocalPath = req.files?.avatar[0]?.path;
+    // let coverImageLocalPath
+    // if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+    //     coverImageLocalPath = req.files.coverImage[0].path
+    // }
 
 
-    // Check if avatar image is provided, if not, throw an error
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar image is required");
-    }
+    // // Check if avatar image is provided, if not, throw an error
+    // if (!avatarLocalPath) {
+    //     throw new ApiError(400, "Avatar image is required");
+    // }
 
-    // Upload avatar and cover image to Cloudinary and get the URLs
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath);    
+    // // Upload avatar and cover image to Cloudinary and get the URLs
+    // const avatar = await uploadOnCloudinary(avatarLocalPath);
+    // const coverImage = await uploadOnCloudinary(coverImageLocalPath);    
 
     // If avatar upload fails, throw an error
-    if (!avatar) {
-        throw new ApiError(400, "Avatar image is required");
-    }
+    // if (!avatar) {
+    //     throw new ApiError(400, "Avatar image is required");
+    // }
 
     // Create a new user in the database with the provided details
     const user = await User.create({
         fullName,
-        // avatar: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-5.jpg", // Set avatar URL from Cloudinary
+        avatar: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-5.jpg", // Set avatar URL from Cloudinary
         // coverImage: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-4.jpg" || "", // Set cover image URL, or empty string if not uploaded
-        avatar : avatar.url,
-        coverImage : coverImage.url,
+        // avatar : avatar.url,
+        // coverImage : coverImage.url,
         email,
         password,
         username: username?.toLowerCase() // Convert username to lowercase

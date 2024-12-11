@@ -11,9 +11,14 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
+  };
+
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -35,21 +40,21 @@ const Login = () => {
       const { data: response } = loggedInUser || {};
       const { success } = response || false;
       const { data } = response || {};
-      // const { accessToken } = data || "";
 
       if (success) {
         dispatch(login(data)); // Adjust based on API response structure
         navigate("/home");
-        setFormData({ fullName: "", username: "", email: "", password: "" }); // Reset form state
+        setFormData({ email: "", password: "" }); // Reset form state
       }
     } catch (error) {
       handleApiError(error, setError);
     }
   };
+
   return (
     <>
-      <div className="mt-10 h-screen w-full flex ">
-        <div className="w-2/5 m-auto flex-col justify-center rounded-lg bg-gray-800 ">
+      <div className="mt-10 h-screen w-full flex">
+        <div className="w-2/5 m-auto flex-col justify-center rounded-lg bg-gray-800">
           <h2 className="mt-12 mb-6 text-center text-2xl/9 font-bold tracking-tight text-white">
             Log in to your account
           </h2>
@@ -73,7 +78,7 @@ const Login = () => {
                     value={formData.email}
                     required
                     autoComplete="email"
-                    className="block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base  outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    className="block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     onChange={onChange}
                   />
                 </div>
@@ -96,17 +101,26 @@ const Login = () => {
                     </a>
                   </div>
                 </div>
-                <div className="mt-2">
+                <div className="mt-2 relative">
                   <input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"} // Toggle type
                     value={formData.password}
                     required
                     autoComplete="current-password"
-                    className="block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base  outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    className="block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     onChange={onChange}
                   />
+                  {formData.password && ( // Show button only if password is not empty
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-200"
+                    >
+                      {showPassword ? "Hide" : "View"}
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -129,7 +143,7 @@ const Login = () => {
                 Register Here
               </Link>
             </p>
-          </div>{" "}
+          </div>
         </div>
       </div>
     </>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { TweetComponent } from "../components";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { handleApiError } from "../utils/errorHandler";
 
@@ -13,17 +12,6 @@ function TweetsPage() {
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
   const id = user?._id;
 
-  const handleDelete = async (userTweet) => {
-    try {
-      const deleteTweet = await axios.delete(
-        `http://localhost:8000/api/v1/tweets/${userTweet._id}`
-      );
-      console.log(deleteTweet);
-      
-    } catch (error) {
-        handleApiError(error,setError)
-    }
-  };
   useEffect(() => {
     const fetchTweets = async () => {
       try {
@@ -53,7 +41,7 @@ function TweetsPage() {
             <div key={tweet._id} className="mb-8">
                 {console.log(tweet)}
                 
-                <TweetComponent tweet={tweet} tweetData = {tweetData} handleDelete={handleDelete}/>
+                <TweetComponent tweet={tweet} tweetData = {tweetData} />
             </div>
         ))
       }

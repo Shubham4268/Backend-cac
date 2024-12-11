@@ -37,11 +37,30 @@ const Register = () => {
         }
       );
 
+      console.log(formData.email);
+
       if (response.data.success) {
-        dispatch(login(response.data)); // Adjust based on API response structure
-        console.log(response.data);
-        navigate("/home");
-        setFormData({ fullName: "", username: "", email: "", password: "" }); // Reset form state
+        const { email, password } = formData;
+        const loginData = { email, password };
+        const loggedInUser = await axios.post(
+          "http://localhost:8000/api/v1/users/login",
+          loginData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const { data: response } = loggedInUser || {};
+        const { success } = response || false;
+        const { data } = response || {};
+        // const { accessToken } = data || "";
+
+        if (success) {
+          dispatch(login(data));
+          navigate("/home");
+          setFormData({ fullName: "", username: "", email: "", password: "" }); // Reset form state
+        }
       }
     } catch (err) {
       handleApiError(err, setError);
@@ -51,7 +70,6 @@ const Register = () => {
   return (
     <div className="flex flex-col justify-center items-center w-full h-screen ">
       <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white ">
-      
         <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
           Sign in to your account
         </h2>

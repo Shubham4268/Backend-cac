@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
 
 function Header({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+    const value = e.target.value;
+    setSearchQuery(value);
+    onSearch({ target: { value } }); // Trigger search on each change
   };
 
   return (
@@ -17,7 +17,6 @@ function Header({ onSearch }) {
           className="max-w-md w-full self-center"
           onSubmit={(e) => {
             e.preventDefault();
-            onSearch({ target: { value: searchQuery } });
           }}
         >
           <div className="relative">
@@ -25,7 +24,7 @@ function Header({ onSearch }) {
               type="text"
               placeholder="Search videos..."
               value={searchQuery}
-              onChange={handleSearch}
+              onChange={handleSearch} // Trigger search dynamically
               className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               required
             />
@@ -42,6 +41,5 @@ function Header({ onSearch }) {
     </div>
   );
 }
-
 
 export default Header;

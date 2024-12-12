@@ -1,15 +1,42 @@
 import axios from "axios";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { change } from "../features/slices/tweetSlice";
 import { handleApiError } from "../utils/errorHandler";
+import { toast, ToastContainer } from "react-toastify";
 
-function TweetComponent({ tweet, tweetData }) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+function TweetComponent({ tweet, tweetData,refreshTweets }) {
+  const [error, setError] = useState(null);
   const usersTweetData = tweetData;
   const userTweet = tweet;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const notify = (text) => toast(text);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false); // For confirmation modal state
 
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
   const isCurrentUser = user?._id === usersTweetData._id;
+
+  const onEdit = ()=>{
+    dispatch(change(tweet))
+    navigate("/addTweet")
+  }
+
+  const onDelete = async () => {
+    try {
+      const deletedTweet = await axios.delete(`http://localhost:8000/api/v1/tweets/${userTweet?._id}`);
+      if (deletedTweet?.data?.success) {
+        refreshTweets();  // Call the refreshTweets function to refresh the list of tweets
+        notify("Tweet Deleted");
+      }
+    } catch (error) {
+      handleApiError(error, setError);
+    }
+  };
+  
+
   const formatDate = (date) => {
     if (!date) return "Unknown Date";
     const now = new Date(date);
@@ -22,10 +49,21 @@ function TweetComponent({ tweet, tweetData }) {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+
+  const confirmDelete = () => {
+    setIsConfirmingDelete(true); // Show confirmation modal
+    toggleDropdown(); // Close the dropdown
+  };
+
+  const cancelDelete = () => {
+    setIsConfirmingDelete(false); // Hide the confirmation modal
+  };
+
+
   return (
     <div className="flex flex-col w-5/6 m-auto h-fit border border-1 bg-gray-800 px-5 pb-5 rounded-lg">
-      {//edit 
-      }
+      {error && <p className="text-red-500 text-center">{error}</p>}
+      <ToastContainer/>
       <div className="flex justify-between mt-5">
         <div className="flex self-start">
           <img
@@ -36,7 +74,7 @@ function TweetComponent({ tweet, tweetData }) {
           <span className="self-center">{usersTweetData.fullName}</span>
         </div>
         <div className="flex text-sm items-center relative">
-          <span>{formatDate(usersTweetData.createdAt)}</span>
+          <span>{formatDate(userTweet.createdAt)}</span>
           {isCurrentUser && (
             <div>
               <button
@@ -59,6 +97,7 @@ function TweetComponent({ tweet, tweetData }) {
                   <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
                     <li>
                       <a
+                      onClick={onEdit}
                         href="#"
                         className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
@@ -67,7 +106,7 @@ function TweetComponent({ tweet, tweetData }) {
                     </li>
                     <li>
                       <a
-                        // onClick={onDelete}
+                        onClick={confirmDelete}
                         className="block px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
                         Delete
@@ -80,8 +119,28 @@ function TweetComponent({ tweet, tweetData }) {
           )}
         </div>
       </div>
-      {/*shouldTweetBeVisible*/true && <div className="text-white ml-5 mt-2">
-        {/* <form onSubmit><input type="text" /></form> */}
+      {isConfirmingDelete && (
+        <div className="fixed inset-0 flex items-center justify-center z-20  bg-gray-800 bg-opacity-90 ">
+          <div className="bg-gray-900 p-5 rounded-lg w-1/3 border border-gray-600 shadow-2xl">
+            <h3 className="text-xl mb-4">Are you sure you want to delete this tweet?</h3>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={onDelete} // Proceed with deletion
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {<div className="text-white ml-5 mt-2">
         {userTweet?.content}
       </div>}
     </div>

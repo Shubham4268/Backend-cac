@@ -72,8 +72,13 @@ function AddVideoForm() {
         // if (thumbnailRef.current) thumbnailRef.current.value = "";
       }
     } catch (error) {
+      setLoading(false)
       console.log(error);
       handleApiError(error, setError);
+      setFormData({
+          title: "",
+          description: "",
+        });
     }
   };
 

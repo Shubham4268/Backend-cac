@@ -58,7 +58,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
             $project: {
                 fullName: 1,
                 avatar: 1,
-                createdAt : 1,
+                // createdAt : 1,
                 // Only include specific fields in userTweets (e.g., text)
                 userTweets: {
                     $map: {
@@ -67,6 +67,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
                         in: {
                             _id: "$$tweet._id",
                             content: "$$tweet.content", // Replace 'text' with the desired field name(s)
+                            createdAt: "$$tweet.createdAt"
                         },
                     },
                 },

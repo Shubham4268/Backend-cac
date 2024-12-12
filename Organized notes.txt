@@ -116,3 +116,20 @@ Logger Middleware:
 Log incoming requests for debugging and monitoring.
 Rate Limiting:
 Use libraries like express-rate-limit to restrict the number of requests.
+
+
+
+
+
+React:
+
+useEffect:
+Purpose: Used to run side effects (e.g., data fetching, subscriptions) in functional components.
+Dependencies: The dependency array ([]) determines when the effect should re-run. Omitting it makes the effect run on every render; leaving it empty makes it run once after the first render.
+Cleanup: Return a cleanup function inside useEffect to clean up side effects (e.g., clearing timers, removing event listeners).
+
+useCallback:
+Purpose: Memoizes functions to ensure they retain the same reference across renders unless dependencies change.
+Use Cases: Primarily used to optimize performance by avoiding re-creation of functions on every render, especially when passing functions to child components or use in useEffect.
+
+Dependencies: Similar to useEffect, it takes a dependency array to specify when the memoized function should be updated.

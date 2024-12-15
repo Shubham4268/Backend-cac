@@ -11,23 +11,61 @@ const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query = "", sortBy = "createdAt", sortType = "desc", userId } = req.query;
 
     // Construct the filter object
-//     filter is an object that defines the search criteria for the database query:
-// If query is provided, it searches for video titles that match the string using a regular expression ($regex) for partial matching. The $options: "i" makes the search case-insensitive.
-// If userId is provided, it adds a filter to match videos by the user’s ID.
+    // filter is an object that defines the search criteria for the database query:
+    // If query is provided, it searches for video titles that match the string using a regular expression ($regex) for partial matching. The $options: "i" makes the search case-insensitive.
+    // If userId is provided, it adds a filter to match videos by the user’s ID.
     const filter = {};
     if (query) {
         filter.title = { $regex: query, $options: "i" }; // Case-insensitive search by title
     }
     if (userId) {
-        filter.user = userId; // Filter by userId if provided
+        filter.owner = mongoose.Types.ObjectId(userId); // Filter by userId if provided
     }
 
     // Count total videos matching the filter
     const totalVideos = await Video.countDocuments(filter);
 
-    // Fetch videos with aggregation for pagination and sorting
+    // Fetch videos with aggregation for pagination, sorting, and population
     const videos = await Video.aggregate([
-        { $match: filter },
+        { $match: filter }, // Match videos based on the filter
+        {
+            $lookup: {
+                from: "users", // Collection name for users
+                localField: "owner", // Field in Video schema to match
+                foreignField: "_id", // Field in User schema to match
+                as: "owner", // Output field for the joined user data
+            },
+        },
+        { $unwind: "$owner" }, // Unwind the owner array into a single object
+        /*{
+                "_id": "675adbeea6bdd3f743624c6c",
+                "videoFile": "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4",
+                "thumbnail": "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-4.jpg",
+                "title": "poiuytre",
+                "description": "kjhgfdsa",
+                "duration": 10,
+                "views": 2,
+                "isPublished": true,
+                "owner": "674d4e2da120550a8c712aee",
+                "createdAt": "2024-12-12T12:49:50.791Z",
+                "updatedAt": "2024-12-12T17:56:08.742Z",
+                "__v": 0
+            }*/
+        {
+            $project: {
+                _id : 1,
+                title: 1,
+                description: 1,
+                videoFile: 1,
+                thumbnail: 1,
+                duration: 1,
+                createdAt: 1,
+                views : 1,
+                isPublished : 1,
+
+                "owner": 1,
+            }, // Select only specific fields to include in the result
+        },
         {
             $sort: {
                 [sortBy]: sortType === "asc" ? 1 : -1, // Dynamic sorting
@@ -35,7 +73,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
         },
         { $skip: (page - 1) * parseInt(limit) },
         { $limit: parseInt(limit) },
-        
     ]);
 
     // Check if videos exist
@@ -64,6 +101,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     );
 });
 
+
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body
 
@@ -71,32 +109,32 @@ const publishAVideo = asyncHandler(async (req, res) => {
         throw new ApiError(400, "All fields are required")
     }
 
-    // const videoLocalPath = req.files?.videoFile[0]?.path
-    // const thumbnailLocalPath = req.files?.thumbnail[0]?.path
+    const videoLocalPath = req.files?.videoFile[0]?.path
+    const thumbnailLocalPath = req.files?.thumbnail[0]?.path
 
 
-    // if (!videoLocalPath || !thumbnailLocalPath) {
-    //     throw new ApiError(400, "Video and thumbnail are required")
-    // }
+    if (!videoLocalPath || !thumbnailLocalPath) {
+        throw new ApiError(400, "Video and thumbnail are required")
+    }
 
-    // const video = await uploadOnCloudinary(videoLocalPath);
-    // const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+    const video = await uploadOnCloudinary(videoLocalPath);
+    const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
 
-    // if (!video || !thumbnail) {
-    //     throw new ApiError(400, "Video and thumbnail are required")
-    // }
+    if (!video || !thumbnail) {
+        throw new ApiError(400, "Video and thumbnail are required")
+    }
     
 
     // const video = "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4"
     const createdVideo = await Video.create({
         title,
         description,
-        videoFile: "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4",
-        thumbnail: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-4.jpg",
-        duration: 10,
-        // videoFile : video.url,
-        // thumbnail: thumbnail.url,
-        // duration: video.duration,
+        // videoFile: "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4",
+        // thumbnail: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-4.jpg",
+        // duration: 10,
+        videoFile : video.url,
+        thumbnail: thumbnail.url,
+        duration: video.duration,
         
         owner: req.user?._id
     })

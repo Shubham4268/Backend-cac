@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 function Header({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -8,6 +9,8 @@ function Header({ onSearch }) {
     setSearchQuery(value);
     onSearch({ target: { value } }); // Trigger search on each change
   };
+
+  const location = useLocation()  
 
   return (
     <div className="z-10 flex fixed top-0 w-full py-5 bg-gray-800 text-white">
@@ -19,7 +22,7 @@ function Header({ onSearch }) {
             e.preventDefault();
           }}
         >
-          <div className="relative">
+          {location.pathname==="/home" && <div className="relative">
             <input
               type="text"
               placeholder="Search videos..."
@@ -35,7 +38,7 @@ function Header({ onSearch }) {
             >
               Search
             </button>
-          </div>
+          </div>}
         </form>
       </div>
     </div>

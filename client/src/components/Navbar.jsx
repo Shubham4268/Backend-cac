@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 import { handleApiError } from "../utils/errorHandler.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/slices/authSlice.js";
 
 const Navbar = () => {
@@ -29,15 +29,19 @@ const Navbar = () => {
     }
   };
 
+  const currentUser = useSelector((state)=>state.user?.userData)
+  const {loggedInUser} = currentUser || {}
+  const {username} = loggedInUser || ""
+
   return (
     <div className="flex fixed max-h-full min-h-full overflow-auto no-scrollbar bg-gray-800">
       {/* Sidebar */}
       <div className="w-36 md:w-52 sm:w-44 mt-14 text-white ">
         <nav className="mt-6 space-y-2">
           <NavLinkItem to="/home" label="Home" icon="🏠" />
-          <NavLinkItem to="/profile" label="Your Profile" icon="👤" />
+          <NavLinkItem to="" label="Subscriptions" icon="🏠" />
+          <NavLinkItem to={`/profile/${username}`} label="Your Profile" icon="👤" />
           <NavLinkItem to="/addVideo" label="Add a Video" icon="📹" />
-          <NavLinkItem to="/tweets" label="Tweets" icon="📹" />
           <NavLinkItem to="/addTweet" label="Add a Tweet" icon="➕" />
           <NavLinkItem to="/settings" label="Settings" icon="⚙️" />
           <button className="w-full pb-10" onClick={logoutHandler}>

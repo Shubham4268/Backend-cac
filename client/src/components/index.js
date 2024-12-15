@@ -11,9 +11,11 @@ import VideoDetails from "./VideoComponents/VideoDetails";
 import SubscribeButton from "./Common/SubscribeButton";
 import LikeButton from "./Common/LikeButton";
 import VideoComponent from "./VideoComponents/VideoComponent";
-import DragAndDrop from "./Common/DragAndDrop";
-import AddTweetForm from "./AddTweetForm";
-import TweetComponent from "./TweetComponent";
+import UserPlaylists from "./Profile/UserPlaylists";
+import UserTweets from "./Profile/userTweets";
+import UserVideos from "./Profile/UserVideos";
+import AddTweetForm from "./Tweets/AddTweetForm";
+import TweetComponent from "./Tweets/TweetComponent";
 export {
     Navbar,
     AuthLayout,
@@ -28,7 +30,10 @@ export {
     SubscribeButton,
     LikeButton,
     VideoComponent,
-    DragAndDrop,
     AddTweetForm,
-    TweetComponent
+    TweetComponent,
+    UserPlaylists, 
+    UserTweets, 
+    UserVideos,
+
 }

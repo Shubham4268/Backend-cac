@@ -1,4 +1,4 @@
-import AddVideoForm from "../components/AddVideoForm"
+import AddVideoForm from "../components/VideoComponents/AddVideoForm"
 
 function AddVideo() {
   return (

@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom"; // Add this hook
 import axios from "axios";
-import { handleApiError } from "../utils/errorHandler";
+import { handleApiError } from "../../utils/errorHandler.js";
 import { toast, ToastContainer } from "react-toastify";
-import { change } from "../features/slices/tweetSlice";
+import { change } from "../../features/slices/tweetSlice";
 
 function AddTweetForm() {
   const [formData, setFormData] = useState({ content: "" });

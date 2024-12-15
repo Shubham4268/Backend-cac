@@ -2,17 +2,40 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { AuthLayout, ChangePassword, ShowNavbar, Successmsg, UpdateAccount, VideoDetails, VideoFile } from "./components/index.js";
-import { Register, Home, Login, Profile, Video, Settings, AddVideo, AddTweet, TweetsPage } from "./pages/index.js";
+import {
+  AuthLayout,
+  ChangePassword,
+  ShowNavbar,
+  Successmsg,
+  UpdateAccount,
+  VideoDetails,
+  VideoFile,
+} from "./components/index.js";
+import {
+  Register,
+  Home,
+  Login,
+  Profile,
+  Video,
+  Settings,
+  AddVideo,
+  AddTweet,
+  TweetsPage,
+} from "./pages/index.js";
 import { Provider } from "react-redux";
 import store from "./app/store.js";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import 'react-toastify/dist/ReactToastify.css';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  ScrollRestoration,
+} from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <ShowNavbar>
+        <ScrollRestoration />
         <App />
       </ShowNavbar>
     ),
@@ -38,7 +61,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/profile",
+        path: "/profile/:username",
         element: (
           <AuthLayout authentication>
             <Profile />
@@ -47,73 +70,72 @@ const router = createBrowserRouter([
       },
       {
         path: "/video/:id",
-        element : (
+        element: (
           <AuthLayout authentication>
-            <Video/>
+            <Video />
           </AuthLayout>
-        )
+        ),
       },
       {
         path: "/settings",
-        element : (
+        element: (
           <AuthLayout authentication>
-            <Settings/>
+            <Settings />
           </AuthLayout>
-        )
+        ),
       },
       {
-        path : "/change-password",
-        element : (
+        path: "/change-password",
+        element: (
           <AuthLayout authentication>
             <ChangePassword />
           </AuthLayout>
-        )
+        ),
       },
       {
-        path : "/update-account",
-        element : (
+        path: "/update-account",
+        element: (
           <AuthLayout authentication>
             <UpdateAccount />
           </AuthLayout>
-        )
+        ),
       },
       {
-        path : "/addVideo",
-        element : (
+        path: "/addVideo",
+        element: (
           <AuthLayout>
             <AddVideo />
           </AuthLayout>
-        )
+        ),
       },
       {
-        path : "/addTweet",
-        element : (
+        path: "/addTweet",
+        element: (
           <AuthLayout>
             <AddTweet />
           </AuthLayout>
-        )
+        ),
       },
       {
-        path : "/tweets",
-        element : (
+        path: "/tweets/:id",
+        element: (
           <AuthLayout>
             <TweetsPage />
           </AuthLayout>
-        )
+        ),
       },
       {
-        element : (<Successmsg text/>)
+        element: <Successmsg text />,
       },
       {
-        element : (<VideoFile video/>)
+        element: <VideoFile video />,
       },
       {
-        element : (<VideoDetails video/>)
-      }
+        element: <VideoDetails video />,
+      },
     ],
   },
 ]);
-
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

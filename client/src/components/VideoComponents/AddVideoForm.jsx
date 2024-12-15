@@ -1,7 +1,6 @@
 import axios from "axios";
-import { handleApiError } from "../utils/errorHandler";
+import { handleApiError } from "../../utils/errorHandler.js";
 import { useState } from "react";
-import Successmsg from "./Common/Successmsg";
 import { useRef } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";

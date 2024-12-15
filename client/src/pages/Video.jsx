@@ -35,6 +35,7 @@ function Video() {
 
     fetchVideo();
   }, [id]);
+console.log(video);
 
   return (
     <div className="flex flex-col md:flex-row mt-28 ml-10 md:w-full justify-evenly h-screen">

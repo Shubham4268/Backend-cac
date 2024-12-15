@@ -1,16 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
-import { TweetComponent } from "../components";
+import { TweetComponent } from "../../components";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import { handleApiError } from "../utils/errorHandler";
-import { useParams } from "react-router-dom";
+import { handleApiError } from "../../utils/errorHandler.js";
+import { useCallback, useEffect, useState } from "react";
 
-function TweetsPage() {
+function userTweets({user}) {
   const [tweetData, setTweetData] = useState(null);
   const [error, setError] = useState(null);
 
   // const user = useSelector((state) => state.user?.userData?.loggedInUser);
-  const {id} = useParams();
+  const id = user?._id;
 
   // Include id as a dependency for fetchTweets
   const fetchTweets = useCallback(async () => {
@@ -36,7 +34,7 @@ function TweetsPage() {
   }, [fetchTweets]);
 
   return (
-    <div className="ml-56 mt-28 text-white w-full h-full">
+    <div className=" text-white w-full h-full">
       {error && (
         <p className="text-red-500 text-center mb-5">
           {error || "Failed to load tweets"}
@@ -50,5 +48,4 @@ function TweetsPage() {
     </div>
   );
 }
-
-export default TweetsPage;
+export default userTweets

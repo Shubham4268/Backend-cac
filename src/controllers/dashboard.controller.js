@@ -97,7 +97,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
 const getChannelVideos = asyncHandler(async (req, res) => {
     // TODO: Get all the videos uploaded by the channel
     const { channelId } = req.params;
-    const getAllVideos = await Video.find({ owner: channelId })
+    const getAllVideos = await Video.find({ owner: channelId }).populate('owner')
 
     if (!getAllVideos) {
         new ApiResponse(200, "No videos on the channel")

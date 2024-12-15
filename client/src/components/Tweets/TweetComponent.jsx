@@ -2,8 +2,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { change } from "../features/slices/tweetSlice";
-import { handleApiError } from "../utils/errorHandler";
+import { change } from "../../features/slices/tweetSlice";
+import { handleApiError } from "../../utils/errorHandler";
 import { toast, ToastContainer } from "react-toastify";
 
 function TweetComponent({ tweet, tweetData,refreshTweets }) {

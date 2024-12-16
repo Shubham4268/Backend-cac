@@ -7,40 +7,41 @@ import { Video } from "../models/video.model.js"
 
 
 const createPlaylist = asyncHandler(async (req, res) => {
-    const { name, description } = req.body
+    const { name, description = "" } = req.body;
+    console.log("name : ", name, "description: ", description);
 
-    if (!name || !description) {
-        throw new ApiError(400, "All fields are required")
+    // Validate playlist name
+    if (!name) {
+        throw new ApiError(400, "Name is required");
     }
 
-    const user = req.user._id;
-
+    // Ensure user exists in the request
+    const user = req.user?._id;
     if (!user) {
-        throw new ApiError(400, "User not found")
+        throw new ApiError(400, "User not found");
     }
+
+    // Create the playlist
 
     const playlist = await Playlist.create({
         name,
         description,
         owner: user
-    })
+    });
 
+
+    // Handle playlist creation failure
     if (!playlist) {
-        throw new ApiError(400, "Unabel to create playlist")
+        throw new ApiError(400, "Unable to create playlist");
     }
+    console.log(playlist);
 
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(
-                200,
-                playlist,
-                "Playlist created successfully"
-            )
-        )
+    // Return success response
+    return res.status(200).json(
+        new ApiResponse(200, playlist, "Playlist created successfully")
+    );
 
-    //TODO: create playlist
-})
+});
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
     const { userId } = req.params

@@ -8,6 +8,7 @@ import {
   ShowNavbar,
   Successmsg,
   UpdateAccount,
+  VideoComponent,
   VideoDetails,
   VideoFile,
 } from "./components/index.js";
@@ -132,6 +133,9 @@ const router = createBrowserRouter([
       },
       {
         element: <VideoDetails video />,
+      },
+      {
+        element: <VideoComponent video/>
       },
     ],
   },

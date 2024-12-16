@@ -75,7 +75,6 @@ const getUserTweets = asyncHandler(async (req, res) => {
         },
     ])
 
-    console.log(tweets);
 
     return res.status(200)
         .json(

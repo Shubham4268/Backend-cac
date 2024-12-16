@@ -7,7 +7,6 @@ const playListSchema = new Schema({
     },
     description: {
         type: String,
-        required: true
     },
     videos: [
         {

@@ -37,20 +37,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
             },
         },
         { $unwind: "$owner" }, // Unwind the owner array into a single object
-        /*{
-                "_id": "675adbeea6bdd3f743624c6c",
-                "videoFile": "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4",
-                "thumbnail": "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-4.jpg",
-                "title": "poiuytre",
-                "description": "kjhgfdsa",
-                "duration": 10,
-                "views": 2,
-                "isPublished": true,
-                "owner": "674d4e2da120550a8c712aee",
-                "createdAt": "2024-12-12T12:49:50.791Z",
-                "updatedAt": "2024-12-12T17:56:08.742Z",
-                "__v": 0
-            }*/
         {
             $project: {
                 _id : 1,

@@ -2,8 +2,9 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
-function VideoComponent(video) {
+function VideoComponent({ videofile, notify }) {
   const [showProfile, setShowProfile] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,11 +14,10 @@ function VideoComponent(video) {
   const [error, setError] = useState(null);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const location = useLocation();
-  const { owner } = video;
-  
-  const user = useSelector((state) => state.user?.userData?.loggedInUser);
+  const video = videofile || {};
+  const { owner } = video || {};
 
-  console.log("isModalOpen", isModalOpen);
+  const user = useSelector((state) => state.user?.userData?.loggedInUser);
 
   const getTimeDifference = (createdAt) => {
     const createdDate = new Date(createdAt);
@@ -57,6 +57,8 @@ function VideoComponent(video) {
 
   // Fetch existing playlists when the component is mounted
   useEffect(() => {
+    setError(null);
+
     if (location.pathname.includes("profile")) {
       setShowProfile(false);
     }
@@ -68,7 +70,7 @@ function VideoComponent(video) {
 
         setPlaylists(response?.data?.data);
       } catch (err) {
-        setError("Failed to load playlists");
+        setError(err.message || "Failed to load playlists");
       }
     };
     fetchPlaylists();
@@ -82,12 +84,31 @@ function VideoComponent(video) {
   const handleAddToPlaylist = async (playlistId) => {
     try {
       // Make API call to add the video to the playlist
-      await axios.patch(
+      const response = await axios.patch(
         `http://localhost:8000/api/v1/playlists/add/${video._id}/${playlistId}`
       );
+
+      // Log and notify success
+      const message =
+        response?.data?.message || "Video added to playlist successfully!";
+      console.log(message);
+
+      // Close modal and dropdown after successful addition
       setIsModalOpen(false);
+      setIsDropdownOpen(false);
+
+      // Display success notification
+      notify(message);
     } catch (err) {
-      setError("Failed to add video to playlist");
+      // Log and set error message
+      console.error("Error adding video to playlist:", err);
+
+      // Provide user feedback for the error
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to add video to playlist"
+      );
     }
   };
 
@@ -105,14 +126,15 @@ function VideoComponent(video) {
 
       setPlaylists([...playlists, response?.data?.data]);
       setNewPlaylistName("");
+      notify("Playlist added");
       // setIsModalOpen(false);
     } catch (err) {
-      setError("Failed to create playlist");
+      setError(err.message || "Failed to create playlist");
     } finally {
       setLoading(false);
+      setError(null);
     }
   };
-  console.log(newPlaylistName);
 
   const to = `/video/${video?._id}`;
 
@@ -218,6 +240,7 @@ function VideoComponent(video) {
                 <button
                   onClick={() => {
                     setIsModalOpen(false);
+                    setIsDropdownOpen(false);
                   }}
                   className="w-full text-sm text-end text-blue-500 hover:underline mb-2"
                 >
@@ -231,13 +254,12 @@ function VideoComponent(video) {
                   {playlists.length === 0 ? (
                     <div>No playlists found</div>
                   ) : (
-                    <select
+                    <select 
                       onChange={(e) => setSelectedPlaylistId(e.target.value)}
                       className="w-full p-2 bg-gray-100 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                      size={5}
                     >
-                      <option value=""  selected>
-                        Select a playlist
-                      </option>
+                      
                       {playlists.map((playlist) => (
                         <option key={playlist._id} value={playlist._id}>
                           {playlist.name}
@@ -251,7 +273,7 @@ function VideoComponent(video) {
                 <button
                   onClick={() => handleAddToPlaylist(selectedPlaylistId)}
                   disabled={!selectedPlaylistId || loading}
-                  className={`w-full p-2 bg-blue-500 text-white rounded-md disabled:opacity-50`}
+                  className="w-full p-2 bg-blue-500 text-white rounded-md disabled:opacity-50"
                 >
                   {loading ? "Adding..." : "Add to Playlist"}
                 </button>

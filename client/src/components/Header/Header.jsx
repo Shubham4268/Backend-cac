@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Header({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -10,11 +10,17 @@ function Header({ onSearch }) {
     onSearch({ target: { value } }); // Trigger search on each change
   };
 
-  const location = useLocation()  
+  const location = useLocation()
+  const navigate= useNavigate();
+
+  const redirecToHomePage=()=>{
+    navigate('/home');
+  }
+
 
   return (
     <div className="z-10 flex fixed top-0 w-full py-5 bg-gray-800 text-white">
-      <span className="text-4xl ml-5">📹VIDEO</span>
+      <span onClick={redirecToHomePage} className="text-4xl ml-5 cursor-pointer z-10">📹VIDEO</span>
       <div className="absolute inset-0 flex justify-center">
         <form
           className="max-w-md w-full self-center"

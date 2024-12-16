@@ -7,6 +7,7 @@ import {
   UserTweets,
   UserPlaylists,
 } from "../components";
+import { toast, ToastContainer } from "react-toastify";
 
 function Profile() {
   const { username } = useParams();
@@ -14,7 +15,8 @@ function Profile() {
   const [subscribed, setSubscribed] = useState(null);
   const [subscribers, setSubscribers] = useState(null);
   const [channelInfo, setChannelInfo] = useState(null);
-  const [activeDiv, setActiveDiv] = useState(1  );
+  const [activeDiv, setActiveDiv] = useState(1);
+  const notify = (text) => toast(text);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -67,6 +69,7 @@ function Profile() {
   return (
     <>
       <div className=" mt-24 mb-4 ml-56 w-full text-white">
+        <ToastContainer className="z-10"/>
         <div className="ml-10 flex ">
           <img
             src={user?.avatar}
@@ -122,8 +125,8 @@ function Profile() {
           <hr className="mr-5" />
         </div>
         <div>
-          {activeDiv === 1 && <UserVideos user={user}/>}
-          {activeDiv === 2 && <UserTweets user={user}/>}
+          {activeDiv === 1 && <UserVideos user={user} notify={notify} />}
+          {activeDiv === 2 && <UserTweets user={user} />}
           {activeDiv === 3 && <UserPlaylists />}
         </div>
       </div>

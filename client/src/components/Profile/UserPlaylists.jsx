@@ -1,7 +1,11 @@
+import PlaylistCard from "../PlaylistCard"
 
 function UserPlaylists() {
   return (
-    <div>UserPlaylists</div>
+    <>
+    
+    <PlaylistCard/>
+    </>
   )
 }
 

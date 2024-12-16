@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { handleApiError } from "../utils/errorHandler.js";
 import Header from "../components/Header/Header.jsx";
+import { toast, ToastContainer } from "react-toastify";
 
 axios.defaults.withCredentials = true;
 
@@ -15,6 +16,7 @@ function Home() {
   const [sortType, setSortType] = useState("desc");
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
+  const notify = (text) => toast(text);
 
   const fetchVideos = async () => {
     try {
@@ -63,6 +65,8 @@ function Home() {
     <>
       <Header onSearch={handleSearch} />
       <div className="flex flex-col items-center mt-24 mb-4 ml-56 pt-6 w-full h-full text-white">
+      <ToastContainer/>
+
         {!error && (
           <div className="flex justify-end w-full mb-6 space-x-6 mr-8">
             <select
@@ -90,10 +94,10 @@ function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 justify-items-center gap-4 min-h-full w-full">
             {videos?.map((video) => (
               <div
-                key={video._id}
+                key={video?._id}
                 className="p-2 items-center my-5 w-3/5 md:w-4/5 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl  dark:border-gray-700 dark:bg-gray-800 "
               >
-                <VideoComponent {...video} />
+                <VideoComponent videofile={video} notify={notify}/>
               </div>
             ))}
           </div>

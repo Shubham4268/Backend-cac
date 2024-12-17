@@ -3,8 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import LikeButton from "../Common/LikeButton";
 import SubscribeButton from "../Common/SubscribeButton";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
-function VideoDetails({ video ,notify}) {
+function VideoDetails({ video, notify }) {
   const [subscribers, setSubscribers] = useState(null);
   const [liked, setLiked] = useState(null);
   const [subscribed, setSubscribed] = useState(null);
@@ -20,6 +21,7 @@ function VideoDetails({ video ,notify}) {
 
   const owner = videoFile.owner;
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
+  console.log(owner);
 
   useEffect(() => {
     const fetchChannelStats = async () => {
@@ -113,12 +115,11 @@ function VideoDetails({ video ,notify}) {
 
   const toggleDropdown = () => setIsDropdownOpen((prevState) => !prevState);
   const handleAddToPlaylist = async (playlistId) => {
-    console.log("video id :", video._id, "Playlist Id : ", playlistId);
 
     try {
       // Make API call to add the video to the playlist
       const response = await axios.patch(
-        `http://localhost:8000/api/v1/playlists/add/${video?._id}/${playlistId}`
+        `http://localhost:8000/api/v1/playlists/add/${videoFile?._id}/${playlistId}`
       );
 
       // Log and notify success
@@ -312,13 +313,20 @@ function VideoDetails({ video ,notify}) {
         <div className="flex">
           {owner ? (
             <>
-              <img
-                className="w-14 h-14 self-center ml-3 rounded-full"
-                src={owner?.avatar || "default-avatar.png"}
-                alt="Owner Avatar"
-              />
+              <Link  className="self-center" to={`/profile/${owner?.username}`}>
+                <img
+                  className="w-14 h-14 self-center ml-3 rounded-full"
+                  src={owner?.avatar || "default-avatar.png"}
+                  alt="Owner Avatar"
+                />
+              </Link>
               <div className="flex flex-col ml-3 mt-3">
-                <span>{owner?.fullName || "Unknown User"}</span>
+                <Link to={`/profile/${owner?.username}`}>
+                  <span className=" hover:text-gray-300 ">
+                    {owner?.fullName || "Unknown User"}
+                  </span>
+                </Link>
+
                 <span>
                   {subscribers < 2
                     ? `${subscribers || 0} Subscriber`

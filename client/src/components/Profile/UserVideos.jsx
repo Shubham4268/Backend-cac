@@ -24,7 +24,7 @@ function UserVideos({ user ,notify}) {
       {videos?.map((video) => (
         <div
           key={video._id}
-          className="p-2 items-center my-5 w-3/5 md:w-4/5 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl dark:border-gray-700 dark:bg-gray-800 "
+          className="p-2 items-center my-5 w-3/5 md:w-5/6 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl dark:border-gray-700 dark:bg-gray-800 "
         >
           <VideoComponent videofile={video} notify={notify} />
         </div>

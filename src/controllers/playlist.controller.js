@@ -94,33 +94,31 @@ const getPlaylistById = asyncHandler(async (req, res) => {
     }
 
     try {
-        // Find playlist and populate the videos and owner fields
+        // Find playlist and populate nested fields
         const playlist = await Playlist.findById(playlistId)
             .populate({
                 path: "videos",
-            })
-            .populate({
-                path: "owner",
-                select: "username fullName avatar", // Fetch only relevant owner details
-            })
-            .exec();
+                populate: {
+                    path: "owner", // Populate owner inside videos
+                    select: "username fullName avatar", // Fetch relevant fields from owner
+                },
+            });
 
+        // Check if playlist exists
         if (!playlist) {
             throw new ApiError(404, "Playlist not found");
         }
 
-        // Respond with the populated playlist
+        // Return response
         return res.status(200).json(
-            new ApiResponse(
-                200,
-                playlist,
-                "Playlist fetched successfully"
-            )
+            new ApiResponse(200, playlist, "Playlist fetched successfully")
         );
     } catch (error) {
-        throw new ApiError(500, "Failed to fetch playlist");
+        // Handle unexpected errors
+        throw new ApiError(500, `Failed to fetch playlist: ${error.message}`);
     }
 });
+
 
 
 

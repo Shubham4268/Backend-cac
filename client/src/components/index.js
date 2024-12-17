@@ -17,6 +17,7 @@ import UserVideos from "./Profile/UserVideos";
 import AddTweetForm from "./Tweets/AddTweetForm";
 import TweetComponent from "./Tweets/TweetComponent";
 import PlaylistCard from "./PlaylistCard";
+import ProfileDropdown from "./Header/ProfileDropdown";
 export {
     Navbar,
     AuthLayout,
@@ -37,6 +38,7 @@ export {
     UserTweets, 
     UserVideos,
     PlaylistCard,
+    ProfileDropdown,
     
     
 }

@@ -16,6 +16,7 @@ function VideoComponent({ videofile, notify }) {
   const location = useLocation();
   const video = videofile || {};
   const { owner } = video || {};
+  
 
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
 
@@ -59,9 +60,10 @@ function VideoComponent({ videofile, notify }) {
   useEffect(() => {
     setError(null);
 
-    if (location.pathname.includes("profile")) {
+    if (["profile", "playlists"].some((path) => location.pathname.includes(path))) {
       setShowProfile(false);
-    }
+  }
+  
     const fetchPlaylists = async () => {
       try {
         const response = await axios.get(
@@ -82,7 +84,6 @@ function VideoComponent({ videofile, notify }) {
 
   // Handle adding video to a selected playlist
   const handleAddToPlaylist = async (playlistId) => {
-    console.log("video id :", video._id, "Playlist Id : ", playlistId);
 
     try {
       // Make API call to add the video to the playlist
@@ -93,7 +94,6 @@ function VideoComponent({ videofile, notify }) {
       // Log and notify success
       const message =
         response?.data?.message || "Video added to playlist successfully!";
-      console.log(message);
 
       // Close modal and dropdown after successful addition
       setIsModalOpen(false);
@@ -127,7 +127,6 @@ function VideoComponent({ videofile, notify }) {
       );
       if (response?.data?.success) {
         setPlaylists([...playlists, response?.data?.data]);
-        console.log(response?.data?.data?._id);
 
         setNewPlaylistName("");
         notify("Playlist added");
@@ -143,7 +142,6 @@ function VideoComponent({ videofile, notify }) {
       setError(null);
     }
   };
-  console.log(selectedPlaylistId);
 
   const to = `/video/${video?._id}`;
 

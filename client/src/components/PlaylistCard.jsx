@@ -8,7 +8,10 @@ function PlaylistCard({ playlist }) {
   return (
     <>
 
-    <Link to={`/playlists/${currPlaylist._id}`}>
+    <Link to={{
+        pathname: `/playlists/${currPlaylist._id}`,
+        state: { playlist: currPlaylist }, // Pass playlist as state
+      }}>
       <div className="relative">
         <img
           className="object-cover rounded-lg h-44 w-full"

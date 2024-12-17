@@ -127,7 +127,7 @@ function Profile() {
         <div>
           {activeDiv === 1 && <UserVideos user={user} notify={notify} />}
           {activeDiv === 2 && <UserTweets user={user} />}
-          {activeDiv === 3 && <UserPlaylists />}
+          {activeDiv === 3 && <UserPlaylists user={user} />}
         </div>
       </div>
     </>

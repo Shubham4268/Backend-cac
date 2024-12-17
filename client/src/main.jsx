@@ -22,6 +22,7 @@ import {
   AddVideo,
   AddTweet,
   TweetsPage,
+  Playlist,
 } from "./pages/index.js";
 import { Provider } from "react-redux";
 import store from "./app/store.js";
@@ -122,6 +123,14 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout>
             <TweetsPage />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/playlists/:id",
+        element: (
+          <AuthLayout>
+            <Playlist />
           </AuthLayout>
         ),
       },

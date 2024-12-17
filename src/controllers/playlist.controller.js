@@ -44,62 +44,85 @@ const createPlaylist = asyncHandler(async (req, res) => {
 });
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
-    const { userId } = req.params
+    const { userId } = req.params;
 
+    // Validate user ID
     if (!mongoose.isValidObjectId(userId)) {
         throw new ApiError(400, "Invalid user ID");
     }
 
-    const userPlaylist = await Playlist.aggregate([
+    // Use aggregation pipeline to match user playlists and populate videos
+    const userPlaylists = await Playlist.aggregate([
         {
             $match: {
-                owner: new mongoose.Types.ObjectId(userId)
+                owner: new mongoose.Types.ObjectId(userId) // Match playlists by owner
             }
+        },
+        {
+            $lookup: {
+                from: "videos", // Name of the Video collection
+                localField: "videos", // Field in Playlist collection that references videos
+                foreignField: "_id", // Field in Video collection to match
+                as: "videos" // Name of the new array with populated video documents
+            }
+        },
+        {
+            $sort: { createdAt: -1 } // Optional: Sort playlists by createdAt
         }
-    ])
+    ]);
 
-
-    if (!userPlaylist) {
-        throw new ApiError("No playlists found")
+    if (!userPlaylists || userPlaylists.length === 0) {
+        throw new ApiError(404, "No playlists found");
     }
 
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(
-                200,
-                userPlaylist,
-                "User playlist fetched successfully"
-            )
+    // Respond with the populated playlists
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            userPlaylists,
+            "User playlists fetched successfully"
         )
-    //TODO: get user playlists
-
-})
+    );
+});
 
 const getPlaylistById = asyncHandler(async (req, res) => {
-    const { playlistId } = req.params
-    //TODO: get playlist by id
+    const { playlistId } = req.params;
 
+    // Validate playlist ID
     if (!mongoose.isValidObjectId(playlistId)) {
-        throw new ApiError(400, "Invalid playlist Id");
+        throw new ApiError(400, "Invalid playlist ID");
     }
 
-    const playlist = await Playlist.findById(playlistId)
+    try {
+        // Find playlist and populate the videos and owner fields
+        const playlist = await Playlist.findById(playlistId)
+            .populate({
+                path: "videos",
+            })
+            .populate({
+                path: "owner",
+                select: "username fullName avatar", // Fetch only relevant owner details
+            })
+            .exec();
 
-    if (!playlist) {
-        throw new ApiError(400, "Unable to fetch the playlist")
-    }
+        if (!playlist) {
+            throw new ApiError(404, "Playlist not found");
+        }
 
-    return res
-        .status(200)
-        .json(
+        // Respond with the populated playlist
+        return res.status(200).json(
             new ApiResponse(
                 200,
                 playlist,
-                "Playlist fetced successfully"
+                "Playlist fetched successfully"
             )
-        )
-})
+        );
+    } catch (error) {
+        throw new ApiError(500, "Failed to fetch playlist");
+    }
+});
+
+
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
     const { playlistId, videoId } = req.params;
@@ -121,15 +144,15 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
         videos: videoId // Match videoId directly in the videos array
     });
     console.log(playlist);
-    
+
     if (playlist) {
-        return res.status(200).json(new ApiResponse(400,{}, "Video already exists in the playlist"));
+        return res.status(200).json(new ApiResponse(400, {}, "Video already exists in the playlist"));
     }
 
     // Add the video to the playlist
     const updatedPlaylist = await Playlist.findByIdAndUpdate(
         playlistId,
-        { $addToSet: { videos: videoId } }, // Add videoId to the videos array if it doesn't exist
+        { $addToSet: { videos: video } }, // Add videoId to the videos array if it doesn't exist
         { new: true } // Return the updated document
     );
 

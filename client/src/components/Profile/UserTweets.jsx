@@ -20,7 +20,6 @@ function userTweets({user}) {
         const sortedTweets = response?.data?.data?.userTweets?.sort((a, b) =>
           new Date(b.createdAt) - new Date(a.createdAt)
         );
-        console.log(sortedTweets);
         
         setTweetData({ ...response.data.data, userTweets: sortedTweets });
       }

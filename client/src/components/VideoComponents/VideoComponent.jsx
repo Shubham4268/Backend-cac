@@ -74,7 +74,7 @@ function VideoComponent({ videofile, notify }) {
       }
     };
     fetchPlaylists();
-  }, [location.pathname, user?._id, newPlaylistName]);
+  }, [location.pathname, user?._id]);
 
   // Toggle the dropdown menu
   const toggleDropdown = () => setIsDropdownOpen((prevState) => !prevState);
@@ -82,10 +82,12 @@ function VideoComponent({ videofile, notify }) {
 
   // Handle adding video to a selected playlist
   const handleAddToPlaylist = async (playlistId) => {
+    console.log("video id :", video._id, "Playlist Id : ", playlistId);
+
     try {
       // Make API call to add the video to the playlist
       const response = await axios.patch(
-        `http://localhost:8000/api/v1/playlists/add/${video._id}/${playlistId}`
+        `http://localhost:8000/api/v1/playlists/add/${video?._id}/${playlistId}`
       );
 
       // Log and notify success
@@ -123,11 +125,17 @@ function VideoComponent({ videofile, notify }) {
           name: newPlaylistName,
         }
       );
+      if (response?.data?.success) {
+        setPlaylists([...playlists, response?.data?.data]);
+        console.log(response?.data?.data?._id);
 
-      setPlaylists([...playlists, response?.data?.data]);
-      setNewPlaylistName("");
-      notify("Playlist added");
-      // setIsModalOpen(false);
+        setNewPlaylistName("");
+        notify("Playlist added");
+
+        await handleAddToPlaylist(response?.data?.data?._id);
+        setIsModalOpen(false);
+        setIsDropdownOpen(false);
+      }
     } catch (err) {
       setError(err.message || "Failed to create playlist");
     } finally {
@@ -135,6 +143,7 @@ function VideoComponent({ videofile, notify }) {
       setError(null);
     }
   };
+  console.log(selectedPlaylistId);
 
   const to = `/video/${video?._id}`;
 
@@ -217,6 +226,7 @@ function VideoComponent({ videofile, notify }) {
                     <button
                       onClick={(e) => {
                         e.preventDefault();
+                        setError(null);
                         setIsModalOpen(true);
                       }}
                       className="block px-4 py-2 text-nowrap hover:bg-gray-100 dark:hover:bg-gray-900 dark:hover:text-white"
@@ -254,15 +264,14 @@ function VideoComponent({ videofile, notify }) {
                   {playlists.length === 0 ? (
                     <div>No playlists found</div>
                   ) : (
-                    <select 
+                    <select
                       onChange={(e) => setSelectedPlaylistId(e.target.value)}
                       className="w-full p-2 bg-gray-100 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       size={5}
                     >
-                      
-                      {playlists.map((playlist) => (
-                        <option key={playlist._id} value={playlist._id}>
-                          {playlist.name}
+                      {playlists?.map((playlist) => (
+                        <option key={playlist?._id} value={playlist?._id}>
+                          {playlist?.name}
                         </option>
                       ))}
                     </select>

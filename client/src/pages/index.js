@@ -6,6 +6,7 @@ import Playlist from "./Playlist";
 import Profile from "./Profile";
 import Register from "./Register";
 import Settings from "./Settings";
+import Subscription from "./Subscription";
 import TweetsPage from "./TweetsPage";
 import Video from "./Video";
 export { 
@@ -18,5 +19,7 @@ export {
     AddVideo,
     AddTweet,
     TweetsPage,
-    Playlist
+    Playlist,
+    Subscription,
+    
 }

@@ -56,7 +56,7 @@ function Header({ onSearch }) {
           )}
         </form>
       </div>
-      {(location.pathname !== "/" && location.pathname !== "/login") && <span className="absolute self-baseline right-36 ">
+      {(location.pathname !== "/" && location.pathname !== "/login") && <span className="absolute self-baseline right-10  ">
         <ProfileDropdown user={user}/>
       </span>}
     </div>

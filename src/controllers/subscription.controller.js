@@ -1,5 +1,6 @@
 import mongoose, { isValidObjectId } from "mongoose"
 import { User } from "../models/user.model.js"
+import { Video } from "../models/video.model.js"
 import { Subscription } from "../models/subscription.model.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
@@ -84,35 +85,102 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 
 
 // controller to return channel list to which user has subscribed
-const getSubscribedChannels = asyncHandler(async (req, res) => {
-    const { subscriberId } = req.params
+const getSubscribedChannelsVideos = asyncHandler(async (req, res) => {
+    const { subscriberId } = req.params;
+    const { page = 1, limit = 10 } = req.query; // Default values: page 1, limit 10
+
+    // Validate subscriber ID
     if (!mongoose.isValidObjectId(subscriberId)) {
         throw new ApiError(400, "Invalid subscriber ID");
     }
 
+    // Fetch subscribed channels
     const channels = await Subscription.aggregate([
         {
-            $match : {
-                subscriber : new mongoose.Types.ObjectId(subscriberId)
-            }
+            $match: {
+                subscriber: new mongoose.Types.ObjectId(subscriberId),
+            },
         },
         {
-            $project : {
-                _id : 0,
-                channel : 1
-            }
-        }
-    ])
+            $sort: {
+                createdAt: -1, // Sort by `createdAt` field in descending order (-1)
+            },
+        },
+        {
+            $lookup: {
+                from: "users", // The collection name of the `Channel` model
+                localField: "channel", // The field in Subscription that references the Channel ID
+                foreignField: "_id", // The field in the Channel model that matches the localField
+                as: "channelDetails", // The output array field name
+            },
+        },
+        {
+            $unwind: "$channelDetails", // Deconstruct the array to get the populated object directly
+        },
+        {
+            $project: {
+                _id: 0, // Exclude the default `_id` field
+                "channel._id": "$channelDetails._id",
+                "channel.fullName": "$channelDetails.fullName",
+                "channel.avatar": "$channelDetails.avatar",
+                "channel.username": "$channelDetails.username",
+
+            },
+        },
+    ]);
+
 
     if (!channels.length) {
-        throw new ApiError(400, "Not subscribed to any channel")
+        throw new ApiError(400, "Not subscribed to any channel");
     }
 
-    return res.status(200).json( new ApiResponse (200,channels,"Channels fetched successfully"))
-})
+    const channelIds = channels.map(channel => channel.channel);
+
+    // Calculate pagination parameters
+    const skip = (page - 1) * limit;
+
+    // Fetch videos with pagination
+    const videos = await Video.find({
+        owner: { $in: channelIds },
+    })
+        .populate('owner') // Populate channel details
+        .sort({ createdAt: -1 }) // Sort by latest to oldest
+        .skip(skip) // Skip videos for previous pages
+        .limit(Number(limit)); // Limit the number of videos per page
+
+    if (!videos.length) {
+        throw new ApiError(404, "No videos found from the subscribed channels");
+    }
+
+    // Count total videos for pagination metadata
+    const totalVideos = await Video.countDocuments({
+        owner: { $in: channelIds },
+    });
+
+    // Return paginated response
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                channels,
+                videos,
+                pagination: {
+                    totalVideos,
+                    totalPages: Math.ceil(totalVideos / limit),
+                    currentPage: Number(page),
+                },
+            },
+            "Channels and videos fetched successfully"
+        )
+    );
+});
+
+
+
+
 
 export {
     toggleSubscription,
     getUserChannelSubscribers,
-    getSubscribedChannels
+    getSubscribedChannelsVideos
 }

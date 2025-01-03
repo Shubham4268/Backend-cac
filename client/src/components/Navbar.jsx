@@ -39,7 +39,7 @@ const Navbar = () => {
       <div className="w-36 md:w-52 sm:w-44 mt-14 text-white ">
         <nav className="mt-6 space-y-2">
           <NavLinkItem to="/home" label="Home" icon="🏠" />
-          <NavLinkItem to="" label="Subscriptions" icon="🏠" />
+          <NavLinkItem to="/subscription" label="Subscriptions" icon="❤️" />
           <NavLinkItem to={`/profile/${username}`} label="Your Profile" icon="👤" />
           <NavLinkItem to="/addVideo" label="Add a Video" icon="📹" />
           <NavLinkItem to="/addTweet" label="Add a Tweet" icon="➕" />

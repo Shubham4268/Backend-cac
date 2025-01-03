@@ -6,6 +6,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { handleApiError } from "../utils/errorHandler.js";
 
 const Register = () => {
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
+  };
+  
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
@@ -99,13 +105,34 @@ const Register = () => {
             value={formData.email}
             onChange={onChange}
           />
-          <InputField
+          {/* <InputField
             placeholder="Password"
             type="password"
             name="password"
             value={formData.password}
             onChange={onChange}
-          />
+          /> */}
+          <div className=" relative w-full">
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"} // Toggle type
+              value={formData.password}
+              required
+              autoComplete="current-password"
+              className="mt-2 block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              onChange={onChange}
+            />
+            {formData.password && ( // Show button only if password is not empty
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute mt-2 inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-200"
+              >
+                {showPassword ? "Hide" : "View"}
+              </button>
+            )}
+          </div>
 
           <div className="input-group flex flex-col w-full items-center">
             <button

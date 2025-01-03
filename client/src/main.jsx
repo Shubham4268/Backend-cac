@@ -23,6 +23,7 @@ import {
   AddTweet,
   TweetsPage,
   Playlist,
+  Subscription,
 } from "./pages/index.js";
 import { Provider } from "react-redux";
 import store from "./app/store.js";
@@ -131,6 +132,14 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout>
             <Playlist />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/subscription",
+        element: (
+          <AuthLayout>
+            <Subscription />
           </AuthLayout>
         ),
       },

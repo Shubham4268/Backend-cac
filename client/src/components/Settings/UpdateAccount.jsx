@@ -15,11 +15,11 @@ function UpdateAccount() {
 
   const navigate = useNavigate();
 
-
   const [formData, setFormData] = useState({
     fullName: user.fullName || "",
     email: user.email || "",
-  });   
+    avatar : user.avatar || ""
+  });
   const [error, setError] = useState(null);
 
   const onChange = (e) => {
@@ -27,14 +27,13 @@ function UpdateAccount() {
   };
   const handleNavigation = () => {
     setTimeout(() => {
-      
-      navigate("/settings");
+      navigate("/home");
     }, 4000); // 3000ms = 3 seconds
   };
   const onSubmit = async (e) => {
     e.preventDefault();
     setError(null); // Clear previous errors
-  
+
     try {
       const response = await axios.patch(
         "http://localhost:8000/api/v1/users/update-account",
@@ -45,8 +44,8 @@ function UpdateAccount() {
           },
         }
       );
-  
-      if (response.data.success) {        
+
+      if (response.data.success) {
         // Dispatch the updated user data to Redux store
         dispatch(login(response.data.data)); // Assuming updated user data is in `data` field
         // Optionally reset the form state to match the updated data
@@ -56,20 +55,25 @@ function UpdateAccount() {
           fullName: response.data.data.fullName || "",
           email: response.data.data.email || "",
         });
-        handleNavigation()
-        
+        handleNavigation();
       }
     } catch (err) {
       handleApiError(err, setError);
     }
   };
-  
+
+  const updateAvatar = async(e)=>{
+    e.preventDefault();
+    setError(null)
+
+    const response = await axios.patch("http://localhost:8000/api/v1/users/avatar",)
+  }
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-screen">
       <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white ">
-      {successAlert && <Successmsg text = "Password changed Successfully!!"/>}
-      <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
+        {successAlert && <Successmsg text="Account Updated Successfully!!" />}
+        <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
           Update your account details
         </h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -77,6 +81,14 @@ function UpdateAccount() {
           className="w-2/3 h-fit p-5 flex flex-col items-center mx-auto space-y-3 "
           onSubmit={onSubmit}
         >
+          <div className="relative">
+            <img
+              className="w-28 h-28 z-10 rounded-full"
+              src={user.avatar}
+              alt={user.fullName}
+            />
+            <button onClick={updateAvatar} className="absolute p-1 z-10 bottom-0 right-0 border border-gray-600 rounded-full bg-gray-800 hover:bg-gray-900 hover:shadow-lg">✏️</button>
+          </div>
           <InputField
             placeholder="Full Name"
             type="text"

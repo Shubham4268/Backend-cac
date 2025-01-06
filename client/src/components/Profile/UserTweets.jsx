@@ -32,15 +32,22 @@ function userTweets({user}) {
     fetchTweets();
   }, [fetchTweets]);
 
+  
   return (
     <div className=" text-white w-full h-full">
+      {!tweetData?.userTweets?.length && (
+        <div className="mt-20 w-full text-center text-3xl font-bold">No Tweets yet</div>
+      )}
       {error && (
         <p className="text-red-500 text-center mb-5">
           {error || "Failed to load tweets"}
         </p>
       )}
+      
       {tweetData?.userTweets?.map((tweet) => (
         <div key={tweet._id} className="mb-8">
+          {console.log(tweetData)}
+          
           <TweetComponent tweet={tweet} tweetData={tweetData} refreshTweets={fetchTweets} />
         </div>
       ))}

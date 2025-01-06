@@ -19,6 +19,11 @@ function UserPlaylists({ user }) {
 
   return (
     <>
+      {!playlists.length && (
+        <div className="mt-20 w-full text-center text-3xl font-bold">
+          No Playlists yet
+        </div>
+      )}
       <div className="grid grid-cols-4 justify-items-center gap-2 min-h-full w-full">
         {playlists?.map((playlist) => (
           <div

@@ -157,6 +157,47 @@ const getSubscribedChannelsVideos = asyncHandler(async (req, res) => {
         owner: { $in: channelIds },
     });
 
+    console.log(channelIds);
+
+    const tweets = await User.aggregate([
+        {
+          $match: {
+            _id: { $in: channelIds.map(channel => channel._id) }, // Extract `_id` from each channel object
+          },
+        },
+        {
+          $lookup: {
+            from: "tweets",
+            localField: "_id",
+            foreignField: "owner",
+            as: "userTweets",
+          },
+        },
+        {
+          $unwind: "$userTweets", // Deconstruct the `userTweets` array into individual documents
+        },
+        {
+          $sort: {
+            "userTweets.createdAt": -1, // Sort tweets by `createdAt` (descending order)
+          },
+        },
+        {
+          $group: {
+            _id: "$_id", // Group back by user
+            fullName: { $first: "$fullName" },
+            avatar: { $first: "$avatar" },
+            userTweets: {
+              $push: {
+                _id: "$userTweets._id",
+                content: "$userTweets.content", // Replace 'content' with desired fields
+                createdAt: "$userTweets.createdAt",
+              },
+            },
+          },
+        },
+      ]);
+      
+
     // Return paginated response
     return res.status(200).json(
         new ApiResponse(
@@ -164,6 +205,7 @@ const getSubscribedChannelsVideos = asyncHandler(async (req, res) => {
             {
                 channels,
                 videos,
+                tweets,
                 pagination: {
                     totalVideos,
                     totalPages: Math.ceil(totalVideos / limit),

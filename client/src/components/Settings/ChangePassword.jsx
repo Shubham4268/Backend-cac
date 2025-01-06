@@ -21,7 +21,7 @@ function ChangePassword() {
     // Navigate to "/settings" after 3 seconds
     setTimeout(() => {
       
-      navigate("/settings");
+      navigate("/home");
     }, 5000); // 3000ms = 3 seconds
   };
 

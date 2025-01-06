@@ -74,7 +74,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
           <span className="self-center">{usersTweetData.fullName}</span>
         </div>
         <div className="flex text-sm items-center relative">
-          <span>{formatDate(userTweet.createdAt)}</span>
+          <span className={`${!isCurrentUser && "mr-7"}`}>{formatDate(userTweet.createdAt)}</span>
           {isCurrentUser && (
             <div>
               <button

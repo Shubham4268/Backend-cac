@@ -5,7 +5,6 @@ import Login from "./Login";
 import Playlist from "./Playlist";
 import Profile from "./Profile";
 import Register from "./Register";
-import Settings from "./Settings";
 import Subscription from "./Subscription";
 import TweetsPage from "./TweetsPage";
 import Video from "./Video";
@@ -15,7 +14,6 @@ export {
     Register,
     Profile,
     Video,
-    Settings,
     AddVideo,
     AddTweet,
     TweetsPage,

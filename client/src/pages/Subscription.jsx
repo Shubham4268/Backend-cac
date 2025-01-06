@@ -74,7 +74,7 @@ console.log(tweetData);
           </div>
           <div className="mr-10 self-center text-white">
             <select
-              className="w-full p-2 border border-gray-300 rounded-md bg-gray-800"
+              className="w-full p-2 border border-gray-300 rounded-md bg-gray-800 cursor-pointer"
               value={selectedOption}
               onChange={handleChange}
             >
@@ -84,6 +84,7 @@ console.log(tweetData);
           </div>
         </div>
         <hr className="mt-8 mr-2 " />
+        
         {!channels.length ? (
           <div className="my-20 w-full text-center text-3xl font-bold text-white">
             You have not subscribed to any channels yet

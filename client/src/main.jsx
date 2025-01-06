@@ -18,7 +18,6 @@ import {
   Login,
   Profile,
   Video,
-  Settings,
   AddVideo,
   AddTweet,
   TweetsPage,
@@ -76,14 +75,6 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout authentication>
             <Video />
-          </AuthLayout>
-        ),
-      },
-      {
-        path: "/settings",
-        element: (
-          <AuthLayout authentication>
-            <Settings />
           </AuthLayout>
         ),
       },

@@ -76,7 +76,7 @@ function SubscribedVideos() {
                   {/* Image */}
                   <Link to={`/profile/${channel?.channel?.username}`}>
                     <img
-                      className="min-w-28 min-h-28 z-10 rounded-full"
+                      className="w-28 h-28 z-10  rounded-full "
                       src={channel?.channel?.avatar}
                       alt={channel?.channel?.fullName}
                     />

@@ -105,17 +105,12 @@ const Register = () => {
             value={formData.email}
             onChange={onChange}
           />
-          {/* <InputField
-            placeholder="Password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={onChange}
-          /> */}
+          
           <div className=" relative w-full">
             <input
               id="password"
               name="password"
+              placeholder="Password"
               type={showPassword ? "text" : "password"} // Toggle type
               value={formData.password}
               required

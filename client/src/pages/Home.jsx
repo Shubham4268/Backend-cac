@@ -4,6 +4,9 @@ import axios from "axios";
 import { handleApiError } from "../utils/errorHandler.js";
 import Header from "../components/Header/Header.jsx";
 import { toast, ToastContainer } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../features/slices/loaderSlice.js";
+import { FcNext, FcPrevious } from "react-icons/fc";
 axios.defaults.withCredentials = true;
 
 function Home() {
@@ -16,8 +19,10 @@ function Home() {
   const [query, setQuery] = useState("");
   const [error, setError] = useState(null);
   const notify = (text) => toast(text);
+  const dispatch = useDispatch();
 
   const fetchVideos = async () => {
+    dispatch(setLoading(true));
     try {
       const response = await axios.get("http://localhost:8000/api/v1/videos", {
         params: {
@@ -39,6 +44,8 @@ function Home() {
       }
     } catch (error) {
       handleApiError(error, setError);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -61,7 +68,8 @@ function Home() {
   return (
     <>
       <Header onSearch={handleSearch} />
-      <div className="flex flex-col items-center mt-24 mb-4 ml-56 pt-6 w-full h-full text-white">
+      <div className="flex flex-col items-center mt-24 mb-4 ml-56 pt-6 w-full h-full text-white ">
+        
         <ToastContainer />
         {!error && (
           <div className="flex justify-end w-full mb-6 space-x-6 mr-8">
@@ -101,9 +109,9 @@ function Home() {
             <button
               disabled={currentPage === 1}
               onClick={() => handlePagination("prev")}
-              className="p-2 bg-gray-700 text-white rounded-md disabled:opacity-50"
+              className="p-2 bg-gray-700 text-white rounded-md disabled:opacity-50 disabled:hover:bg-gray-700 hover:bg-gray-800"
             >
-              Previous
+              <FcPrevious className="text-xl "/>
             </button>
             <p className="text-white">
               Page {currentPage} of {Math.ceil(totalVideos / limit)}
@@ -111,9 +119,10 @@ function Home() {
             <button
               disabled={currentPage * limit >= totalVideos}
               onClick={() => handlePagination("next")}
-              className="p-2 bg-gray-700 text-white rounded-md disabled:opacity-50"
+              className="p-2 bg-gray-700 text-white rounded-md disabled:opacity-50 disabled:hover:bg-gray-700 hover:bg-gray-800"
             >
-              Next
+              <FcNext className="text-xl"/>
+
             </button>
           </div>
         )}

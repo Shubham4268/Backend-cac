@@ -4,6 +4,7 @@ import axios from "axios";
 import { login } from "../features/slices/authSlice.js";
 import { useNavigate, Link } from "react-router-dom";
 import { handleApiError } from "../utils/errorHandler.js";
+import { setLoading } from "../features/slices/loaderSlice.js";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false); // State for password visibility
@@ -33,6 +34,7 @@ const Register = () => {
     setError(null); // Clear previous errors
 
     try {
+      dispatch(setLoading(true))
       const response = await axios.post(
         "http://localhost:8000/api/v1/users/register",
         formData,
@@ -43,7 +45,6 @@ const Register = () => {
         }
       );
 
-      console.log(formData.email);
 
       if (response.data.success) {
         const { email, password } = formData;
@@ -70,6 +71,8 @@ const Register = () => {
       }
     } catch (err) {
       handleApiError(err, setError);
+    } finally{
+      dispatch(setLoading(false))
     }
   };
 

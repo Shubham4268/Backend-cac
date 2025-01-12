@@ -4,6 +4,8 @@ import LikeButton from "../Common/LikeButton";
 import SubscribeButton from "../Common/SubscribeButton";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../features/slices/loaderSlice.js";
 
 function VideoDetails({ video, notify }) {
   const [subscribers, setSubscribers] = useState(null);
@@ -17,17 +19,17 @@ function VideoDetails({ video, notify }) {
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const [newPlaylistName, setNewPlaylistName] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loadingPlaylist, setLoadingPlaylist] = useState(false);
 
   const owner = videoFile.owner;
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
-  console.log(owner);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchChannelStats = async () => {
       if (!owner?._id) return; // Avoid API call if owner or _id is missing
 
       try {
+        dispatch(setLoading(true));
         const response = await axios.get(
           `http://localhost:8000/api/v1/dashboards/stats/${owner._id}`
         );
@@ -51,6 +53,8 @@ function VideoDetails({ video, notify }) {
         setLikesCount(likesOnVideo);
       } catch (error) {
         console.error("Error fetching channel stats:", error);
+      } finally {
+        dispatch(setLoading(false));
       }
     };
     const fetchPlaylists = async () => {
@@ -115,7 +119,6 @@ function VideoDetails({ video, notify }) {
 
   const toggleDropdown = () => setIsDropdownOpen((prevState) => !prevState);
   const handleAddToPlaylist = async (playlistId) => {
-
     try {
       // Make API call to add the video to the playlist
       const response = await axios.patch(
@@ -125,7 +128,6 @@ function VideoDetails({ video, notify }) {
       // Log and notify success
       const message =
         response?.data?.message || "Video added to playlist successfully!";
-      console.log(message);
 
       // Close modal and dropdown after successful addition
       setIsModalOpen(false);
@@ -147,7 +149,7 @@ function VideoDetails({ video, notify }) {
   };
   const handleCreatePlaylist = async () => {
     if (!newPlaylistName) return;
-    setLoading(true);
+    setLoadingPlaylist(true);
     try {
       const response = await axios.post(
         "http://localhost:8000/api/v1/playlists/",
@@ -157,7 +159,6 @@ function VideoDetails({ video, notify }) {
       );
       if (response?.data?.success) {
         setPlaylists([...playlists, response?.data?.data]);
-        console.log(response?.data?.data?._id);
 
         setNewPlaylistName("");
         notify("Playlist added");
@@ -169,7 +170,7 @@ function VideoDetails({ video, notify }) {
     } catch (err) {
       setError(err.message || "Failed to create playlist");
     } finally {
-      setLoading(false);
+      setLoadingPlaylist(false);
       setError(null);
     }
   };
@@ -257,10 +258,10 @@ function VideoDetails({ video, notify }) {
             {/* Button to add video to selected playlist */}
             <button
               onClick={() => handleAddToPlaylist(selectedPlaylistId)}
-              disabled={!selectedPlaylistId || loading}
+              disabled={!selectedPlaylistId || loadingPlaylist}
               className="w-full p-2 bg-blue-500 text-white rounded-md disabled:opacity-50"
             >
-              {loading ? "Adding..." : "Add to Playlist"}
+              {loadingPlaylist ? "Adding..." : "Add to Playlist"}
             </button>
 
             {/* New Playlist Form */}
@@ -277,12 +278,12 @@ function VideoDetails({ video, notify }) {
               />
               <button
                 onClick={handleCreatePlaylist}
-                disabled={loading}
+                disabled={loadingPlaylist}
                 className={`w-2/12 text-white rounded-md disabled:opacity-50 text-xs font-light hover:font-normal ${
-                  loading ? "bg-transparent border" : "bg-blue-500"
+                  loadingPlaylist ? "bg-transparent border" : "bg-blue-500"
                 }`}
               >
-                {loading ? "Creating..." : "Create"}
+                {loadingPlaylist ? "Creating..." : "Create"}
               </button>
             </div>
 
@@ -313,7 +314,7 @@ function VideoDetails({ video, notify }) {
         <div className="flex">
           {owner ? (
             <>
-              <Link  className="self-center" to={`/profile/${owner?.username}`}>
+              <Link className="self-center" to={`/profile/${owner?.username}`}>
                 <img
                   className="w-14 h-14 self-center ml-3 rounded-full"
                   src={owner?.avatar || "default-avatar.png"}

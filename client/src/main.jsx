@@ -2,12 +2,14 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
+import { PersistGate } from "redux-persist/integration/react";
 import {
   AuthLayout,
   ChangePassword,
+  Loader,
   ShowNavbar,
-  Successmsg,
   UpdateAccount,
+  UserTweets,
   VideoComponent,
   VideoDetails,
   VideoFile,
@@ -20,18 +22,18 @@ import {
   Video,
   AddVideo,
   AddTweet,
-  TweetsPage,
   Playlist,
   Subscription,
 } from "./pages/index.js";
 import { Provider } from "react-redux";
-import store from "./app/store.js";
+import { store, persistor } from "./app/store.js";
 import {
   createBrowserRouter,
   RouterProvider,
   ScrollRestoration,
 } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -110,14 +112,7 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
-      {
-        path: "/tweets/:id",
-        element: (
-          <AuthLayout>
-            <TweetsPage />
-          </AuthLayout>
-        ),
-      },
+      
       {
         path: "/playlists/:id",
         element: (
@@ -135,7 +130,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        element: <Successmsg text />,
+        element: <UserTweets />,
       },
       {
         element: <VideoFile video />,
@@ -144,7 +139,10 @@ const router = createBrowserRouter([
         element: <VideoDetails video />,
       },
       {
-        element: <VideoComponent video/>
+        element: <VideoComponent video />,
+      },
+      {
+        element: <Loader />,
       },
     ],
   },
@@ -153,9 +151,12 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router}>
-        <App />
-      </RouterProvider>
+    <Loader />
+      <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+        <RouterProvider router={router}>
+          <App />
+        </RouterProvider>
+      </PersistGate>
     </Provider>
   </StrictMode>
 );

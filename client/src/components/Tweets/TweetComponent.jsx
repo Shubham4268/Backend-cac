@@ -69,7 +69,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
           <img
             src={usersTweetData.avatar}
             alt={usersTweetData.fullName}
-            className="w-8 h-8 rounded-full mr-3"
+            className="w-8 h-8 rounded-full mr-3 object-cover"
           />
           <span className="self-center">{usersTweetData.fullName}</span>
         </div>

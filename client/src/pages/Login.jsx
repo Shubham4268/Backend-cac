@@ -4,6 +4,7 @@ import { handleApiError } from "../utils/errorHandler";
 import axios from "axios";
 import { login } from "../features/slices/authSlice.js";
 import { useDispatch } from "react-redux";
+import { setLoading } from "../features/slices/loaderSlice.js";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -22,12 +23,12 @@ const Login = () => {
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const onSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
+      dispatch(setLoading(true));
       const loggedInUser = await axios.post(
         "http://localhost:8000/api/v1/users/login",
         formData,
@@ -48,6 +49,8 @@ const Login = () => {
       }
     } catch (error) {
       handleApiError(error, setError);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 

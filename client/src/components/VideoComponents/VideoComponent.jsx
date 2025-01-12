@@ -1,14 +1,16 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { handleApiError } from "../../utils/errorHandler";
 
 function VideoComponent({ videofile, notify }) {
   const [showProfile, setShowProfile] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [playlists, setPlaylists] = useState([]);
+  const [playlistId, setPlaylistId] = useState(null);
   const [newPlaylistName, setNewPlaylistName] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -16,9 +18,9 @@ function VideoComponent({ videofile, notify }) {
   const location = useLocation();
   const video = videofile || {};
   const { owner } = video || {};
-  
 
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
+  const {id : currPlaylistId}  = useParams();
 
   const getTimeDifference = (createdAt) => {
     const createdDate = new Date(createdAt);
@@ -59,11 +61,16 @@ function VideoComponent({ videofile, notify }) {
   // Fetch existing playlists when the component is mounted
   useEffect(() => {
     setError(null);
+    if (location.pathname.includes("playlists")) {
+      setPlaylistId(currPlaylistId);
+    }
 
-    if (["profile", "playlists"].some((path) => location.pathname.includes(path))) {
+    if (
+      ["profile", "playlists"].some((path) => location.pathname.includes(path))
+    ) {
       setShowProfile(false);
-  }
-  
+    }
+
     const fetchPlaylists = async () => {
       try {
         const response = await axios.get(
@@ -84,7 +91,6 @@ function VideoComponent({ videofile, notify }) {
 
   // Handle adding video to a selected playlist
   const handleAddToPlaylist = async (playlistId) => {
-
     try {
       // Make API call to add the video to the playlist
       const response = await axios.patch(
@@ -113,6 +119,24 @@ function VideoComponent({ videofile, notify }) {
       );
     }
   };
+
+  const handleRemoveFromPlaylist = async (e)=>{
+    e.preventDefault()
+      setError(null);
+      setLoading(true)
+       try {
+        const response = await axios.patch(`http://localhost:8000/api/v1/playlists/remove/${video?._id}/${playlistId}`)
+
+        if(response?.data?.success){
+            notify("Video removed!!")
+        }
+       } catch (error) {
+          handleApiError(error,setError)
+       } finally{
+        setLoading(false)
+       }
+    
+  }
 
   // Handle creating a new playlist
   const handleCreatePlaylist = async () => {
@@ -143,11 +167,13 @@ function VideoComponent({ videofile, notify }) {
     }
   };
 
+
+
   const to = `/video/${video?._id}`;
 
   return (
     <Link to={to}>
-      <div className="relative">
+      <div className="relative ">
         {/* Thumbnail */}
         <img
           className="object-cover rounded-lg h-44 w-full"
@@ -166,7 +192,7 @@ function VideoComponent({ videofile, notify }) {
               <img
                 src={owner?.avatar}
                 alt={owner?.fullName}
-                className="w-10 h-10 rounded-full mr-5"
+                className="w-10 h-10 rounded-full mr-5 object-cover"
               />
             </Link>
           )}
@@ -221,16 +247,25 @@ function VideoComponent({ videofile, notify }) {
               <div className="absolute z-10 right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700">
                 <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
                   <li>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setError(null);
-                        setIsModalOpen(true);
-                      }}
-                      className="block px-4 py-2 text-nowrap hover:bg-gray-100 dark:hover:bg-gray-900 dark:hover:text-white"
-                    >
-                      Add to Playlist
-                    </button>
+                    {playlistId ? (
+                      <button
+                        onClick={handleRemoveFromPlaylist}
+                        className="block px-4 py-2 text-nowrap hover:bg-gray-100 dark:hover:bg-gray-900 dark:hover:text-white"
+                      >
+                        Remove from Playlist
+                      </button>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setError(null);
+                          setIsModalOpen(true);
+                        }}
+                        className="block px-4 py-2 text-nowrap hover:bg-gray-100 dark:hover:bg-gray-900 dark:hover:text-white"
+                      >
+                        Add to Playlist
+                      </button>
+                    )}
                   </li>
                 </ul>
               </div>

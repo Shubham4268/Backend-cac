@@ -3,9 +3,9 @@ export default function VideoFile({ video }) {
 
   return (
     <>
-      <video className="object-contain w-full h-full rounded-xl  shadow-xl" controls>
+      <video className="object-contain w-full h-full rounded-xl  shadow-xl" controls autoPlay>
         <source src={url} type="video/mp4" />
-        Your browser does not support the video tag.
+        
       </video>
     </>
   );

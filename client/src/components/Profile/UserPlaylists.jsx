@@ -1,17 +1,29 @@
 import { useEffect, useState } from "react";
 import PlaylistCard from "../PlaylistCard";
 import axios from "axios";
+import { handleApiError } from "../../utils/errorHandler.js";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../features/slices/loaderSlice.js";
 
 function UserPlaylists({ user }) {
+  const dispatch = useDispatch();
   const [playlists, setPlaylists] = useState([]);
   const currUser = user;
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPlaylists = async () => {
-      const response = await axios.get(
-        `http://localhost:8000/api/v1/playlists/user/${currUser?._id}`
-      );
-      setPlaylists(response?.data?.data);
+      try {
+        dispatch(setLoading(true));
+        const response = await axios.get(
+          `http://localhost:8000/api/v1/playlists/user/${currUser?._id}`
+        );
+        setPlaylists(response?.data?.data);
+      } catch (error) {
+        handleApiError(error, setError);
+      } finally {
+        dispatch(setLoading(false));
+      }
     };
 
     fetchPlaylists();
@@ -19,6 +31,7 @@ function UserPlaylists({ user }) {
 
   return (
     <>
+      
       {!playlists.length && (
         <div className="mt-20 w-full text-center text-3xl font-bold">
           No Playlists yet

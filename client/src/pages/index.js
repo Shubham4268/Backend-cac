@@ -6,7 +6,6 @@ import Playlist from "./Playlist";
 import Profile from "./Profile";
 import Register from "./Register";
 import Subscription from "./Subscription";
-import TweetsPage from "./TweetsPage";
 import Video from "./Video";
 export { 
     Home, 
@@ -16,7 +15,6 @@ export {
     Video,
     AddVideo,
     AddTweet,
-    TweetsPage,
     Playlist,
     Subscription,
     

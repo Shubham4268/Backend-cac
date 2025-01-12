@@ -3,17 +3,17 @@ import { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { handleApiError } from "../../utils/errorHandler";
 import { login } from "../../features/slices/authSlice";
-import Successmsg from "../Common/Successmsg";
 import { useNavigate } from "react-router-dom";
+import { setLoading } from "../../features/slices/loaderSlice.js";
+import { toast, ToastContainer } from "react-toastify";
 
 function UpdateAccount() {
   const response = useSelector((state) => state.user.userData);
   const { loggedInUser: user } = response || {};
-  const [successAlert, setSuccessAlert] = useState(false);
   const [error, setError] = useState(null);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const notify = (text) => toast(text);
 
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
@@ -38,6 +38,7 @@ function UpdateAccount() {
       formData.append("avatar", file);
 
       try {
+        dispatch(setLoading(true));
         const response = await axios.patch(
           "http://localhost:8000/api/v1/users/avatar",
           formData,
@@ -47,11 +48,12 @@ function UpdateAccount() {
         if (response.data.success) {
           setAvatar(response.data.data.avatar);
           dispatch(login(response.data.data));
-          setSuccessAlert(true);
-          setTimeout(() => setSuccessAlert(false), 3000);
         }
       } catch (err) {
         handleApiError(err, setError);
+      } finally {
+        dispatch(setLoading(false));
+        notify("Avatar Updated successfully");
       }
     }
   };
@@ -61,6 +63,7 @@ function UpdateAccount() {
     setError(null);
 
     try {
+      dispatch(setLoading(true));
       const response = await axios.patch(
         "http://localhost:8000/api/v1/users/update-account",
         formData,
@@ -69,23 +72,23 @@ function UpdateAccount() {
 
       if (response.data.success) {
         dispatch(login(response.data.data));
-        setSuccessAlert(true);
         setTimeout(() => {
-          setSuccessAlert(false);
           navigate("/home");
         }, 3000);
       }
     } catch (err) {
       handleApiError(err, setError);
+    } finally {
+      notify("Account Updated successfully");
+      dispatch(setLoading(false));
     }
   };
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-screen">
       <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white">
-        {successAlert && <Successmsg text="Account Updated Successfully!" />}
         {error && <p className="text-red-500 text-center">{error}</p>}
-
+      <ToastContainer/>
         <h2 className="mt-3 mb-3 text-center text-2xl font-bold">
           Update Your Account
         </h2>
@@ -94,7 +97,7 @@ function UpdateAccount() {
         <form className="flex flex-col items-center mx-auto my-5">
           <div className="relative">
             <img
-              className="w-28 h-28 z-10 rounded-full"
+              className="w-28 h-28 z-10 rounded-full object-cover"
               src={avatar || user?.avatar}
               alt={user?.fullName}
             />

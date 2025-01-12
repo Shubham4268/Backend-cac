@@ -8,7 +8,6 @@ import { Video } from "../models/video.model.js"
 
 const createPlaylist = asyncHandler(async (req, res) => {
     const { name, description = "" } = req.body;
-    console.log("name : ", name, "description: ", description);
 
     // Validate playlist name
     if (!name) {
@@ -34,7 +33,6 @@ const createPlaylist = asyncHandler(async (req, res) => {
     if (!playlist) {
         throw new ApiError(400, "Unable to create playlist");
     }
-    console.log(playlist);
 
     // Return success response
     return res.status(200).json(
@@ -141,7 +139,6 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
         _id: playlistId,
         videos: videoId // Match videoId directly in the videos array
     });
-    console.log(playlist);
 
     if (playlist) {
         return res.status(200).json(new ApiResponse(400, {}, "Video already exists in the playlist"));

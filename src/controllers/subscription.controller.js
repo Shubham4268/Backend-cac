@@ -157,7 +157,6 @@ const getSubscribedChannelsVideos = asyncHandler(async (req, res) => {
         owner: { $in: channelIds },
     });
 
-    console.log(channelIds);
 
     const tweets = await User.aggregate([
         {

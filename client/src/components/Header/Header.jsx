@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ProfileDropdown from "./ProfileDropdown";
 import { useSelector } from "react-redux";
+import { FcCamcorderPro  } from "react-icons/fc";
 
 function Header({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +27,11 @@ function Header({ onSearch }) {
         onClick={redirecToHomePage}
         className="text-4xl ml-5 cursor-pointer z-10"
       >
-        📹VIDEO
+        <span className="flex space-x-3 items-center">
+          {/* <FcCamcorderPro className=" hover:animate-spin	"/> */}
+          <img src="./twitube1.2.png" alt="" width={"55px"} className=""/>
+          <div className="text-3xl font-bold ">Twi<span className="text-blue-600">Tube</span></div>
+        </span>
       </span>
       <div className="absolute inset-0 flex justify-center">
         <form
@@ -56,9 +61,11 @@ function Header({ onSearch }) {
           )}
         </form>
       </div>
-      {(location.pathname !== "/" && location.pathname !== "/login") && <span className="absolute self-baseline right-10  ">
-        <ProfileDropdown user={user}/>
-      </span>}
+      {location.pathname !== "/" && location.pathname !== "/login" && (
+        <span className="absolute self-baseline right-10  ">
+          <ProfileDropdown user={user} />
+        </span>
+      )}
     </div>
   );
 }

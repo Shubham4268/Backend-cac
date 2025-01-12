@@ -2,8 +2,10 @@ import axios from "axios";
 import { handleApiError } from "../../utils/errorHandler.js";
 import { useState } from "react";
 import { useRef } from "react";
-import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../features/slices/loaderSlice.js";
 
 const InputField = ({ type, name, value, onChange, placeholder }) => (
   <div className="input-group flex flex-col w-full">
@@ -15,7 +17,7 @@ const InputField = ({ type, name, value, onChange, placeholder }) => (
       onChange={onChange}
       required
       className="block mt-3 w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-    />
+      />
   </div>
 );
 
@@ -27,11 +29,11 @@ function AddVideoForm() {
     description: "",
   });
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   // Refs for file inputs
   const videoFileRef = useRef(null);
   const thumbnailRef = useRef(null);
-
+  const dispatch = useDispatch();
+  
   const onSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -48,6 +50,8 @@ function AddVideoForm() {
     }
 
     try {
+      dispatch(setLoading(true));
+  
       const response = await axios.post(
         "http://localhost:8000/api/v1/videos/",
         data,
@@ -63,21 +67,15 @@ function AddVideoForm() {
         setLoading(false);
         notify("Video uploaded Successfully!!");
         navigate(`/video/${id}`)
-        // setFormData({
-        //   title: "",
-        //   description: "",
-        // });
-        // if (videoFileRef.current) videoFileRef.current.value = "";
-        // if (thumbnailRef.current) thumbnailRef.current.value = "";
       }
     } catch (error) {
-      setLoading(false)
-      console.log(error);
       handleApiError(error, setError);
       setFormData({
           title: "",
           description: "",
         });
+    }finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -89,7 +87,6 @@ function AddVideoForm() {
     <>
       <div className="flex flex-col justify-center items-center w-full h-fit ">
         <ToastContainer />
-        {!loading ? (
           <div className="mt-28 mb-12 shadow-lg w-2/5 h-2/3 p-5 bg-gray-800 rounded-lg text-white ">
             <h2 className="text-center text-2xl/9 font-bold text-white my-3">
               Upload Your Video
@@ -158,9 +155,7 @@ function AddVideoForm() {
               </div>
             </form>
           </div>
-        ) : (
-          <p className="mt-28 text-white">Loading...</p>
-        )}
+        
       </div>
     </>
   );

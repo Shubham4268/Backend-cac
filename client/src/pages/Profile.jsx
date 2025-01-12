@@ -8,6 +8,8 @@ import {
   UserPlaylists,
 } from "../components";
 import { toast, ToastContainer } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../features/slices/loaderSlice.js";
 
 function Profile() {
   const { username } = useParams();
@@ -17,31 +19,56 @@ function Profile() {
   const [channelInfo, setChannelInfo] = useState(null);
   const [activeDiv, setActiveDiv] = useState(1);
   const notify = (text) => toast(text);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await axios.get(
-        `http://localhost:8000/api/v1/users/channel/${username}`
-      );
-      if (response?.data?.success) {
-        const { data: currentUser } = response.data;
-        setUser(currentUser);
-        setSubscribers(user?.subscribersCount);
-        setSubscribed(user?.isSubscribed);
+      dispatch(setLoading(true));
 
-        const userId = user?._id;
-        const dashResponse = await axios.get(
-          `http://localhost:8000/api/v1/dashboards/stats/${userId}`
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/v1/users/channel/${username}`
         );
 
-        if (dashResponse?.data?.success) {
-          const { data: dashboard } = dashResponse.data;
-          setChannelInfo(dashboard);
+        if (response?.data?.success) {
+          const { data: currentUser } = response.data;
+          setUser(currentUser);
+          setSubscribers(currentUser.subscribersCount);
+          setSubscribed(currentUser.isSubscribed);
         }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        dispatch(setLoading(false));
       }
     };
+
     fetchUser();
   }, [user?._id, user?.isSubscribed, user?.subscribersCount, username]);
+
+  // Effect to fetch dashboard stats only after user data is available
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      if (user?._id) {
+        try {dispatch(setLoading(true));
+          const dashResponse = await axios.get(
+            `http://localhost:8000/api/v1/dashboards/stats/${user._id}`
+          );
+
+          if (dashResponse?.data?.success) {
+            const { data: dashboard } = dashResponse.data;
+            setChannelInfo(dashboard);
+          }
+        } catch (error) {
+          console.error("Error fetching dashboard stats:", error);
+        }finally {
+        dispatch(setLoading(false));
+      }
+      }
+    };
+
+    fetchDashboardStats();
+  }, [user]); // This effect will only run when 'user' is updated
 
   const onSubscribeClick = async () => {
     const channelId = user?._id;
@@ -66,15 +93,18 @@ function Profile() {
     setActiveDiv(divId);
   };
 
+  if (!user) {
+    return <div className="text-white">Loading profile...</div>;
+  }
   return (
     <>
       <div className=" mt-24 mb-4 ml-56 w-full text-white">
-        <ToastContainer className="z-10"/>
+        <ToastContainer className="z-10" />
         <div className="ml-10 flex ">
           <img
             src={user?.avatar}
             alt={user?.fullName}
-            className="w-48 h-48 rounded-full outline outline-1 p-1"
+            className="w-48 h-48 rounded-full outline outline-1 p-1 object-cover"
           />
           <div className="ml-5 flex flex-col self-center space-y-2">
             <span className="text-4xl font-medium">{user?.fullName}</span>

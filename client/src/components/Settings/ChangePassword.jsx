@@ -2,16 +2,19 @@ import axios from "axios";
 import { useState } from "react";
 import { handleApiError } from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
-import Successmsg from "../Common/Successmsg";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../features/slices/loaderSlice.js";
+import { toast, ToastContainer } from "react-toastify";
 
 function ChangePassword() {
   const [error, setError] = useState(null);
-  const [successAlert, setSuccessAlert] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     oldPassword: "",
     newPassword: "",
   });
+  const notify = (text) => toast(text);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,7 +23,6 @@ function ChangePassword() {
   const handleNavigation = () => {
     // Navigate to "/settings" after 3 seconds
     setTimeout(() => {
-      
       navigate("/home");
     }, 5000); // 3000ms = 3 seconds
   };
@@ -30,6 +32,7 @@ function ChangePassword() {
     setError(null);
 
     try {
+      dispatch(setLoading(true));
       const response = await axios.post(
         "http://localhost:8000/api/v1/users/change-password",
         formData,
@@ -41,20 +44,21 @@ function ChangePassword() {
       );
 
       if (response?.data?.success) {
-        console.log(response.data);
         setFormData({ oldPassword: "", newPassword: "" });
-        setSuccessAlert(true);
-        handleNavigation()
+        handleNavigation();
       }
     } catch (error) {
       handleApiError(error, setError);
+    } finally {
+      notify("Password changed successfully")
+      dispatch(setLoading(false));
     }
   };
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-screen">
       <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white">
-        {successAlert && <Successmsg text = "Password changed Successfully!!"/>}
+      <ToastContainer />
         <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
           Change Password
         </h2>

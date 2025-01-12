@@ -4,14 +4,18 @@ import { handleApiError } from "../utils/errorHandler";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { setLoading } from "../features/slices/loaderSlice.js";
+import { useDispatch } from "react-redux";
 
 function Video() {
   const [video, setVideo] = useState(null);
   const [error, setError] = useState(null);
   const { id } = useParams();
-  const notify = (text) => toast(text)
+  const notify = (text) => toast(text);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setLoading(true));
     const fetchVideo = async () => {
       try {
         // First, fetch the video details
@@ -32,12 +36,13 @@ function Video() {
         }
       } catch (error) {
         handleApiError(error, setError);
+      } finally {
+        dispatch(setLoading(false));
       }
     };
 
     fetchVideo();
   }, [id]);
-console.log(video);
 
   return (
     <div className="flex flex-col md:flex-row mt-28 ml-10 md:w-full justify-evenly h-screen">
@@ -46,7 +51,7 @@ console.log(video);
           {error || "Failed to load video"}
         </p>
       )}
-      <ToastContainer/>
+      <ToastContainer />
       <div className="gap-20">
         <div className="w-[44rem] h-3/4 bg-gray-800 rounded-xl ">
           {video ? (
@@ -59,7 +64,7 @@ console.log(video);
 
       <div className="text-white h-3/4 w-full md:w-1/2 md:mx-10 mx-10 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl  dark:border-gray-700 dark:bg-gray-800 ">
         {video ? (
-          <VideoDetails video={video} notify={notify}/>
+          <VideoDetails video={video} notify={notify} />
         ) : (
           <p className="text-white">Loading Details...</p>
         )}

@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import VideoComponent from "../components/VideoComponents/VideoComponent";
 import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
 import { TweetComponent } from "../components";
+import { setLoading } from "../features/slices/loaderSlice";
 
 function Subscription() {
   const [videos, setVideos] = useState([]);
@@ -18,9 +19,11 @@ function Subscription() {
   const notify = (text) => toast(text);
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
   const id = user?._id;
+  const dispatch = useDispatch();
 
   const fetchVideos = async () => {
     try {
+      dispatch(setLoading(true))
       const response = await axios.get(
         `http://localhost:8000/api/v1/subscriptions/u/${id}`,
         {
@@ -33,6 +36,7 @@ function Subscription() {
 
       const { success, data } = response.data;
       if (success) {
+        setError(null)
         setVideos(data.videos);
         setChannels(data.channels);
         setTweetData(data.tweets);
@@ -44,8 +48,10 @@ function Subscription() {
         setError("No videos found from your subscribed channels.");
       }
     } catch (error) {
-      setError("An error occurred while fetching videos.");
+      setError("An error occurred while fetching ");
       console.error(error);
+    } finally{
+      dispatch(setLoading(false))
     }
   };
 console.log(tweetData);
@@ -84,9 +90,9 @@ console.log(tweetData);
           </div>
         </div>
         <hr className="mt-8 mr-2 " />
-        
+
         {!channels.length ? (
-          <div className="my-20 w-full text-center text-3xl font-bold text-white">
+          <div className="my-20 w-full text-center text-3xl  text-white">
             You have not subscribed to any channels yet
           </div>
         ) : (
@@ -96,7 +102,7 @@ console.log(tweetData);
                 {/* Image */}
                 <Link to={`/profile/${channel?.channel?.username}`}>
                   <img
-                    className="min-w-28 min-h-28 max-h-28 z-10 rounded-full"
+                    className="min-w-28 min-h-28 max-h-28 z-10 rounded-full object-cover"
                     src={channel?.channel?.avatar}
                     alt={channel?.channel?.fullName}
                   />
@@ -169,18 +175,14 @@ console.log(tweetData);
         )}
         {selectedOption === "tweets" && (
           <div className=" text-white w-full h-full mt-10">
-            {!tweetData?.length && (
+            {channels.length !== 0 && !tweetData?.length && (
               <div className="mt-20 w-full text-center text-3xl font-bold">
                 No Tweets yet
               </div>
             )}
-            {error && (
-              <p className="text-red-500 text-center mb-5">
-                {error || "Failed to load tweets"}
-              </p>
-            )}
+            
             {tweetData?.map((data) =>
-              data?.userTweets.map((tweet) => (
+              data?.userTweets?.map((tweet) => (
                 <div key={tweet._id} className="mb-8">
                   <TweetComponent
                     tweet={tweet}

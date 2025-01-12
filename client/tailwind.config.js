@@ -5,7 +5,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        mono: ['Ubuntu', 'monospace'], // Add Ubuntu Mono to the "mono" key
+      },
+    },
   },
   plugins: [],
 }

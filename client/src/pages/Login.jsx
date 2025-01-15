@@ -5,6 +5,7 @@ import axios from "axios";
 import { login } from "../features/slices/authSlice.js";
 import { useDispatch } from "react-redux";
 import { setLoading } from "../features/slices/loaderSlice.js";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -121,7 +122,7 @@ const Login = () => {
                       onClick={togglePasswordVisibility}
                       className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-200"
                     >
-                      {showPassword ? "Hide" : "View"}
+                      {showPassword ? <BsEyeSlash /> : <BsEye /> }
                     </button>
                   )}
                 </div>

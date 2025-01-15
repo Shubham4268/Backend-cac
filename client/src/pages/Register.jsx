@@ -5,6 +5,7 @@ import { login } from "../features/slices/authSlice.js";
 import { useNavigate, Link } from "react-router-dom";
 import { handleApiError } from "../utils/errorHandler.js";
 import { setLoading } from "../features/slices/loaderSlice.js";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false); // State for password visibility
@@ -127,7 +128,7 @@ const Register = () => {
                 onClick={togglePasswordVisibility}
                 className="absolute mt-2 inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-200"
               >
-                {showPassword ? "Hide" : "View"}
+                {showPassword ? <BsEyeSlash /> : <BsEye /> }
               </button>
             )}
           </div>

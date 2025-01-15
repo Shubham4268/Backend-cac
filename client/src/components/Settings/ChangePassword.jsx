@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
 import { toast, ToastContainer } from "react-toastify";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 function ChangePassword() {
   const [error, setError] = useState(null);
@@ -116,9 +117,9 @@ const InputField = ({ name, value, onChange, placeholder }) => {
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute right-3 top-3 text-gray-400 hover:text-white focus:outline-none"
+          className="absolute mt-2 inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-200"
         >
-          {showPassword ? "Hide" : "View"}
+          {showPassword ? <BsEyeSlash /> : <BsEye /> }
         </button>
       )}
     </div>

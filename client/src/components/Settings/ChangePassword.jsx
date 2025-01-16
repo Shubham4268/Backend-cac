@@ -35,7 +35,7 @@ function ChangePassword() {
     try {
       dispatch(setLoading(true));
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/change-password",
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/change-password`,
         formData,
         {
           headers: {

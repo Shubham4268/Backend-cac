@@ -16,7 +16,7 @@ function userTweets({ user }) {
     try {
       dispatch(setLoading(true));
       const response = await axios.get(
-        `http://localhost:8000/api/v1/tweets/user/${id}`
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/user/${id}`
       );
       if (response) {
         const sortedTweets = response?.data?.data?.userTweets?.sort(

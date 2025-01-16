@@ -40,7 +40,7 @@ function UpdateAccount() {
       try {
         dispatch(setLoading(true));
         const response = await axios.patch(
-          "http://localhost:8000/api/v1/users/avatar",
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/avatar`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -65,7 +65,7 @@ function UpdateAccount() {
     try {
       dispatch(setLoading(true));
       const response = await axios.patch(
-        "http://localhost:8000/api/v1/users/update-account",
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/update-account`,
         formData,
         { headers: { "Content-Type": "application/json" } }
       );

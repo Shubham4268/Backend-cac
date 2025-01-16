@@ -20,7 +20,7 @@ function Playlist() {
       dispatch(setLoading(true));
       const fetchVideos = async () => {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/playlists/${id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/${id}`
         );
         setVideos(response?.data?.data?.videos);
         setPlaylist(response?.data?.data);

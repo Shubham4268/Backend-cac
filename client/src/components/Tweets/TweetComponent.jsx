@@ -26,7 +26,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
 
   const onDelete = async () => {
     try {
-      const deletedTweet = await axios.delete(`http://localhost:8000/api/v1/tweets/${userTweet?._id}`);
+      const deletedTweet = await axios.delete(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/${userTweet?._id}`);
       if (deletedTweet?.data?.success) {
         refreshTweets();  // Call the refreshTweets function to refresh the list of tweets
         notify("Tweet Deleted");

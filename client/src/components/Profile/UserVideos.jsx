@@ -19,7 +19,7 @@ function UserVideos({ user, notify }) {
         dispatch(setLoading(true));
 
         const response = await axios.get(
-          `http://localhost:8000/api/v1/dashboards/videos/${currUser?._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/videos/${currUser?._id}`
         );
         const { data } = response?.data || {};
         setVideos(data);

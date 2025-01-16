@@ -31,7 +31,7 @@ function VideoDetails({ video, notify }) {
       try {
         dispatch(setLoading(true));
         const response = await axios.get(
-          `http://localhost:8000/api/v1/dashboards/stats/${owner._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/stats/${owner._id}`
         );
 
         const { data: info } = response || {};
@@ -41,7 +41,7 @@ function VideoDetails({ video, notify }) {
         setSubscribers(getTotalSubscribers);
         setSubscribed(subscribedStatus);
         const likeResponse = await axios.get(
-          `http://localhost:8000/api/v1/likes/v/${videoFile._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/v/${videoFile._id}`
         );
 
         const { data: likeData } = likeResponse || {};
@@ -60,7 +60,7 @@ function VideoDetails({ video, notify }) {
     const fetchPlaylists = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/playlists/user/${user?._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/user/${user?._id}`
         ); // Adjust the URL accordingly
 
         setPlaylists(response?.data?.data);
@@ -83,7 +83,7 @@ function VideoDetails({ video, notify }) {
 
   const onclick = async () => {
     const response = await axios.post(
-      `http://localhost:8000/api/v1/likes/toggle/v/${videoFile._id}`
+      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/toggle/v/${videoFile._id}`
     );
 
     const { data } = response || {};
@@ -102,7 +102,7 @@ function VideoDetails({ video, notify }) {
     const channelId = owner?._id;
 
     const response = await axios.post(
-      `http://localhost:8000/api/v1/subscriptions/c/${channelId}`
+      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/subscriptions/c/${channelId}`
     );
 
     const { data: info } = response || {};
@@ -122,7 +122,7 @@ function VideoDetails({ video, notify }) {
     try {
       // Make API call to add the video to the playlist
       const response = await axios.patch(
-        `http://localhost:8000/api/v1/playlists/add/${videoFile?._id}/${playlistId}`
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/add/${videoFile?._id}/${playlistId}`
       );
 
       // Log and notify success
@@ -152,7 +152,7 @@ function VideoDetails({ video, notify }) {
     setLoadingPlaylist(true);
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/playlists/",
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/`,
         {
           name: newPlaylistName,
         }

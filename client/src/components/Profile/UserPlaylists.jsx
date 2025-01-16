@@ -16,7 +16,7 @@ function UserPlaylists({ user }) {
       try {
         dispatch(setLoading(true));
         const response = await axios.get(
-          `http://localhost:8000/api/v1/playlists/user/${currUser?._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/user/${currUser?._id}`
         );
         setPlaylists(response?.data?.data);
       } catch (error) {

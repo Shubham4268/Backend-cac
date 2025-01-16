@@ -74,7 +74,7 @@ function VideoComponent({ videofile, notify }) {
     const fetchPlaylists = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/playlists/user/${user?._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/user/${user?._id}`
         ); // Adjust the URL accordingly
 
         setPlaylists(response?.data?.data);
@@ -94,7 +94,7 @@ function VideoComponent({ videofile, notify }) {
     try {
       // Make API call to add the video to the playlist
       const response = await axios.patch(
-        `http://localhost:8000/api/v1/playlists/add/${video?._id}/${playlistId}`
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/add/${video?._id}/${playlistId}`
       );
 
       // Log and notify success
@@ -125,7 +125,7 @@ function VideoComponent({ videofile, notify }) {
       setError(null);
       setLoading(true)
        try {
-        const response = await axios.patch(`http://localhost:8000/api/v1/playlists/remove/${video?._id}/${playlistId}`)
+        const response = await axios.patch(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/remove/${video?._id}/${playlistId}`)
 
         if(response?.data?.success){
             notify("Video removed!!")
@@ -144,7 +144,7 @@ function VideoComponent({ videofile, notify }) {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/playlists/",
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/`,
         {
           name: newPlaylistName,
         }

@@ -19,7 +19,7 @@ const Navbar = () => {
     setError(null);
     try {
       const loggedOutUser = await axios.post(
-        "http://localhost:8000/api/v1/users/logout"
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/logout`
       );
   
       const { data: response } = loggedOutUser || {};

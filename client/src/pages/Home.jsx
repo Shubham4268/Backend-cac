@@ -24,7 +24,7 @@ function Home() {
   const fetchVideos = async () => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.get("http://localhost:8000/api/v1/videos", {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/videos`, {
         params: {
           page: currentPage,
           limit,

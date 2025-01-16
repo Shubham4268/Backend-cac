@@ -20,7 +20,7 @@ function Video() {
       try {
         // First, fetch the video details
         const response = await axios.get(
-          `http://localhost:8000/api/v1/videos/${id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/videos/${id}`
         );
 
         const { data } = response || {};
@@ -30,7 +30,7 @@ function Video() {
         if (data.success) {
           setVideo(videoData); // Set the fetched video data
           // Increment the view count on the server
-          await axios.post(`http://localhost:8000/api/v1/views/${id}`);
+          await axios.post(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/views/${id}`);
         } else {
           throw new Error("Failed to fetch video");
         }

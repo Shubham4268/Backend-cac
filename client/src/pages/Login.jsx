@@ -6,6 +6,7 @@ import { login } from "../features/slices/authSlice.js";
 import { useDispatch } from "react-redux";
 import { setLoading } from "../features/slices/loaderSlice.js";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
+console.log(import.meta.env.VITE_BACKEND_BASEURL);
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ const Login = () => {
     try {
       dispatch(setLoading(true));
       const loggedInUser = await axios.post(
-        "http://localhost:8000/api/v1/users/login",
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/login`,
         formData,
         {
           headers: {

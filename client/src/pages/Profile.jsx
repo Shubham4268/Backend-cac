@@ -27,7 +27,7 @@ function Profile() {
 
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/users/channel/${username}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/channel/${username}`
         );
 
         if (response?.data?.success) {
@@ -52,7 +52,7 @@ function Profile() {
       if (user?._id) {
         try {dispatch(setLoading(true));
           const dashResponse = await axios.get(
-            `http://localhost:8000/api/v1/dashboards/stats/${user._id}`
+            `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/stats/${user._id}`
           );
 
           if (dashResponse?.data?.success) {
@@ -74,7 +74,7 @@ function Profile() {
     const channelId = user?._id;
 
     const response = await axios.post(
-      `http://localhost:8000/api/v1/subscriptions/c/${channelId}`
+      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/subscriptions/c/${channelId}`
     );
 
     const { data: info } = response || {};

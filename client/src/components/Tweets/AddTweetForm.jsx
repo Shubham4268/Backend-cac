@@ -42,8 +42,8 @@ function AddTweetForm() {
     setError(null);
 
     const url = editing
-      ? `http://localhost:8000/api/v1/tweets/${postData?._id}`
-      : "http://localhost:8000/api/v1/tweets/create-Tweet";
+      ? `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/${postData?._id}`
+      : `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/create-Tweet`;
     const method = editing ? "patch" : "post";
 
     try {
@@ -75,7 +75,7 @@ function AddTweetForm() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/tweets/${postData?._id}`);
+      await axios.delete(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/${postData?._id}`);
       setFormData({ content: "" });
       setEditing(false);
       setPostData(null);

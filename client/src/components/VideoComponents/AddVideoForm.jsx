@@ -53,7 +53,7 @@ function AddVideoForm() {
       dispatch(setLoading(true));
   
       const response = await axios.post(
-        "http://localhost:8000/api/v1/videos/",
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/videos/`,
         data,
         {
           headers: {

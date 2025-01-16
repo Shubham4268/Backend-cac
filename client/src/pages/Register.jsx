@@ -37,7 +37,7 @@ const Register = () => {
     try {
       dispatch(setLoading(true))
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/register",
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/register`,
         formData,
         {
           headers: {
@@ -51,7 +51,7 @@ const Register = () => {
         const { email, password } = formData;
         const loginData = { email, password };
         const loggedInUser = await axios.post(
-          "http://localhost:8000/api/v1/users/login",
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/login`,
           loginData,
           {
             headers: {

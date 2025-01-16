@@ -25,7 +25,7 @@ function Subscription() {
     try {
       dispatch(setLoading(true))
       const response = await axios.get(
-        `http://localhost:8000/api/v1/subscriptions/u/${id}`,
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/subscriptions/u/${id}`,
         {
           params: {
             page: currentPage,

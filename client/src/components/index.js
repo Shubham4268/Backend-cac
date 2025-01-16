@@ -11,7 +11,7 @@ import SubscribeButton from "./Common/SubscribeButton";
 import LikeButton from "./Common/LikeButton";
 import VideoComponent from "./VideoComponents/VideoComponent";
 import UserPlaylists from "./Profile/UserPlaylists";
-import UserTweets from "./Profile/userTweets";
+import UserTweets from "./Profile/UserTweets";
 import UserVideos from "./Profile/UserVideos";
 import AddTweetForm from "./Tweets/AddTweetForm";
 import TweetComponent from "./Tweets/TweetComponent";

@@ -3,14 +3,14 @@
   "builds" : [
     {
       "src" : "src/index.js",
-      "use" : "@vecel/node"
+      "use" : "@vercel/node"
     }
   ],
   "routes" : [
     {
       "src" : "/(.*)",
       "dest" : "src/index.js",
-      "methods" : ["GET","POST","PUT","DELETE","PAATCH","OPTIONS"],
+      "methods" : ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
       "headers" : {"Access-Control-Allow-Origin" : "*"}
     }
   ]

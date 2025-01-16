@@ -6,23 +6,22 @@ const app = express()
    
 // Configure CORS
 const corsOptions = {
-  origin: 'https://twitubefrontend.vercel.app', // Replace this with your frontend URL
+  origin: 'https://twitubefrontend.vercel.app', // Your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // Allow cookies and credentials
 };
 
-// Enable CORS
-app.use(cors(corsOptions));  // Apply CORS to all routes
+// Apply CORS middleware before your routes
+app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    return res.status(200).end(); // Respond to preflight request
-  }
-  next(); // Continue to other middleware and routes
+// Handle preflight OPTIONS requests explicitly (if needed)
+app.options('*', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app'); // Your frontend URL
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true'); // Allow credentials
+  return res.status(200).end(); // Respond with 200 OK to preflight request
 });
 
 app.use(express.json({limit : '16kb'}))

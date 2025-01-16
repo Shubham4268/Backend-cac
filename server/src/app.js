@@ -3,26 +3,16 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 
 const app = express()
+   
+// Configure CORS
+const corsOptions = {
+  origin: 'https://twitubefrontend.vercel.app', // Replace this with your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
-const allowedOrigins = [
-  'https://twitubefrontend.vercel.app',
-];
-
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true, // Allow cookies if needed
-  preflightContinue: false, // Ensure OPTIONS requests are handled properly
-}));
-
-// Add this middleware to handle preflight requests
-app.options('*', cors());
+// Enable CORS
+app.use(cors(corsOptions));  // Apply CORS to all routes
 
 
 app.use(express.json({limit : '16kb'}))

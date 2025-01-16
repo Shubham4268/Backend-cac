@@ -4,10 +4,26 @@ import cors from "cors"
 
 const app = express()
 
+const allowedOrigins = [
+  'https://twitubefrontend.vercel.app',
+];
+
 app.use(cors({
-    origin : process.env.CORS_ORIGIN,
-    credentials : true
-}))
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true, // Allow cookies if needed
+  preflightContinue: false, // Ensure OPTIONS requests are handled properly
+}));
+
+// Add this middleware to handle preflight requests
+app.options('*', cors());
+
 
 app.use(express.json({limit : '16kb'}))
 // Some times urls are written as shubham+joshi or shubham%20joshi. to make express understand:-

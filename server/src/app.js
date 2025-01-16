@@ -12,10 +12,6 @@ const corsOptions = {
   credentials: true, // Allow cookies and credentials
 };
 
-// Apply CORS middleware before your routes
-app.use(cors(corsOptions));
-
-// Handle preflight OPTIONS requests explicitly (if needed)
 app.options('*', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app'); // Your frontend URL
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
@@ -23,6 +19,10 @@ app.options('*', (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true'); // Allow credentials
   return res.status(200).end(); // Respond with 200 OK to preflight request
 });
+// Apply CORS middleware before your routes
+app.use(cors(corsOptions));
+
+// Handle preflight OPTIONS requests explicitly (if needed)
 
 app.use(express.json({limit : '16kb'}))
 // Some times urls are written as shubham+joshi or shubham%20joshi. to make express understand:-

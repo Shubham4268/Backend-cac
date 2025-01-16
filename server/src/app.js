@@ -14,6 +14,16 @@ const corsOptions = {
 // Enable CORS
 app.use(cors(corsOptions));  // Apply CORS to all routes
 
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    return res.status(200).end(); // Respond to preflight request
+  }
+  next(); // Continue to other middleware and routes
+});
 
 app.use(express.json({limit : '16kb'}))
 // Some times urls are written as shubham+joshi or shubham%20joshi. to make express understand:-

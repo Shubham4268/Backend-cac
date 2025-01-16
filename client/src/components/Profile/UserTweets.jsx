@@ -2,27 +2,28 @@ import { TweetComponent } from "../../components";
 import axios from "axios";
 import { handleApiError } from "../../utils/errorHandler.js";
 import { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
-function userTweets({ user }) {
+
+function UserTweets({ user }) {
   const [tweetData, setTweetData] = useState(null);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  // const user = useSelector((state) => state.user?.userData?.loggedInUser);
-  const id = user?._id;
+  const loggedInUser = useSelector((state) => state.user?.userData?.loggedInUser);
+  const activeUser = user || loggedInUser;
+  const id = activeUser?._id;
 
-  // Include id as a dependency for fetchTweets
   const fetchTweets = useCallback(async () => {
     try {
+      if (!id) return;
       dispatch(setLoading(true));
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/user/${id}`
       );
       if (response) {
-        const sortedTweets = response?.data?.data?.userTweets?.sort(
+        const sortedTweets = response.data.data.userTweets.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-
         setTweetData({ ...response.data.data, userTweets: sortedTweets });
       }
     } catch (error) {
@@ -30,15 +31,15 @@ function userTweets({ user }) {
     } finally {
       dispatch(setLoading(false));
     }
-  }, [id]); // Add `id` as a dependency
+  }, [id, dispatch]);
 
   useEffect(() => {
     fetchTweets();
   }, [fetchTweets]);
 
   return (
-    <div className=" text-white w-full h-full">
-      {!tweetData?.userTweets?.length && (
+    <div className="text-white w-full h-full">
+      {tweetData && !tweetData.userTweets?.length && (
         <div className="mt-20 w-full text-center text-3xl font-bold">
           No Tweets yet
         </div>
@@ -48,7 +49,6 @@ function userTweets({ user }) {
           {error || "Failed to load tweets"}
         </p>
       )}
-
       {tweetData?.userTweets?.map((tweet) => (
         <div key={tweet._id} className="mb-8">
           <TweetComponent
@@ -61,4 +61,6 @@ function userTweets({ user }) {
     </div>
   );
 }
-export default userTweets;
+
+
+export default UserTweets;

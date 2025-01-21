@@ -32,7 +32,7 @@ const Login = () => {
     try {
       dispatch(setLoading(true));
       const loggedInUser = await axios.post(
-        `https://twitubebackend.vercel.app/api/v1/users/login`,
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/login`,
         formData,
         {
           headers: {

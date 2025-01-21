@@ -17,7 +17,7 @@ app.options('*', (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.set('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(200);
+  res.status(200);
 });
 
 

@@ -20,6 +20,7 @@ function Subscription() {
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
   const id = user?._id;
   const dispatch = useDispatch();
+console.log(channels);
 
   const fetchVideos = async () => {
     try {
@@ -54,7 +55,6 @@ function Subscription() {
       dispatch(setLoading(false))
     }
   };
-console.log(tweetData);
 
   useEffect(() => {
     if (id) {

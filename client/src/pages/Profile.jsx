@@ -79,7 +79,7 @@ function Profile() {
 
     const { data: info } = response || {};
     const { data } = info || {};
-
+    console.log(data)
     if (!data) {
       setSubscribed(true);
       setSubscribers((prev) => prev + 1);

@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Learning backend in detail",
   "type": "module",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "start": "node index.js",
+    "dev": "nodemon -r dotenv/config --experimental-json-modules index.js"
   },
   "keywords": [
     "js",

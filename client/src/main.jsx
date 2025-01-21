@@ -46,7 +46,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Register />,
+        element: (
+          <AuthLayout authentication={false}>
+            <Register />
+          </AuthLayout>
+        ),
       },
       {
         path: "/login",
@@ -112,7 +116,7 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
-      
+
       {
         path: "/playlists/:id",
         element: (
@@ -151,7 +155,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-    <Loader />
+      <Loader />
       <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
         <RouterProvider router={router}>
           <App />

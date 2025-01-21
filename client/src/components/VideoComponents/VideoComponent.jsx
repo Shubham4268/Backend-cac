@@ -299,11 +299,11 @@ function VideoComponent({ videofile, notify }) {
                   ) : (
                     <select
                       onChange={(e) => setSelectedPlaylistId(e.target.value)}
-                      className="w-full p-2 bg-gray-100 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                      className="w-full p-2 bg-gray-100 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 "
                       size={5}
                     >
                       {playlists?.map((playlist) => (
-                        <option key={playlist?._id} value={playlist?._id}>
+                        <option key={playlist?._id} value={playlist?._id} className="hover:bg-gray-500 rounded-xl px-2 hover:cursor-pointer">
                           {playlist?.name}
                         </option>
                       ))}

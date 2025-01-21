@@ -24,6 +24,9 @@ app.use(cors({
   origin : process.env.CORS_ORIGIN,
   credentials : true
 }))
+app.get('/', (req, res) => {
+  res.send('Welcome to my Node.js & MongoDB app!');
+});
 
 
 // Handle preflight OPTIONS requests explicitly (if needed)

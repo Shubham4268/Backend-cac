@@ -20,13 +20,17 @@ const app = express()
 //   return res.status(200).end(); // Respond with 200 OK to preflight request
 // });
 // Apply CORS middleware before your routes
+// app.use(cors({
+//   origin : process.env.CORS_ORIGIN,
+//   credentials : true
+// }))
+
 app.use(cors({
-  origin : process.env.CORS_ORIGIN,
-  credentials : true
-}))
-app.get('/', (req, res) => {
-  res.send('Welcome to my Node.js & MongoDB app!');
-});
+  origin: 'https://twitubefrontend.vercel.app', // Allow only your frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+  credentials: true // Include cookies if needed
+}));
+console.log("You are connected to backend")
 
 
 // Handle preflight OPTIONS requests explicitly (if needed)
@@ -38,6 +42,9 @@ app.use(express.static("public"))  // Static stores files, images in the server 
 app.use(cookieParser())            // req gets the Access of cookies via middleware
 
 
+app.get('/', (req, res) => {
+  res.send('Welcome to my Node.js & MongoDB app!');
+});
 
 // import Routes
 import userRouter from "./routes/user.routes.js"

@@ -1,72 +1,65 @@
-import express from "express"
-import cookieParser from "cookie-parser"
-import cors from "cors"
+import express from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
-const app = express()
-   
-console.log(process.env.CORS_ORIGIN)
+const app = express();
 
+console.log(process.env.CORS_ORIGIN);
+
+// Handle CORS
 app.use(
   cors({
-    // origin: 'https://twitubefrontend.vercel.app', // Your frontend domain
-    origin: process.env.CORS_ORIGIN, // Your frontend domain
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
+    origin: process.env.CORS_ORIGIN || 'https://twitubefrontend.vercel.app', // Allow your frontend domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
     credentials: true, // Allow cookies or Authorization headers
   })
 );
-app.use((req, res, next) => {
-  // res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app');
-  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN);
+
+// Explicit handling of preflight requests
+app.options("*", (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'https://twitubefrontend.vercel.app');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  next();
+  res.sendStatus(204); // No content for preflight request
 });
 
-
-
-
-
-// Handle preflight OPTIONS requests explicitly (if needed)
-
-app.use(express.json({ limit: '16kb' }))
-// Some times urls are written as shubham+joshi or shubham%20joshi. to make express understand:-
-app.use(express.urlencoded({ extended: true, limit: '16kb' }))
-app.use(express.static("public"))  // Static stores files, images in the server in public folder
-app.use(cookieParser())            // req gets the Access of cookies via middleware
-
+// Middleware
+app.use(express.json({ limit: '16kb' }));
+app.use(express.urlencoded({ extended: true, limit: '16kb' }));
+app.use(express.static("public")); // Serve static files from the "public" folder
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
   res.send('Welcome to my Node.js & MongoDB app!');
 });
 
-// import Routes
-import userRouter from "./routes/user.routes.js"
-import tweetRouter from "./routes/tweet.routes.js"
-import videoRouter from "./routes/video.routes.js"
-import playlistRouter from "./routes/playlist.routes.js"
-import subscriptionRouter from "./routes/subscription.routes.js"
-import commentRouter from "./routes/comment.routes.js"
-import likeRouter from "./routes/like.routes.js"
-import viewRouter from "./routes/view.routes.js"
-import healthcheckRouter from "./routes/healthcheck.routes.js"
-import dashboardRouter from "./routes/dashboard.routes.js"
-import { ApiError } from "./utils/ApiError.js"
+// Import Routes
+import userRouter from "./routes/user.routes.js";
+import tweetRouter from "./routes/tweet.routes.js";
+import videoRouter from "./routes/video.routes.js";
+import playlistRouter from "./routes/playlist.routes.js";
+import subscriptionRouter from "./routes/subscription.routes.js";
+import commentRouter from "./routes/comment.routes.js";
+import likeRouter from "./routes/like.routes.js";
+import viewRouter from "./routes/view.routes.js";
+import healthcheckRouter from "./routes/healthcheck.routes.js";
+import dashboardRouter from "./routes/dashboard.routes.js";
+import { ApiError } from "./utils/ApiError.js";
 
-// routes declaration
+// Declare routes
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/tweets", tweetRouter);
+app.use("/api/v1/videos", videoRouter);
+app.use("/api/v1/playlists", playlistRouter);
+app.use("/api/v1/subscriptions", subscriptionRouter);
+app.use("/api/v1/comments", commentRouter);
+app.use("/api/v1/likes", likeRouter);
+app.use("/api/v1/views", viewRouter);
+app.use("/api/v1/healthchecks", healthcheckRouter);
+app.use("/api/v1/dashboards", dashboardRouter);
 
-app.use("/api/v1/users", userRouter)          // The userRouter is imported and mounted on the /api/v1/users path. Any request to this path will be forwarded to userRouter.
-app.use("/api/v1/tweets", tweetRouter)
-app.use("/api/v1/videos", videoRouter)
-app.use("/api/v1/playlists", playlistRouter)
-app.use("/api/v1/subscriptions", subscriptionRouter)
-app.use("/api/v1/comments", commentRouter)
-app.use("/api/v1/likes", likeRouter)
-app.use("/api/v1/views", viewRouter)
-app.use("/api/v1/healthchecks", healthcheckRouter)
-app.use("/api/v1/dashboards", dashboardRouter)
-// URL : http://localhost:8000/api/v1/users/register
-
+// Error handling middleware
 app.use((err, req, res, next) => {
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
@@ -77,11 +70,11 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // Handle other errors
+  // Generic error handler
   res.status(500).json({
     success: false,
     message: "Internal Server Error",
   });
 });
 
-export { app }
+export { app };

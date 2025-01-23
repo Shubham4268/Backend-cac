@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 
 const app = express()
-
+   
 console.log(process.env.CORS_ORIGIN)
 
 app.use(

@@ -3,8 +3,8 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 
 const app = express()
-   
-console.log("You are connected to backend")
+
+console.log(process.env.CORS_ORIGIN)
 
 app.use(
   cors({
@@ -14,24 +14,24 @@ app.use(
     credentials: true, // Allow cookies or Authorization headers
   })
 );
-
-
 app.use((req, res, next) => {
   // res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app');
   res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   next();
 });
 
 
 
+
+
 // Handle preflight OPTIONS requests explicitly (if needed)
 
-app.use(express.json({limit : '16kb'}))
+app.use(express.json({ limit: '16kb' }))
 // Some times urls are written as shubham+joshi or shubham%20joshi. to make express understand:-
-app.use(express.urlencoded({extended : true, limit : '16kb'}))
+app.use(express.urlencoded({ extended: true, limit: '16kb' }))
 app.use(express.static("public"))  // Static stores files, images in the server in public folder
 app.use(cookieParser())            // req gets the Access of cookies via middleware
 
@@ -84,4 +84,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-export {app}
+export { app }

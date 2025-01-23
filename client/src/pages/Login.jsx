@@ -38,8 +38,10 @@ const Login = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true, // Include cookies or credentials in the request
         }
       );
+      
       const { data: response } = loggedInUser || {};
       const { success } = response || false;
       const { data } = response || {};

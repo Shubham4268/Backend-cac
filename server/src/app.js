@@ -7,19 +7,27 @@ const app = express();
 console.log(process.env.CORS_ORIGIN);
 
 // Handle CORS
-app.use(
-  cors({
-    origin: 'https://twitubefrontend.vercel.app', // Allow only the frontend domain
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
-    allowedHeaders: ['Content-Type', 'Authorization', 'Origin'], // Allow these headers
-    credentials: true, // Allow cookies or Authorization headers
-    preflightContinue: false, // Do not pass to next middleware
-    optionsSuccessStatus: 200, // Ensure 200 OK is sent for OPTIONS request
-  })
-);
-app.options('/*', (_, res) => {
-  res.sendStatus(200);
-});
+const allowedOrigins = [
+  "https://twitubefrontend.vercel.app",
+  "http://localhost:5173"
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    console.log("Origin:", origin);
+    if (!origin) return callback(null, true); // Allow non-browser requests
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+};
+app.use(cors(corsOptions));
+
 
 // Middleware
 app.use(express.json({ limit: '16kb' }));

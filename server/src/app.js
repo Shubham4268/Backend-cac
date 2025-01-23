@@ -9,19 +9,19 @@ console.log(process.env.CORS_ORIGIN);
 // Handle CORS
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || 'https://twitubefrontend.vercel.app', // Allow your frontend domain
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+    origin: 'https://twitubefrontend.vercel.app', // Allow only the frontend domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
     credentials: true, // Allow cookies or Authorization headers
   })
 );
 
-// Explicit handling of preflight requests
-app.options("*", (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'https://twitubefrontend.vercel.app');
+// Explicitly handle OPTIONS requests
+app.options('/*', (_, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(204); // No content for preflight request
+  res.sendStatus(200); // Respond with HTTP 200 OK
 });
 
 // Middleware

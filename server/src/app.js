@@ -6,21 +6,25 @@ const app = express()
    
 console.log("You are connected to backend")
 
-app.use(cors({
-  origin: 'https://twitubefrontend.vercel.app', // Allow only your frontend domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-  credentials: true, // Include cookies if needed
-  optionSuccessStatus:200
-}));
+app.use(
+  cors({
+    // origin: 'https://twitubefrontend.vercel.app', // Your frontend domain
+    origin: process.env.CORS_ORIGIN, // Your frontend domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
+    credentials: true, // Allow cookies or Authorization headers
+  })
+);
 
-app.options('*', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app');
+
+app.use((req, res, next) => {
+  // res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app');
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader("Access-Control-Max-Age", "1800");
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.status(200);
+  next();
 });
+
 
 
 // Handle preflight OPTIONS requests explicitly (if needed)

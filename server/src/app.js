@@ -1,11 +1,14 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import dotenv from "dotenv"
 
 const app = express();
 
+dotenv.config({
+  path : './.env'
+})
 console.log(process.env.CORS_ORIGIN);
-
 // Handle CORS
 app.use(
   cors({
@@ -14,7 +17,8 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'Origin'], // Allow these headers
     credentials: true, // Allow cookies or Authorization headers
     preflightContinue: false, // Do not pass to next middleware
-    optionsSuccessStatus: 200, // Ensure 200 OK is sent for OPTIONS request
+    optionsSuccessStatus : 200, // Ensure 200 OK is sent for OPTIONS request
+    
   })
 );
 app.options('/*', (_, res) => {
@@ -30,8 +34,7 @@ app.use(express.static("public")); // Serve static files from the "public" folde
 app.use(cookieParser());
 
 app.get("/", (request, response) => {
-  console.log(request);
-  return response.status(234).send("Server Is Working Fine");
+  return response.status(200).send("Server Is Working Fine");
 });
 
 // Import Routes

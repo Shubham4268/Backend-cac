@@ -31,6 +31,7 @@ router.route("/register").post(
   registerUser
 );
 
+// router.route("/login").get(getloginUser);
 router.route("/login").post(loginUser);
 
 // Secured Routes

@@ -9,14 +9,16 @@ console.log("You are connected to backend")
 app.use(cors({
   origin: 'https://twitubefrontend.vercel.app', // Allow only your frontend domain
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-  credentials: true // Include cookies if needed
+  credentials: true, // Include cookies if needed
+  optionSuccessStatus:200
 }));
 
 app.options('*', (req, res) => {
-  res.set('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app');
-  res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.set('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', 'https://twitubefrontend.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader("Access-Control-Max-Age", "1800");
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.status(200);
 });
 

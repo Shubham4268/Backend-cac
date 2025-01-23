@@ -1,39 +1,43 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
-dotenv.config({
-  path : './.env'
-})
-console.log(process.env.CORS_ORIGIN);
-// Handle CORS
-app.use(
-  cors({
-    origin: 'https://twitubefrontend.vercel.app', // Allow only the frontend domain
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
-    allowedHeaders: ['Content-Type', 'Authorization', 'Origin'], // Allow these headers
-    credentials: true, // Allow cookies or Authorization headers
-    preflightContinue: false, // Do not pass to next middleware
-    optionsSuccessStatus : 200, // Ensure 200 OK is sent for OPTIONS request
-    
-  })
-);
-app.options('/*', (_, res) => {
-  res.sendStatus(200);
-});
+const allowedOrigins = [
+  process.env.CORS_ORIGIN,
+];
+console.log("")
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true); // Allow requests with no origin (like mobile apps or curl requests)
+    }
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Include OPTIONS method
+  allowedHeaders: ['Content-Type', 'Authorization'], // Headers that the server allows
+  credentials: true
+};
 
 
 
+
+app.use(cookieParser());
+app.use(cors(corsOptions));
 // Middleware
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static("public")); // Serve static files from the "public" folder
-app.use(cookieParser());
 
-app.get("/", (request, response) => {
+app.get("/", (_, response) => {
   return response.status(200).send("Server Is Working Fine");
 });
 

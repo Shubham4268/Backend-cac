@@ -3,17 +3,20 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 
+// Load environment variables
 dotenv.config();
 
 const app = express();
 
+// CORS setup
 const allowedOrigins = [
-  process.env.CORS_ORIGIN,
+  process.env.CORS_ORIGIN || 'https://twitubefrontend.vercel.app', // Add your frontend URL here
 ];
+
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) {
-      return callback(null, true); // Allow requests with no origin (like mobile apps or curl requests)
+      return callback(null, true); // Allow requests with no origin
     }
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -21,27 +24,24 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Include OPTIONS method
-  allowedHeaders: ['Content-Type', 'Authorization'], // Headers that the server allows
-  credentials: true
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // Make sure this is true
 };
-
-
 
 
 app.use(cookieParser());
 app.use(cors(corsOptions));
-// Middleware
+
+// Middleware to parse JSON and URL-encoded data
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static("public")); // Serve static files from the "public" folder
 
+// Basic health check route
 app.get("/api/v1/", (_, response) => {
-  response.status(200).send("Server Is Working Fine");
+  response.status(200).send("Server is working fine");
 });
-// app.get("/", (_, response) => {
-//   return response.status(200).send("Server Is Working Fine");
-// });
 
 // Import Routes
 import userRouter from "./routes/user.routes.js";
@@ -80,6 +80,10 @@ app.use((err, req, res, next) => {
   }
 
   // Generic error handler
+  if (process.env.NODE_ENV === 'development') {
+    console.error(err); // Log error in development mode for debugging
+  }
+
   res.status(500).json({
     success: false,
     message: "Internal Server Error",

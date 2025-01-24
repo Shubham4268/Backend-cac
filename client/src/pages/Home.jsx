@@ -25,6 +25,7 @@ function Home() {
     dispatch(setLoading(true));
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/videos`, {
+        withCredentials: true, // Include this in the same configuration object
         params: {
           page: currentPage,
           limit,
@@ -32,7 +33,6 @@ function Home() {
           sortType,
           query,
         },
-        withCredentials: true, // Include this in the same configuration object
       });
       
 

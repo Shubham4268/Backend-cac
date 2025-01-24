@@ -31,24 +31,30 @@ const Login = () => {
 
     try {
       dispatch(setLoading(true));
-      const loggedInUser = await axios.post(  
+
+      const response = await fetch(
         `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/login`,
-        formData,
         {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true, // Include cookies or credentials in the request
+          credentials: "include", // Include cookies in the request
+          body: JSON.stringify(formData), // Send the form data as JSON
         }
       );
-      
-      const { data: response } = loggedInUser || {};
-      const { success } = response || false;
-      const { data } = response || {};
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Something went wrong");
+      }
+
+      const responseData = await response.json();
+      const { success, data } = responseData || {};
 
       if (success) {
-        dispatch(login(data)); // Adjust based on API response structure
-        navigate("/home");
+        dispatch(login(data)); // Dispatch action with user data
+        navigate("/home"); // Redirect on successful login
         setFormData({ email: "", password: "" }); // Reset form state
       }
     } catch (error) {
@@ -125,7 +131,7 @@ const Login = () => {
                       onClick={togglePasswordVisibility}
                       className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-200"
                     >
-                      {showPassword ? <BsEyeSlash /> : <BsEye /> }
+                      {showPassword ? <BsEyeSlash /> : <BsEye />}
                     </button>
                   )}
                 </div>

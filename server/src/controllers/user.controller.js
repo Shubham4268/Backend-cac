@@ -148,15 +148,17 @@ const loginUser = asyncHandler(async (req, res) => {
     res.cookie('accessToken', accessToken, {
         httpOnly: true,  // Prevent access to the cookie via JavaScript (helps mitigate XSS attacks)
         secure: true,    // Only send the cookie over HTTPS (for security)
-        sameSite: 'Strict', // Prevent the cookie from being sent in cross-origin requests (helps mitigate CSRF attacks)
-        maxAge: 24 * 60 * 60 * 1000  // Cookie expires in 1 day
+        sameSite: 'None', // Prevent the cookie from being sent in cross-origin requests (helps mitigate CSRF attacks)
+        maxAge: 24 * 60 * 60 * 1000,  // Cookie expires in 1 day
+        domain: `${process.env.CORS_ORIGIN}`
     });
 
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,  // Prevent access to the cookie via JavaScript
         secure: true,    // Only send the cookie over HTTPS
-        sameSite: 'Strict', // SameSite strategy
-        maxAge: 7 * 24 * 60 * 60 * 1000  // Refresh token cookie expires in 7 days
+        sameSite: 'None', // SameSite strategy
+        maxAge: 7 * 24 * 60 * 60 * 1000,  // Refresh token cookie expires in 7 days
+        domain: `${process.env.CORS_ORIGIN}`
     });
     return res
         .status(200)

@@ -36,7 +36,7 @@ const Login = () => {
         formData,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "text/plain",
           },
           withCredentials: true, // Include cookies or credentials in the request
         }

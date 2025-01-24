@@ -31,25 +31,21 @@ const Login = () => {
 
     try {
       dispatch(setLoading(true));
-      const response = await fetch(
+      const loggedInUser = await axios.post(
         `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/login`,
+        formData,
         {
-          method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "text/plain",
           },
-          credentials: "include", // Include cookies or credentials in the request
-          body: JSON.stringify(formData),
+          withCredentials: true, // Include cookies or credentials in the request
         }
       );
-    
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-    
-      const responseData = await response.json();
-      const { success, data } = responseData || {};
-    
+      
+      const { data: response } = loggedInUser || {};
+      const { success } = response || false;
+      const { data } = response || {};
+
       if (success) {
         dispatch(login(data)); // Adjust based on API response structure
         navigate("/home");
@@ -60,7 +56,6 @@ const Login = () => {
     } finally {
       dispatch(setLoading(false));
     }
-    
   };
 
   return (

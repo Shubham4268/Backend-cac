@@ -26,6 +26,9 @@ const corsOptions = {
   credentials: true
 };
 
+app.get("/api/v1/", (_, response) => {
+   response.status(200).send("Server Is Working Fine");
+});
 
 
 
@@ -36,9 +39,6 @@ app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static("public")); // Serve static files from the "public" folder
 
-app.get("/", (_, response) => {
-  return response.status(200).send("Server Is Working Fine");
-});
 
 // Import Routes
 import userRouter from "./routes/user.routes.js";

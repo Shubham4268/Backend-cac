@@ -10,7 +10,7 @@ const app = express();
 
 // CORS setup
 const allowedOrigins = [
-  process.env.CORS_ORIGIN || 'https://twitubefrontend.vercel.app', // Add your frontend URL here
+  process.env.CORS_ORIGIN 
 ];
 
 const corsOptions = {
@@ -39,7 +39,7 @@ app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static("public")); // Serve static files from the "public" folder
 
 // Basic health check route
-app.get("/api/v1/", (_, response) => {
+app.get("/", (_, response) => {
   response.status(200).send("Server is working fine");
 });
 

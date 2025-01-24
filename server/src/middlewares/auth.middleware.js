@@ -10,10 +10,11 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
     try {
         // Retrieve token from cookies or Authorization header (for mobile clients)
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
+        console.log(req.cookies);
         
         // Check if token is provided
         if (!token) {
-            throw new ApiError(401, "Unauthorized access");
+            throw new ApiError(401, "You are not authorized : Unauthorized access");
         }
         // Verify the JWT token using the secret key
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);

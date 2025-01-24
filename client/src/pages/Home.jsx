@@ -32,7 +32,9 @@ function Home() {
           sortType,
           query,
         },
+        withCredentials: true, // Include this in the same configuration object
       });
+      
 
       const { success, data } = response.data;
       if (success) {

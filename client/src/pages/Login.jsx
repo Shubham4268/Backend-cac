@@ -31,7 +31,7 @@ const Login = () => {
 
     try {
       dispatch(setLoading(true));
-      const loggedInUser = await axios.post(
+      const loggedInUser = await axios.post(  
         `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/login`,
         formData,
         {

@@ -30,8 +30,8 @@ const corsOptions = {
 };
 
 
-app.use(cookieParser());
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json({ limit: '16kb' }));

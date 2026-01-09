@@ -1,14 +1,17 @@
-import AddVideoForm from "../components/VideoComponents/AddVideoForm"
+import AddVideoForm from "../components/VideoComponents/AddVideoForm";
+import { useSelector } from "react-redux";
 
 function AddVideo() {
+  const collapsed = useSelector((state) => state.navbar.collapsed);
+
   return (
-    <>
-    <div className="ml-56  text-white w-full h-screen " >
-        <AddVideoForm />
+    <div
+      className={`min-h-screen w-full transition-all duration-300 py-10
+      ${collapsed ? "ml-16" : "ml-60"}`}
+    >
+      <AddVideoForm />
     </div>
-    
-    </>
-  )
+  );
 }
 
-export default AddVideo
+export default AddVideo;

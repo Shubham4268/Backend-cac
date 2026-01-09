@@ -8,7 +8,7 @@ function SubscribeButton({onclick,subscribed}) {
         ${
           subscribed
             ? "bg-transparent border border-solid text-white hover:border-2"
-            : "bg-red-500 text-white  hover:border hover:border-solid"
+            : "bg-red-600 text-white  hover:bg-red-700 hover:shadow-lg hover:scale-105"
         }`}
     >
       {subscribed ? "Unsubscribe" : "Subscribe"}

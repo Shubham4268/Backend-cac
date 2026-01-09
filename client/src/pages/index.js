@@ -1,5 +1,6 @@
 import AddTweet from "./AddTweet";
 import AddVideo from "./AddVideo";
+import About from "./About";
 import Home from "./Home";
 import Login from "./Login";
 import Playlist from "./Playlist";
@@ -17,5 +18,7 @@ export {
     AddTweet,
     Playlist,
     Subscription,
+    About,
+
     
 }

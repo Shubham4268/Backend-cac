@@ -31,7 +31,9 @@ function VideoDetails({ video, notify }) {
       try {
         dispatch(setLoading(true));
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/stats/${owner._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/stats/${
+            owner._id
+          }`
         );
 
         const { data: info } = response || {};
@@ -41,7 +43,9 @@ function VideoDetails({ video, notify }) {
         setSubscribers(getTotalSubscribers);
         setSubscribed(subscribedStatus);
         const likeResponse = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/v/${videoFile._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/v/${
+            videoFile._id
+          }`
         );
 
         const { data: likeData } = likeResponse || {};
@@ -60,7 +64,9 @@ function VideoDetails({ video, notify }) {
     const fetchPlaylists = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/user/${user?._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/user/${
+            user?._id
+          }`
         ); // Adjust the URL accordingly
 
         setPlaylists(response?.data?.data);
@@ -83,7 +89,9 @@ function VideoDetails({ video, notify }) {
 
   const onclick = async () => {
     const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/toggle/v/${videoFile._id}`
+      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/toggle/v/${
+        videoFile._id
+      }`
     );
 
     const { data } = response || {};
@@ -102,7 +110,9 @@ function VideoDetails({ video, notify }) {
     const channelId = owner?._id;
 
     const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/subscriptions/c/${channelId}`
+      `${
+        import.meta.env.VITE_BACKEND_BASEURL
+      }/api/v1/subscriptions/c/${channelId}`
     );
 
     const { data: info } = response || {};
@@ -122,7 +132,9 @@ function VideoDetails({ video, notify }) {
     try {
       // Make API call to add the video to the playlist
       const response = await axios.patch(
-        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/add/${videoFile?._id}/${playlistId}`
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/add/${
+          videoFile?._id
+        }/${playlistId}`
       );
 
       // Log and notify success
@@ -175,8 +187,8 @@ function VideoDetails({ video, notify }) {
     }
   };
   return (
-    <div className="relative flex flex-col shadow-lg h-full my-3">
-      <div className="absolute top-0 right-1 p-2">
+    <div className="relative flex flex-col h-full bg-gradient-to-r from-gray-900 to-gray-950 rounded-2xl shadow-xl overflow-hidden">
+      <div className="absolute top-0 right-1 p-2  mt-5 ">
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -292,7 +304,7 @@ function VideoDetails({ video, notify }) {
           </div>
         </div>
       )}
-      <span className="text-center font-bold text-2xl underline mb-2 ">
+      <span className="text-center font-bold text-2xl underline mt-6 ">
         About Video
       </span>
       <div className="font-bold my-3 mx-5">
@@ -304,31 +316,34 @@ function VideoDetails({ video, notify }) {
           Uploaded Date: {formatDate(videoFile.createdAt)}
         </span>
       </div>
-      <div className="flex flex-col border border-gray-500 bg-gray-700 rounded-lg shadow mx-3 p-2 h-28 max-h-28">
-        <span className="mb-1">Description :</span>
-        <span className="overflow-auto p-1 rounded-lg">
-          {videoFile.description || "No description available."}
-        </span>
+
+      <div className="mt-3 mx-3 bg-white/5 rounded-xl p-4 leading-relaxed text-gray-300 text-sm max-h-44 overflow-auto">
+        <span className="mb-1 text-center font-bold">Description: </span>
+        {videoFile.description || "No description available."}
       </div>
+
       <div className="absolute flex justify-between bottom-3 right-0 w-full h-[78px] border-t border-gray-400">
         <div className="flex">
           {owner ? (
             <>
               <Link className="self-center" to={`/profile/${owner?.username}`}>
                 <img
-                  className="w-14 h-14 self-center ml-3 rounded-full"
+                  className="w-12 h-12 self-center ml-3 rounded-full"
                   src={owner?.avatar || "default-avatar.png"}
                   alt="Owner Avatar"
                 />
               </Link>
-              <div className="flex flex-col ml-3 mt-3">
-                <Link to={`/profile/${owner?.username}`}>
-                  <span className=" hover:text-gray-300 ">
+              <div className="flex flex-col ml-3 mt-3 max-w-28 ">
+                <Link
+                  to={`/profile/${owner?.username}`}
+                  className="block max-w-full"
+                >
+                  <span className="block max-w-full truncate hover:text-gray-300 mt-2">
                     {owner?.fullName || "Unknown User"}
                   </span>
                 </Link>
 
-                <span>
+                <span className="text-xs text-gray-400 leading-tight">
                   {subscribers < 2
                     ? `${subscribers || 0} Subscriber`
                     : `${subscribers || 0} Subscribers`}

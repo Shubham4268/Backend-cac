@@ -61,7 +61,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
 
 
   return (
-    <div className="flex flex-col w-5/6 m-auto h-fit border border-1 bg-gray-800 px-5 pb-5 rounded-lg">
+    <div className="flex flex-col w-5/6 m-auto h-fit px-5 pb-5 rounded-lg">
       {error && <p className="text-red-500 text-center">{error}</p>}
       <ToastContainer/>
       <div className="flex justify-between mt-5">
@@ -79,7 +79,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
             <div>
               <button
                 onClick={toggleDropdown}
-                className="inline-flex p-2 text-sm font-medium text-gray-900 bg-white rounded-lg hover:bg-gray-100 dark:text-white dark:bg-gray-800 dark:hover:bg-gray-800"
+                className="inline-flex ml-4 p-2 text-sm font-medium text-gray-900 rounded-full hover:bg-gray-100 dark:text-white dark:hover:bg-gray-800"
                 type="button"
               >
                 <svg
@@ -93,7 +93,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
                 </svg>
               </button>
               {isDropdownOpen && (
-                <div className="absolute z-10 right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow w-20 dark:bg-gray-700">
+                <div className="absolute z-10 right-5 bg-white divide-y divide-gray-100 rounded-lg shadow w-20 dark:bg-gray-700">
                   <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
                     <li>
                       <a

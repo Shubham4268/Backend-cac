@@ -18,7 +18,6 @@ function Video() {
     dispatch(setLoading(true));
     const fetchVideo = async () => {
       try {
-        // First, fetch the video details
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/videos/${id}`
         );
@@ -26,11 +25,11 @@ function Video() {
         const { data } = response || {};
         const { data: videoData } = data || {};
 
-        // Check if video was fetched successfully
         if (data.success) {
-          setVideo(videoData); // Set the fetched video data
-          // Increment the view count on the server
-          await axios.post(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/views/${id}`);
+          setVideo(videoData);
+          await axios.post(
+            `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/views/${id}`
+          );
         } else {
           throw new Error("Failed to fetch video");
         }
@@ -44,33 +43,47 @@ function Video() {
     fetchVideo();
   }, [id]);
 
-  return (
-    <div className="flex flex-col md:flex-row mt-28 ml-10 md:w-full justify-evenly h-screen">
-      {error && (
-        <p className="text-red-500 text-center mb-5">
-          {error || "Failed to load video"}
-        </p>
-      )}
-      <ToastContainer />
-      <div className="gap-20">
-        <div className="w-[44rem] h-3/4 bg-gray-800 rounded-xl ">
+ return (
+  <div className="mt-24 px-6 lg:px-12 max-w-[1600px] mx-auto">
+    <ToastContainer />
+
+    {error && (
+      <p className="text-red-500 text-center mb-5">
+        {error || "Failed to load video"}
+      </p>
+    )}
+
+    {/* Equal height grid */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+
+      {/* 🎥 Video stage */}
+      <div className="lg:col-span-2 flex">
+        <div className="relative w-full bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video ml-10">
           {video ? (
             <VideoFile video={video} />
           ) : (
-            <p className="text-white">Loading video...</p>
+            <div className="flex items-center justify-center h-full text-gray-400">
+              Loading video...
+            </div>
           )}
         </div>
       </div>
 
-      <div className="text-white h-3/4 w-full md:w-1/2 md:mx-10 mx-10 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl  dark:border-gray-700 dark:bg-gray-800 ">
+      {/* 📦 Details — forced to same height */}
+      <div className="lg:col-span-1 flex">
         {video ? (
-          <VideoDetails video={video} notify={notify} />
+          <div className="w-full h-full">
+            <VideoDetails video={video} notify={notify} />
+          </div>
         ) : (
-          <p className="text-white">Loading Details...</p>
+          <div className="text-gray-400">Loading details...</div>
         )}
       </div>
     </div>
-  );
+  </div>
+);
+
 }
+
 
 export default Video;

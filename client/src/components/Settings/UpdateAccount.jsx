@@ -6,10 +6,34 @@ import { login } from "../../features/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { setLoading } from "../../features/slices/loaderSlice.js";
 import { toast, ToastContainer } from "react-toastify";
+import { Camera } from "lucide-react";
+
+const InputField = ({ type = "text", name, value, onChange, placeholder }) => (
+  <div className="w-full">
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      required
+      className="
+        w-full rounded-xl
+        bg-gray-950/60 text-gray-100
+        px-4 py-2.5 text-sm
+        border border-white/10
+        placeholder:text-gray-500
+        focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
+        transition
+      "
+    />
+  </div>
+);
 
 function UpdateAccount() {
   const response = useSelector((state) => state.user.userData);
   const { loggedInUser: user } = response || {};
+  const collapsed = useSelector((state) => state.navbar.collapsed);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,10 +49,9 @@ function UpdateAccount() {
 
   const fileInputRef = useRef(null);
 
-  // Handle changes in the form fields
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setIsAccountChanged(true); // Enable the account submit button when fields are changed
+    setIsAccountChanged(true);
   };
 
   const handleFileChange = async (e) => {
@@ -48,12 +71,12 @@ function UpdateAccount() {
         if (response.data.success) {
           setAvatar(response.data.data.avatar);
           dispatch(login(response.data.data));
+          notify("Avatar updated successfully 📸");
         }
       } catch (err) {
         handleApiError(err, setError);
       } finally {
         dispatch(setLoading(false));
-        notify("Avatar Updated successfully");
       }
     }
   };
@@ -72,6 +95,7 @@ function UpdateAccount() {
 
       if (response.data.success) {
         dispatch(login(response.data.data));
+        notify("Account updated successfully ✨");
         setTimeout(() => {
           navigate("/home");
         }, 3000);
@@ -79,92 +103,121 @@ function UpdateAccount() {
     } catch (err) {
       handleApiError(err, setError);
     } finally {
-      notify("Account Updated successfully");
       dispatch(setLoading(false));
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-screen">
-      <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white">
-        {error && <p className="text-red-500 text-center">{error}</p>}
-      <ToastContainer/>
-        <h2 className="mt-3 mb-3 text-center text-2xl font-bold">
-          Update Your Account
-        </h2>
+    <div className={`min-h-screen w-full text-white relative overflow-hidden transition-all duration-300 ${
+      collapsed ? "ml-16" : "ml-60"
+    }`}>
+      <div className="relative flex items-center justify-center min-h-screen px-6 py-24">
+        <ToastContainer />
 
-        {/* Avatar Section */}
-        <form className="flex flex-col items-center mx-auto my-5">
-          <div className="relative">
-            <img
-              className="w-28 h-28 z-10 rounded-full object-cover"
-              src={avatar || user?.avatar}
-              alt={user?.fullName}
-            />
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              className="hidden"
-              onChange={handleFileChange}
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current.click()}
-              className="absolute p-1 z-10 bottom-0 right-0 border border-gray-600 rounded-full bg-gray-800 hover:bg-gray-900 hover:shadow-lg"
-            >
-              ✏️
-            </button>
-          </div>
-        </form>
-
-        {/* Account Details Section */}
-        <form
-          className="w-3/5 flex flex-col items-center mx-auto space-y-3"
-          onSubmit={onSubmitAccount}
+        {/* Card */}
+        <div
+          className="
+            w-full max-w-xl
+            rounded-2xl
+            border border-white/10
+            bg-slate-800 backdrop-blur-3xl
+            px-8 py-8
+          "
         >
-          <InputField
-            placeholder="Full Name"
-            type="text"
-            name="fullName"
-            value={formData.fullName}
-            onChange={onChange}
-          />
-          <InputField
-            placeholder="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={onChange}
-          />
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-semibold tracking-tight bg-white bg-clip-text text-transparent">
+              Update Your Account
+            </h2>
+            <p className="text-gray-400 text-sm mt-2">
+              Manage your profile information and avatar
+            </p>
+          </div>
 
-          <button
-            type="submit"
-            className={` w-fit justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 ${
-              !isAccountChanged && "opacity-50 cursor-not-allowed"
-            }`}
-            disabled={!isAccountChanged}
-          >
-            Update Account
-          </button>
-        </form>
+          {error && (
+            <p className="text-red-400 text-center text-sm mb-4">
+              {error}
+            </p>
+          )}
+
+          {/* Avatar Section */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="relative group">
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-indigo-500 to-cyan-400 blur opacity-30 group-hover:opacity-50 transition" />
+              <img
+                className="relative w-32 h-32 rounded-full object-cover border-4 border-gray-800 shadow-2xl"
+                src={avatar || user?.avatar}
+                alt={user?.fullName}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current.click()}
+                className="
+                  absolute bottom-0 right-0
+                  p-2.5 rounded-full
+                  bg-indigo-600 text-white
+                  border-4 border-gray-800
+                  hover:bg-indigo-500
+                  shadow-lg
+                  transition
+                  group-hover:scale-110
+                "
+              >
+                <Camera size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* Account Details Form */}
+          <form onSubmit={onSubmitAccount} className="flex flex-col space-y-6">
+            <div className="space-y-3">
+              <InputField
+                placeholder="Full Name"
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={onChange}
+              />
+              <InputField
+                placeholder="Email"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={onChange}
+              />
+            </div>
+
+            {/* CTA */}
+            <div className="pt-2 flex justify-center">
+              <button
+                type="submit"
+                className={`
+                  relative overflow-hidden
+                  px-8 py-2.5 rounded-xl
+                  bg-indigo-600 text-white text-sm font-medium
+                  shadow-lg 
+                  hover:bg-indigo-500 
+                  active:scale-[0.98]
+                  transition
+                  ${!isAccountChanged && "opacity-50 cursor-not-allowed"}
+                `}
+                disabled={!isAccountChanged}
+              >
+                Update Account
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
-
-const InputField = ({ type, name, value, onChange, placeholder }) => (
-  <div className="input-group flex flex-col w-full">
-    <input
-      placeholder={placeholder}
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      required
-      className="mb-3 block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base  outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-    />
-  </div>
-);
 
 export default UpdateAccount;

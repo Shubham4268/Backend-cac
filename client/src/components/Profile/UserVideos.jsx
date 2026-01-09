@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import VideoComponent from "../VideoComponents/VideoComponent";
-import { toast, ToastContainer } from "react-toastify";
+import VideoComponent from "../video/VideoComponent.jsx";
+// import { toast, ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
 import { handleApiError } from "../../utils/errorHandler.js";
@@ -10,16 +10,16 @@ function UserVideos({ user, notify }) {
   const currUser = user;
   const [videos, setVideos] = useState([]);
   const [error, setError] = useState(null);
-  
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         dispatch(setLoading(true));
-
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/videos/${currUser?._id}`
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/videos/${
+            currUser?._id
+          }`
         );
         const { data } = response?.data || {};
         setVideos(data);
@@ -30,30 +30,64 @@ function UserVideos({ user, notify }) {
       }
     };
     fetchVideos();
-  }, [currUser?._id]);
+  }, [currUser?._id, dispatch]);
 
   return (
-    <>
-      {error && (
-        <p className="mb-4 text-red-500 text-center text-sm">{error}</p>
-      )}
-      {!videos.length && (
-        <div className="mt-20 w-full text-center text-3xl font-bold">
-          No Videos yet
+    <div className="w-full flex justify-center px-6">
+      <div className="w-full max-w-7xl">
+        {/* Header */}
+    <div className="mb-10 text-center">
+          <h2 className="text-3xl font-semibold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+            Your Videos
+          </h2>
+          <p className="text-gray-400 text-sm mt-1">
+            Videos you’ve uploaded and published
+          </p>
         </div>
-      )}
-      <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 justify-items-center gap-4 min-h-full w-11/12 m-auto">
-        {videos?.map((video) => (
-          <div
-            key={video._id}
-            className="p-2 items-center my-5 w-3/5 md:w-5/6 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl dark:border-gray-700 dark:bg-gray-800 "
-          >
-            <VideoComponent videofile={video} notify={notify} />
+
+        {error && (
+          <p className="mb-6 text-red-400 text-center text-sm">{error}</p>
+        )}
+
+        {!videos.length && !error && (
+          <div className="mt-28 text-center">
+            <h2 className="text-3xl font-bold text-white">No Videos yet</h2>
+            <p className="text-gray-400 mt-2">
+              This channel hasn’t uploaded any videos.
+            </p>
           </div>
-        ))}
+        )}
+
+        {videos.length > 0 && (
+          <div
+            className="
+            grid gap-8 mt-10
+            grid-cols-1
+            sm:grid-cols-2
+            lg:grid-cols-3
+            
+          "
+          >
+            {videos.map((video) => (
+              <div
+                key={video._id}
+                className="
+                  group
+                  rounded-2xl
+                  overflow-hidden
+                  bg-gradient-to-b from-gray-800/60 to-gray-900/80
+                  backdrop-blur
+                  shadow-md hover:shadow-xl
+                  transition-all duration-300
+                "
+              >
+                <VideoComponent videofile={video} notify={notify} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }
-
 export default UserVideos;

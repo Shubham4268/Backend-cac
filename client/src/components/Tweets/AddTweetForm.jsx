@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom"; // Add this hook
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { handleApiError } from "../../utils/errorHandler.js";
 import { toast, ToastContainer } from "react-toastify";
@@ -11,10 +11,12 @@ function AddTweetForm() {
   const [postData, setPostData] = useState(null);
   const [error, setError] = useState(null);
   const [editing, setEditing] = useState(false);
+
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
   const tweet = useSelector((state) => state.tweet?.tweetData);
+
   const dispatch = useDispatch();
-  const location = useLocation(); // Track the current route
+  const location = useLocation();
 
   useEffect(() => {
     if (tweet) {
@@ -24,10 +26,9 @@ function AddTweetForm() {
     }
   }, [tweet]);
 
-  // Listen for page navigation
   useEffect(() => {
     return () => {
-      dispatch(change(null)); // Reset the state when leaving the page
+      dispatch(change(null));
     };
   }, [dispatch, location]);
 
@@ -44,6 +45,7 @@ function AddTweetForm() {
     const url = editing
       ? `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/${postData?._id}`
       : `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/create-Tweet`;
+
     const method = editing ? "patch" : "post";
 
     try {
@@ -55,11 +57,7 @@ function AddTweetForm() {
       setPostData(editing ? data : data?.tweet);
       setFormData({ content: "" });
 
-      if (editing) {
-        notify("Tweet updated successfully!");
-      } else {
-        notify("Tweet added successfully!");
-      }
+      notify(editing ? "Tweet updated successfully!" : "Tweet added successfully!");
 
       dispatch(change(null));
       setEditing(false);
@@ -75,7 +73,9 @@ function AddTweetForm() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/${postData?._id}`);
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/${postData?._id}`
+      );
       setFormData({ content: "" });
       setEditing(false);
       setPostData(null);
@@ -86,45 +86,83 @@ function AddTweetForm() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-fit">
-      <div className="mb-12 shadow-lg w-2/5 h-2/3 p-5 bg-gray-800 rounded-lg text-white">
-        <ToastContainer />
+    <div className="flex justify-center px-6 py-20">
+      <ToastContainer />
 
-        <h2 className="text-center text-2xl font-bold my-3">What's on your mind?</h2>
+      <div
+        className="
+          w-full max-w-xl
+          bg-gray-800
+          backdrop-blur-xl
+          border border-white/15
+          rounded-2xl
+          shadow-xl
+          px-8 py-7 text-white
+        "
+      >
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-semibold tracking-tight">
+            What’s on your mind?
+          </h2>
+          <p className="text-gray-300 text-sm mt-1">
+            Share something with your followers
+          </p>
+        </div>
 
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {error && (
+          <p className="text-red-400 text-center text-sm mb-3">
+            {error}
+          </p>
+        )}
 
-        <form onSubmit={handleSubmit} className="w-3/4 flex flex-col items-center mx-auto space-y-3">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center space-y-5"
+        >
+          {/* User */}
           {user && (
-            <div className="flex mt-5 self-start">
+            <div className="flex items-center gap-3 self-start">
               <img
                 src={user.avatar}
                 alt={user.fullName}
-                className="w-8 h-8 rounded-full mr-3 object-cover"
+                className="w-9 h-9 rounded-full object-cover border border-white/10"
               />
-              <span className="self-center">{user.fullName}</span>
+              <span className="text-sm text-gray-200 font-medium">
+                {user.fullName}
+              </span>
             </div>
           )}
 
+          {/* View mode */}
           {postData && !editing ? (
-            <div className="w-full flex flex-col items-center">
-              <div className="block w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-500">
-                <div className="font-normal text-gray-700 dark:text-gray-200 h-28 overflow-scroll no-scrollbar">
-                  {postData.content}
-                </div>
+            <div className="w-full flex flex-col items-center space-y-4">
+
+              <div className="w-full p-4 rounded-xl bg-gray-900 border border-white/10 text-gray-200 text-sm leading-relaxed max-h-40 overflow-y-auto no-scrollbar">
+                {postData.content}
               </div>
-              <div className="flex space-x-5">
+
+              <div className="flex gap-4">
                 <button
                   onClick={handleEdit}
                   type="button"
-                  className="mt-4 w-fit rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline focus:outline-indigo-600"
+                  className="
+                    px-5 py-2 rounded-lg
+                    bg-indigo-600 text-white text-sm font-semibold
+                    hover:bg-indigo-500 transition
+                  "
                 >
                   Edit
                 </button>
+
                 <button
                   onClick={handleDelete}
                   type="button"
-                  className="mt-4 w-fit rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline focus:outline-red-600"
+                  className="
+                    px-5 py-2 rounded-lg
+                    bg-red-600 text-white text-sm font-semibold
+                    hover:bg-red-500 transition
+                  "
                 >
                   Delete
                 </button>
@@ -132,19 +170,36 @@ function AddTweetForm() {
             </div>
           ) : (
             <>
+              {/* Input */}
               <textarea
-                placeholder="Content"
+                placeholder="Write something..."
                 name="content"
                 value={formData.content}
                 onChange={handleChange}
                 required
-                className="block w-full text-wrap h-28 max-h-28 rounded-md text-white bg-gray-800 px-3 py-1.5 text-base outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 "
+                className="
+                  w-full min-h-[100px] rounded-lg
+                  bg-gray-900 text-gray-100
+                  px-3.5 py-2 text-sm
+                  border border-white/15
+                  placeholder:text-gray-400
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
+                  transition
+                "
               />
+
+              {/* CTA */}
               <button
                 type="submit"
-                className="mt-4 w-fit rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline focus:outline-indigo-600"
+                className="
+                  px-6 py-2 rounded-lg
+                  bg-indigo-600 text-white text-sm font-semibold
+                  shadow-md 
+                  hover:bg-indigo-500 
+                  transition
+                "
               >
-                {editing ? "Update" : "Post"}
+                {editing ? "Update Tweet" : "Post Tweet"}
               </button>
             </>
           )}

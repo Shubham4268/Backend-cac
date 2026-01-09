@@ -21,7 +21,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
     if (userId) {
         filter.owner = mongoose.Types.ObjectId(userId); // Filter by userId if provided
     }
-
+    console.log("Filter",filter);
+    
     // Count total videos matching the filter
     const totalVideos = await Video.countDocuments(filter);
 

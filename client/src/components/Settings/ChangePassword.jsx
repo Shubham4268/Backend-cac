@@ -2,15 +2,17 @@ import axios from "axios";
 import { useState } from "react";
 import { handleApiError } from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
 import { toast, ToastContainer } from "react-toastify";
-import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { Eye, EyeOff } from "lucide-react";
 
 function ChangePassword() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const collapsed = useSelector((state) => state.navbar.collapsed);
+  const theme = useSelector((state) => state.theme.theme);
   const [formData, setFormData] = useState({
     oldPassword: "",
     newPassword: "",
@@ -22,10 +24,9 @@ function ChangePassword() {
   };
 
   const handleNavigation = () => {
-    // Navigate to "/settings" after 3 seconds
     setTimeout(() => {
       navigate("/home");
-    }, 5000); // 3000ms = 3 seconds
+    }, 5000);
   };
 
   const onSubmit = async (e) => {
@@ -46,56 +47,100 @@ function ChangePassword() {
 
       if (response?.data?.success) {
         setFormData({ oldPassword: "", newPassword: "" });
+        notify("Password changed successfully 🔒");
         handleNavigation();
       }
     } catch (error) {
       handleApiError(error, setError);
     } finally {
-      notify("Password changed successfully")
       dispatch(setLoading(false));
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-screen">
-      <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white">
-      <ToastContainer />
-        <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
-          Change Password
-        </h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form
-          className="w-2/3 h-fit p-5 flex flex-col items-center mx-auto space-y-3"
-          onSubmit={onSubmit}
-        >
-          <InputField
-            placeholder="Current Password"
-            name="oldPassword"
-            value={formData.oldPassword}
-            onChange={onChange}
-          />
-          <InputField
-            placeholder="New Password"
-            name="newPassword"
-            value={formData.newPassword}
-            onChange={onChange}
-          />
+    <div className={`min-h-screen w-full relative overflow-hidden transition-all duration-300 ${
+      collapsed ? "ml-16" : "ml-60"
+    } ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+      <div className="relative flex items-center justify-center min-h-screen px-6 py-24">
+        <ToastContainer />
 
-          <div className="input-group flex flex-col w-full items-center">
-            <button
-              type="submit"
-              className="mt-3 w-fit justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Change
-            </button>
+        {/* Card */}
+        <div
+          className={`
+            w-full max-w-xl
+            rounded-2xl
+            border backdrop-blur-3xl
+            px-8 py-8
+            ${theme === "dark" 
+              ? "bg-slate-800 border-white/10" 
+              : "bg-white border-gray-200 shadow-xl"
+            }
+          `}
+        >
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h2 className={`text-3xl font-semibold tracking-tight bg-clip-text text-transparent ${
+              theme === "dark" 
+                ? "bg-white" 
+                : "bg-gradient-to-r from-gray-900 to-gray-700"
+            }`}>
+              Change Password
+            </h2>
+            <p className={`text-sm mt-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+              Update your account password for better security
+            </p>
           </div>
-        </form>
+
+          {error && (
+            <p className="text-red-400 text-center text-sm mb-4">
+              {error}
+            </p>
+          )}
+
+          <form onSubmit={onSubmit} className="flex flex-col space-y-6">
+            {/* Password fields */}
+            <div className="space-y-3">
+              <InputField
+                placeholder="Current Password"
+                name="oldPassword"
+                value={formData.oldPassword}
+                onChange={onChange}
+                theme={theme}
+              />
+              <InputField
+                placeholder="New Password"
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={onChange}
+                theme={theme}
+              />
+            </div>
+
+            {/* CTA */}
+            <div className="pt-2 flex justify-center">
+              <button
+                type="submit"
+                className="
+                  relative overflow-hidden
+                  px-8 py-2.5 rounded-xl
+                  bg-indigo-600 text-white text-sm font-medium
+                  shadow-lg 
+                  hover:bg-indigo-500 
+                  active:scale-[0.98]
+                  transition
+                "
+              >
+                Change Password
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
 
-const InputField = ({ name, value, onChange, placeholder }) => {
+const InputField = ({ name, value, onChange, placeholder, theme }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -103,7 +148,7 @@ const InputField = ({ name, value, onChange, placeholder }) => {
   };
 
   return (
-    <div className="input-group flex flex-col w-full relative">
+    <div className="w-full relative">
       <input
         placeholder={placeholder}
         type={showPassword ? "text" : "password"}
@@ -111,15 +156,25 @@ const InputField = ({ name, value, onChange, placeholder }) => {
         value={value}
         onChange={onChange}
         required
-        className="mt-2 block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+        className={`
+          w-full rounded-xl
+          px-4 py-2.5 text-sm pr-10
+          border
+          focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
+          transition
+          ${theme === "dark"
+            ? "bg-gray-950/60 text-gray-100 border-white/10 placeholder:text-gray-500"
+            : "bg-gray-50 text-gray-900 border-gray-300 placeholder:text-gray-400"
+          }
+        `}
       />
       {value && (
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute mt-2 inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-200"
+          className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-200 transition"
         >
-          {showPassword ? <BsEyeSlash /> : <BsEye /> }
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       )}
     </div>

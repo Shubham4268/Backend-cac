@@ -14,6 +14,8 @@ function Playlist() {
   const { id } = useParams();
   const notify = (text) => toast(text);
   const dispatch = useDispatch();
+  const collapsed = useSelector((state) => state.navbar.collapsed);
+  const theme = useSelector((state) => state.theme.theme);
 
   useEffect(() => {
     try {
@@ -35,7 +37,7 @@ function Playlist() {
 
   return (
     <>
-      <div className="flex flex-col items-center mt-24 mb-4 ml-56 pt-6 w-full h-full text-white ">
+      <div className="flex flex-col items-center mt-24 mb-4 pt-6 w-full h-full text-white">
         {error && (
           <p className="mb-4 text-red-500 text-center text-sm">{error}</p>
         )}

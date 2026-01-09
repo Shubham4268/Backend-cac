@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { TweetComponent } from "../components";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { handleApiError } from "../utils/errorHandler";
 import { useParams } from "react-router-dom";
 import { setLoading } from "../features/slices/loaderSlice.js";
@@ -13,6 +13,8 @@ function TweetsPage() {
   // const user = useSelector((state) => state.user?.userData?.loggedInUser);
   const { id } = useParams();
   const dispatch = useDispatch();
+  const collapsed = useSelector((state) => state.navbar.collapsed);
+  const theme = useSelector((state) => state.theme.theme);
 
   // Include id as a dependency for fetchTweets
   const fetchTweets = useCallback(async () => {
@@ -40,7 +42,7 @@ function TweetsPage() {
   }, [fetchTweets]);
 
   return (
-    <div className="ml-56 mt-28 text-white w-full h-full">
+    <div className="mt-28 text-white w-full h-full">
       {error && (
         <p className="text-red-500 text-center mb-5">
           {error || "Failed to load tweets"}

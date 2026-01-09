@@ -1,12 +1,15 @@
 export default function VideoFile({ video }) {
-  const { videoFile: url = "", title = "No Title Available" } = video || {};
+  const { videoFile: url = "" } = video || {};
 
   return (
-    <>
-      <video className="object-contain w-full h-full rounded-xl  shadow-xl" controls autoPlay>
-        <source src={url} type="video/mp4" />
-        
-      </video>
-    </>
+    <video
+      className="w-full h-full object-contain bg-black "
+      controls
+      autoPlay
+      controlsList="nodownload"
+      loop
+    >
+      <source src={url} type="video/mp4" />
+    </video>
   );
 }

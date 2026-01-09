@@ -9,7 +9,7 @@ import VideoFile from "./VideoComponents/VideoFile";
 import VideoDetails from "./VideoComponents/VideoDetails";
 import SubscribeButton from "./Common/SubscribeButton";
 import LikeButton from "./Common/LikeButton";
-import VideoComponent from "./VideoComponents/VideoComponent";
+import VideoComponent from "./video/VideoComponent";
 import UserPlaylists from "./Profile/UserPlaylists";
 import UserTweets from "./Profile/UserTweets";
 import UserVideos from "./Profile/UserVideos";

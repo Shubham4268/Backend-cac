@@ -1,0 +1,94 @@
+import { createPortal } from "react-dom";
+
+function PlaylistModal({
+  playlists,
+  selectedPlaylistId,
+  setSelectedPlaylistId,
+  handleAddToPlaylist,
+  newPlaylistName,
+  setNewPlaylistName,
+  handleCreatePlaylist,
+  loading,
+  error,
+  closeModal
+}) {
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeModal();
+      }}
+    >
+      <div 
+        className="bg-white rounded-lg shadow-lg p-6 w-96 dark:bg-gray-800 dark:text-white"
+        onClick={(e) => e.stopPropagation()}
+      >
+
+        <button
+          onClick={closeModal}
+          className="w-full text-sm text-end text-blue-500 hover:underline mb-2"
+        >
+          Close
+        </button>
+
+        <h2 className="text-lg font-semibold mb-4">Select Playlist</h2>
+
+        <div className="mb-4">
+          {playlists.length === 0 ? (
+            <div>No playlists found</div>
+          ) : (
+            <select
+              onChange={(e) => setSelectedPlaylistId(e.target.value)}
+              className="w-full p-2 bg-gray-100 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 "
+              size={5}
+            >
+              {playlists?.map((playlist) => (
+                <option key={playlist?._id} value={playlist?._id}>
+                  {playlist?.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+
+        <button
+          onClick={() => handleAddToPlaylist(selectedPlaylistId)}
+          disabled={!selectedPlaylistId || loading}
+          className="w-full p-2 bg-blue-500 text-white rounded-md disabled:opacity-50"
+        >
+          {loading ? "Adding..." : "Add to Playlist"}
+        </button>
+
+        <h3 className="text-md font-medium mt-4 mb-2">
+          Create New Playlist
+        </h3>
+
+        <div className="flex">
+          <input
+            type="text"
+            value={newPlaylistName}
+            onChange={(e) => setNewPlaylistName(e.target.value)}
+            className="w-10/12 p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 mr-1"
+            placeholder="Enter playlist name"
+          />
+          <button
+            onClick={handleCreatePlaylist}
+            disabled={loading}
+            className={`w-2/12 text-white rounded-md disabled:opacity-50 text-xs font-light hover:font-normal ${
+              loading ? "bg-transparent border" : "bg-blue-500"
+            }`}
+          >
+            {loading ? "Creating..." : "Create"}
+          </button>
+        </div>
+
+        {error && <div className="text-red-500 mt-2">{error}</div>}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+export default PlaylistModal;

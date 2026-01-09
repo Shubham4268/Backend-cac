@@ -5,6 +5,8 @@ import { authSlice } from "../features/slices/authSlice";
 import { tweetSlice } from "../features/slices/tweetSlice";
 import { searchSlice } from "../features/slices/searchSlice";
 import { loaderSlice } from "../features/slices/loaderSlice";
+import { themeSlice } from "../features/slices/themeSlice";
+import { navbarSlice } from "../features/slices/navbarSlice";
 import {
     FLUSH,
     REHYDRATE,
@@ -19,13 +21,15 @@ const rootReducer = combineReducers({
    tweet: tweetSlice.reducer,
    search: searchSlice.reducer,
    loader : loaderSlice.reducer,
+   theme: themeSlice.reducer,
+   navbar: navbarSlice.reducer,
 });
 
 // Persist configuration
 const persistConfig = {
    key: "root",
    storage,
-   whitelist: ["user"], // Persist only the user state
+   whitelist: ["user", "theme"], // Persist user and theme state
 };
 
 // Wrap rootReducer with persistReducer

@@ -24,6 +24,7 @@ import {
   AddTweet,
   Playlist,
   Subscription,
+  About,
 } from "./pages/index.js";
 import { Provider } from "react-redux";
 import { store, persistor } from "./app/store.js";
@@ -46,17 +47,21 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: (
-          <AuthLayout authentication={false}>
-            <Register />
-          </AuthLayout>
-        ),
+        element: <About />,
       },
       {
         path: "/login",
         element: (
           <AuthLayout authentication={false}>
             <Login />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/register",
+        element: (
+          <AuthLayout authentication={false}>
+            <Register />
           </AuthLayout>
         ),
       },
@@ -132,6 +137,10 @@ const router = createBrowserRouter([
             <Subscription />
           </AuthLayout>
         ),
+      },
+      {
+        path: "/about",
+        element: <About />,
       },
       {
         element: <UserTweets />,

@@ -9,7 +9,7 @@ const ShowNavbar = ({ children }) => {
 
   
   useEffect(() => {
-    const noNavbar = ["/login", "/", "/video/:id"];
+    const noNavbar = ["/login", "/register", "/"];
     const shouldHideNavbar = noNavbar.some((route) =>
       matchPath(route, location.pathname)
     );

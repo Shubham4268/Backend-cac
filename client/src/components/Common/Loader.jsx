@@ -1,20 +1,25 @@
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import {FadeLoader} from "react-spinners"
+import { FadeLoader } from "react-spinners";
+import Header from "../Header/Header";
 
 function Loader() {
   const isLoading = useSelector((state) => state.loader.isLoading);
-  
+
   if (!isLoading) return null;
 
-
   return (
-    <div className="ml-52 mt-20 text-white w-full h-screen fixed top-0 left-0 flex items-center justify-center bg-gray-900 z-50">
-      <div className="loader mb-40 mr-60"><FadeLoader color="#3f53d0" /></div>
-    </div>
+    <>
+      {/* <Header /> */}
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-950">
+        {/* Loader card */}
+        <div className="relative flex flex-col items-center gap-6 px-10 py-8 rounded-2xl bg-gray-900 border border-white/10 shadow-2xl">
+          <FadeLoader color="#6366f1" />
+
+          <p className="text-sm tracking-wide text-gray-300">Processing…</p>
+        </div>
+      </div>
+    </>
   );
 }
 
 export default Loader;
-
-

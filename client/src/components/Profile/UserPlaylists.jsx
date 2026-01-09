@@ -8,8 +8,8 @@ import { setLoading } from "../../features/slices/loaderSlice.js";
 function UserPlaylists({ user }) {
   const dispatch = useDispatch();
   const [playlists, setPlaylists] = useState([]);
-  const currUser = user;
   const [error, setError] = useState(null);
+  const currUser = user;
 
   useEffect(() => {
     const fetchPlaylists = async () => {
@@ -18,7 +18,7 @@ function UserPlaylists({ user }) {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/user/${currUser?._id}`
         );
-        setPlaylists(response?.data?.data);
+        setPlaylists(response?.data?.data || []);
       } catch (error) {
         handleApiError(error, setError);
       } finally {
@@ -26,28 +26,55 @@ function UserPlaylists({ user }) {
       }
     };
 
-    fetchPlaylists();
+    if (currUser?._id) fetchPlaylists();
   }, [currUser?._id]);
 
   return (
-    <>
-      
+    <div className="w-full px-6 py-10 text-white">
+
+      {/* Header */}
+    <div className="mb-10 text-center">
+        <h2 className="text-3xl font-semibold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+          Your Playlists
+        </h2>
+        <p className="text-gray-400 text-sm mt-1">
+          Collections you’ve created and saved
+        </p>
+      </div>
+
+      {/* Empty state */}
       {!playlists.length && (
-        <div className="mt-20 w-full text-center text-3xl font-bold">
-          No Playlists yet
+        <div className="mt-24 flex flex-col items-center justify-center text-center">
+          <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-3xl mb-5">
+            🎧
+          </div>
+          <h3 className="text-xl font-semibold text-gray-200">
+            No playlists yet
+          </h3>
+          <p className="text-gray-400 text-sm mt-1 max-w-sm">
+            Create playlists to organize your favorite videos and come back to them anytime.
+          </p>
         </div>
       )}
-      <div className="grid grid-cols-4 justify-items-center gap-2 min-h-full w-full">
-        {playlists?.map((playlist) => (
-          <div
-            key={playlist?._id}
-            className="p-2 items-center my-5 w-3/5 md:w-4/5 border border-gray-500 rounded-lg shadow md:flex-row md:max-w-xl  dark:border-gray-700 dark:bg-gray-800 "
-          >
-            <PlaylistCard playlist={playlist} />
-          </div>
-        ))}
-      </div>
-    </>
+
+      {/* Grid */}
+      {!!playlists.length && (
+        <div
+          className="
+            grid gap-6
+            grid-cols-1
+            sm:grid-cols-2
+            md:grid-cols-3
+            lg:grid-cols-4
+          "
+        >
+          {playlists.map((playlist) => (
+            <PlaylistCard key={playlist?._id} playlist={playlist} />
+          ))}
+        </div>
+      )}
+
+    </div>
   );
 }
 

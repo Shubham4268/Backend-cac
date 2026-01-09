@@ -8,12 +8,7 @@ import { setLoading } from "../features/slices/loaderSlice.js";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 const Register = () => {
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevState) => !prevState);
-  };
-  
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
@@ -23,132 +18,143 @@ const Register = () => {
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
 
-  const onChange = (e) => {
+  const togglePasswordVisibility = () =>
+    setShowPassword((prev) => !prev);
+
+  const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Clear previous errors
+    setError(null);
 
     try {
-      dispatch(setLoading(true))
+      dispatch(setLoading(true));
+
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/register`,
         formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
-
 
       if (response.data.success) {
         const { email, password } = formData;
-        const loginData = { email, password };
+
         const loggedInUser = await axios.post(
           `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/login`,
-          loginData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+          { email, password },
+          { headers: { "Content-Type": "application/json" } }
         );
-        const { data: response } = loggedInUser || {};
-        const { success } = response || false;
-        const { data } = response || {};
-        // const { accessToken } = data || "";
 
-        if (success) {
-          dispatch(login(data));
+        if (loggedInUser?.data?.success) {
+          dispatch(login(loggedInUser.data.data));
           navigate("/home");
-          setFormData({ fullName: "", username: "", email: "", password: "" }); // Reset form state
+          setFormData({
+            fullName: "",
+            username: "",
+            email: "",
+            password: "",
+          });
         }
       }
     } catch (err) {
       handleApiError(err, setError);
-    } finally{
-      dispatch(setLoading(false))
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-screen ">
-      <div className="mt-28 mb-12 shadow-lg w-1/3 p-5 bg-gray-800 rounded-lg text-white ">
-        <h2 className="mt-6 mb-3 text-center text-2xl/9 font-bold tracking-tight text-white">
-          Sign in to your account
-        </h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form
-          className="w-2/3 h-fit p-5 flex flex-col items-center mx-auto space-y-3 "
-          onSubmit={onSubmit}
-        >
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-950 text-white relative overflow-hidden">
+
+      {/* ambient glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.15),transparent_60%)]" />
+
+      <div className="relative w-full max-w-md rounded-2xl bg-gray-900/80 backdrop-blur-xl border border-white/10 shadow-2xl p-8">
+
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+            Create your account
+          </h2>
+          <p className="text-gray-400 text-sm mt-1">
+            Join and start building your channel
+          </p>
+        </div>
+
+        {error && (
+          <p className="mb-4 text-red-400 text-center text-sm">
+            {error}
+          </p>
+        )}
+
+        {/* Form */}
+        <form onSubmit={onSubmit} className="space-y-4">
+
           <InputField
-            placeholder="Full Name"
-            type="text"
+            placeholder="Full name"
             name="fullName"
             value={formData.fullName}
             onChange={onChange}
           />
+
           <InputField
             placeholder="Username"
-            type="text"
             name="username"
             value={formData.username}
             onChange={onChange}
           />
+
           <InputField
-            placeholder="Email"
+            placeholder="Email address"
             type="email"
             name="email"
             value={formData.email}
             onChange={onChange}
           />
-          
-          <div className=" relative w-full">
+
+          {/* Password */}
+          <div className="relative">
             <input
-              id="password"
               name="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
-              type={showPassword ? "text" : "password"} // Toggle type
               value={formData.password}
               required
-              autoComplete="current-password"
-              className="mt-2 block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
               onChange={onChange}
+              className="w-full rounded-lg bg-gray-950 px-3.5 py-2.5 text-sm border border-white/10 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition pr-10"
             />
-            {formData.password && ( // Show button only if password is not empty
+
+            {formData.password && (
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="absolute mt-2 inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-200"
+                className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-white transition"
               >
-                {showPassword ? <BsEyeSlash /> : <BsEye /> }
+                {showPassword ? <BsEyeSlash /> : <BsEye />}
               </button>
             )}
           </div>
 
-          <div className="input-group flex flex-col w-full items-center">
-            <button
-              type="submit"
-              className="mt-3 w-fit justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Register
-            </button>
-          </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full mt-2 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 hover:shadow-indigo-500/40 transition"
+          >
+            Create account
+          </button>
         </form>
-        <p className="text-center text-sm/6 text-gray-500">
+
+        {/* Footer */}
+        <p className="mt-8 text-center text-sm text-gray-400">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="font-semibold text-indigo-600 hover:text-indigo-500"
+            className="font-semibold text-indigo-400 hover:text-indigo-300 transition"
           >
-            Login
+            Log in
           </Link>
         </p>
       </div>
@@ -156,18 +162,16 @@ const Register = () => {
   );
 };
 
-const InputField = ({ type, name, value, onChange, placeholder }) => (
-  <div className="input-group flex flex-col w-full">
-    <input
-      placeholder={placeholder}
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      required
-      className="mt-2 block w-full rounded-md text-white bg-gray-800 px-3 py-1.5 text-base  outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-    />
-  </div>
+const InputField = ({ type = "text", name, value, onChange, placeholder }) => (
+  <input
+    placeholder={placeholder}
+    type={type}
+    name={name}
+    value={value}
+    onChange={onChange}
+    required
+    className="w-full rounded-lg bg-gray-950 px-3.5 py-2.5 text-sm border border-white/10 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition"
+  />
 );
 
 export default Register;

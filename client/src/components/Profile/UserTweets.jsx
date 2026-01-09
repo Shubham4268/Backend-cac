@@ -9,7 +9,9 @@ function UserTweets({ user }) {
   const [tweetData, setTweetData] = useState(null);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const loggedInUser = useSelector((state) => state.user?.userData?.loggedInUser);
+  const loggedInUser = useSelector(
+    (state) => state.user?.userData?.loggedInUser
+  );
   const activeUser = user || loggedInUser;
   const id = activeUser?._id;
 
@@ -38,29 +40,67 @@ function UserTweets({ user }) {
   }, [fetchTweets]);
 
   return (
-    <div className="text-white w-full h-full">
-      {tweetData && !tweetData.userTweets?.length && (
-        <div className="mt-20 w-full text-center text-3xl font-bold">
-          No Tweets yet
-        </div>
-      )}
-      {error && (
-        <p className="text-red-500 text-center mb-5">
-          {error || "Failed to load tweets"}
-        </p>
-      )}
-      {tweetData?.userTweets?.map((tweet) => (
-        <div key={tweet._id} className="mb-8">
-          <TweetComponent
-            tweet={tweet}
-            tweetData={tweetData}
-            refreshTweets={fetchTweets}
-          />
-        </div>
-      ))}
+  <div className="w-full flex flex-col items-center">
+    
+    {/* Header */}
+    <div className="mb-10 text-center">
+      <h2 className="text-3xl font-semibold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+        Your Tweets
+      </h2>
+      <p className="text-gray-400 text-sm mt-1">
+        Thoughts, updates, and moments you’ve shared
+      </p>
     </div>
-  );
-}
 
+    {/* Empty state */}
+    {tweetData && !tweetData.userTweets?.length && (
+      <div className="mt-20 text-center">
+        <h2 className="text-3xl font-bold text-white">No posts yet</h2>
+        <p className="text-gray-400 mt-2">
+          This channel hasn’t shared anything yet.
+        </p>
+      </div>
+    )}
+
+    {/* Error */}
+    {error && (
+      <p className="text-red-500 text-center mt-10">
+        {error || "Failed to load tweets"}
+      </p>
+    )}
+
+    {/* Feed */}
+    {tweetData?.userTweets?.length > 0 && (
+      <div className="w-full max-w-2xl flex flex-col gap-8">
+        {tweetData.userTweets.map((tweet) => (
+          <div
+            key={tweet._id}
+            className="
+              relative
+              bg-gradient-to-b from-gray-800/80 to-gray-900/90
+              backdrop-blur
+              rounded-3xl
+              px-6 py-5
+              shadow-lg
+              hover:shadow-xl
+              transition-all
+            "
+          >
+            <span className="absolute left-0 top-6 bottom-6 w-[3px] rounded-full bg-gradient-to-b from-indigo-500 to-cyan-400" />
+
+            <TweetComponent
+              tweet={tweet}
+              tweetData={tweetData}
+              refreshTweets={fetchTweets}
+            />
+          </div>
+        ))}
+      </div>
+    )}
+
+  </div>
+);
+
+}
 
 export default UserTweets;

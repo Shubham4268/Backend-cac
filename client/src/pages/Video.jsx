@@ -5,7 +5,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { setLoading } from "../features/slices/loaderSlice.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 function Video() {
   const [video, setVideo] = useState(null);
@@ -13,6 +13,7 @@ function Video() {
   const { id } = useParams();
   const notify = (text) => toast(text);
   const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme.theme);
 
   useEffect(() => {
     dispatch(setLoading(true));
@@ -43,45 +44,45 @@ function Video() {
     fetchVideo();
   }, [id]);
 
- return (
-  <div className="mt-24 px-6 lg:px-12 max-w-[1600px] mx-auto">
-    <ToastContainer />
+  return (
+    <div className="mt-24 px-6 lg:px-12 max-w-[1600px] mx-auto">
+      <ToastContainer />
 
-    {error && (
-      <p className="text-red-500 text-center mb-5">
-        {error || "Failed to load video"}
-      </p>
-    )}
+      {error && (
+        <p className="text-red-500 text-center mb-5">
+          {error || "Failed to load video"}
+        </p>
+      )}
 
-    {/* Equal height grid */}
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+      {/* Equal height grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
 
-      {/* 🎥 Video stage */}
-      <div className="lg:col-span-2 flex">
-        <div className="relative w-full bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video ml-10">
+        {/* 🎥 Video stage */}
+        <div className="lg:col-span-2 flex">
+          <div className="relative w-full h-[500px] bg-black rounded-2xl overflow-hidden shadow-2xl ml-10 flex items-center justify-center">
+            {video ? (
+              <VideoFile video={video} />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-400">
+                Loading video...
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 📦 Details — forced to same height */}
+        <div className="lg:col-span-1 flex">
           {video ? (
-            <VideoFile video={video} />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-400">
-              Loading video...
+            <div className="w-[450px] h-[500px]">
+              <VideoDetails video={video} notify={notify} />
             </div>
+          ) : (
+            <div className={`text-gray-400 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>Loading details...</div>
           )}
         </div>
       </div>
-
-      {/* 📦 Details — forced to same height */}
-      <div className="lg:col-span-1 flex">
-        {video ? (
-          <div className="w-full h-full">
-            <VideoDetails video={video} notify={notify} />
-          </div>
-        ) : (
-          <div className="text-gray-400">Loading details...</div>
-        )}
-      </div>
     </div>
-  </div>
-);
+  );
 
 }
 

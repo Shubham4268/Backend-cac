@@ -20,9 +20,16 @@ function Profile() {
   const [activeDiv, setActiveDiv] = useState(1);
   const notify = (text) => toast(text);
   const dispatch = useDispatch();
+  const currUser = useSelector((state) => state.user.userData);
+  // console.log("currUser: ",currUser.loggedInUser._id);
+  // console.log("user: ",user._id);
+  console.log(currUser?.loggedInUser?._id == user?._id);
+
+
 
   // ✅ already there, now we will USE it
   const collapsed = useSelector((state) => state.navbar.collapsed);
+  const theme = useSelector((state) => state.theme.theme);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -89,7 +96,8 @@ function Profile() {
 
   if (!user) {
     return (
-      <div className="text-white mt-24 text-center">
+      <div className={`mt-24 text-center ${theme === "dark" ? "text-white" : "text-gray-900"
+        }`}>
         Loading profile...
       </div>
     );
@@ -99,16 +107,19 @@ function Profile() {
     // ✅ THIS is the important part
     <div
       className={`
-        mt-16 min-h-screen text-white
-        bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950
-        transition-all duration-300 ease-in-out
+        mt-16 min-h-screen transition-all duration-300 ease-in-out
         ${collapsed ? "ml-16 w-[calc(100%-4rem)]" : "ml-60 w-full"}
+        ${theme === "dark"
+          ? "text-white bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950"
+          : "text-gray-900 bg-gradient-to-b from-gray-50 via-white to-gray-50"
+        }
       `}
     >
       <ToastContainer className="z-10" />
 
       {/* Hero */}
-      <div className="relative overflow-hidden border-b border-white/10">
+      <div className={`relative overflow-hidden border-b ${theme === "dark" ? "border-white/10" : "border-gray-200"
+        }`}>
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 via-fuchsia-500/10 to-cyan-500/10 blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto px-10 py-14 flex items-center gap-10">
@@ -125,9 +136,10 @@ function Profile() {
             <h1 className="text-5xl font-bold tracking-tight">
               {user?.fullName}
             </h1>
-            <p className="text-gray-400">@{user?.username}</p>
+            <p className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>@{user?.username}</p>
 
-            <div className="flex items-center gap-4 text-gray-300 text-sm mt-1">
+            <div className={`flex items-center gap-4 text-sm mt-1 ${theme === "dark" ? "text-gray-300" : "text-gray-700"
+              }`}>
               <span>{subscribers} subscribers</span>
               <span>•</span>
               <span>{channelInfo?.getTotalVideos || 0} videos</span>
@@ -144,17 +156,19 @@ function Profile() {
       </div>
 
       {/* Tabs */}
-      <div className="mt-4 border-b border-white/10">
+      <div className={`mt-4 border-b ${theme === "dark" ? "border-white/10" : "border-gray-200"
+        }`}>
         <div className="max-w-7xl mx-auto px-10 flex justify-evenly py-3">
           <SectionTab label="Videos" active={activeDiv === 1} onClick={() => setActiveDiv(1)} />
           <SectionTab label="Tweets" active={activeDiv === 2} onClick={() => setActiveDiv(2)} />
-          <SectionTab label="Playlists" active={activeDiv === 3} onClick={() => setActiveDiv(3)} />
+          {currUser?.loggedInUser?._id == user?._id && <SectionTab label="Playlists" active={activeDiv === 3} onClick={() => setActiveDiv(3)} />}
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-10 py-10">
-        <div className="bg-gray-900/60 rounded-3xl p-8">
+        <div className={`rounded-3xl p-8 ${theme === "dark" ? "bg-gray-900/60" : "bg-white/80 border border-gray-200"
+          }`}>
           {activeDiv === 1 && <UserVideos user={user} notify={notify} />}
           {activeDiv === 2 && <UserTweets user={user} />}
           {activeDiv === 3 && <UserPlaylists user={user} />}
@@ -164,21 +178,28 @@ function Profile() {
   );
 }
 
-const SectionTab = ({ label, active, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`
-      relative px-8 py-3 rounded-full text-sm font-semibold tracking-wide
-      transition-all duration-200
-      ${
-        active
-          ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md"
-          : "text-gray-300 hover:bg-white/5 hover:text-white"
-      }
-    `}
-  >
-    {label}
-  </button>
-);
+const SectionTab = ({ label, active, onClick }) => {
+  const theme = useSelector((state) => state.theme.theme);
+
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        relative px-8 py-3 rounded-full text-sm font-semibold tracking-wide
+        transition-all duration-200
+        ${active
+          ? theme === "dark"
+            ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md"
+            : "bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-sm"
+          : theme === "dark"
+            ? "text-gray-300 hover:bg-white/5 hover:text-white"
+            : "text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+        }
+      `}
+    >
+      {label}
+    </button>
+  );
+};
 
 export default Profile;

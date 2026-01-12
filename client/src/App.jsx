@@ -10,14 +10,19 @@ function App() {
   const theme = useSelector((state) => state.theme.theme);
 
   return (
-    <div className={`w-full flex flex-row font-sans min-h-screen ${
-      theme === 'dark' 
-        ? 'bg-gray-900 text-white' 
-        : 'bg-gradient-to-b from-gray-50 to-white text-gray-900'
-    }`}>
-      <Header />
-      <Outlet />
-    </div>
+    <>
+      <div
+        className={`w-full flex flex-row font-sans min-h-screen ${
+          theme === "dark"
+            ? "bg-gray-900 text-white"
+            : "bg-gradient-to-b from-gray-200 to-white text-gray-900"
+        }`}
+      >
+        <Header />
+        <Outlet />
+      </div>
+      <Footer />
+    </>
   );
 }
 

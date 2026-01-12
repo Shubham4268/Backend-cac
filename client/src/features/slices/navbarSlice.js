@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  collapsed: false,
+  collapsed: true,
 };
 
 const navbarSlice = createSlice({

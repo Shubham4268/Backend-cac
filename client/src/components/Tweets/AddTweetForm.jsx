@@ -14,6 +14,7 @@ function AddTweetForm() {
 
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
   const tweet = useSelector((state) => state.tweet?.tweetData);
+  const theme = useSelector((state) => state.theme.theme);
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -90,22 +91,23 @@ function AddTweetForm() {
       <ToastContainer />
 
       <div
-        className="
+        className={`
           w-full max-w-xl
-          bg-gray-800
           backdrop-blur-xl
-          border border-white/15
-          rounded-2xl
-          shadow-xl
-          px-8 py-7 text-white
-        "
+          border rounded-2xl shadow-xl
+          px-8 py-7 transition-colors
+          ${theme === "dark"
+            ? "bg-gray-800 border-white/15 text-white"
+            : "bg-white border-gray-200 text-gray-900"
+          }
+        `}
       >
         {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-3xl font-semibold tracking-tight">
             What’s on your mind?
           </h2>
-          <p className="text-gray-300 text-sm mt-1">
+          <p className={`${theme === "dark" ? "text-gray-300" : "text-gray-500"} text-sm mt-1`}>
             Share something with your followers
           </p>
         </div>
@@ -128,7 +130,7 @@ function AddTweetForm() {
                 alt={user.fullName}
                 className="w-9 h-9 rounded-full object-cover border border-white/10"
               />
-              <span className="text-sm text-gray-200 font-medium">
+              <span className={`text-sm font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
                 {user.fullName}
               </span>
             </div>
@@ -138,7 +140,7 @@ function AddTweetForm() {
           {postData && !editing ? (
             <div className="w-full flex flex-col items-center space-y-4">
 
-              <div className="w-full p-4 rounded-xl bg-gray-900 border border-white/10 text-gray-200 text-sm leading-relaxed max-h-40 overflow-y-auto no-scrollbar">
+              <div className={`w-full p-4 rounded-xl text-sm leading-relaxed max-h-40 overflow-y-auto no-scrollbar border ${theme === "dark" ? "bg-gray-900 border-white/10 text-gray-200" : "bg-gray-50 border-gray-200 text-gray-800"}`}>
                 {postData.content}
               </div>
 
@@ -177,15 +179,16 @@ function AddTweetForm() {
                 value={formData.content}
                 onChange={handleChange}
                 required
-                className="
+                className={`
                   w-full min-h-[100px] rounded-lg
-                  bg-gray-900 text-gray-100
                   px-3.5 py-2 text-sm
-                  border border-white/15
-                  placeholder:text-gray-400
+                  border transition
                   focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
-                  transition
-                "
+                  ${theme === "dark"
+                    ? "bg-gray-900 text-gray-100 border-white/15 placeholder:text-gray-400"
+                    : "bg-gray-50 text-gray-900 border-gray-300 placeholder:text-gray-500"
+                  }
+                `}
               />
 
               {/* CTA */}

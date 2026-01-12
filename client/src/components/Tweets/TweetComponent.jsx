@@ -6,7 +6,7 @@ import { change } from "../../features/slices/tweetSlice";
 import { handleApiError } from "../../utils/errorHandler";
 import { toast, ToastContainer } from "react-toastify";
 
-function TweetComponent({ tweet, tweetData,refreshTweets }) {
+function TweetComponent({ tweet, tweetData, refreshTweets }) {
   const [error, setError] = useState(null);
   const usersTweetData = tweetData;
   const userTweet = tweet;
@@ -17,9 +17,10 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false); // For confirmation modal state
 
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
+  const theme = useSelector((state) => state.theme.theme);
   const isCurrentUser = user?._id === usersTweetData._id;
 
-  const onEdit = ()=>{
+  const onEdit = () => {
     dispatch(change(tweet))
     navigate("/addTweet")
   }
@@ -35,7 +36,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
       handleApiError(error, setError);
     }
   };
-  
+
 
   const formatDate = (date) => {
     if (!date) return "Unknown Date";
@@ -63,7 +64,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
   return (
     <div className="flex flex-col w-5/6 m-auto h-fit px-5 pb-5 rounded-lg">
       {error && <p className="text-red-500 text-center">{error}</p>}
-      <ToastContainer/>
+      <ToastContainer />
       <div className="flex justify-between mt-5">
         <div className="flex self-start">
           <img
@@ -79,7 +80,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
             <div>
               <button
                 onClick={toggleDropdown}
-                className="inline-flex ml-4 p-2 text-sm font-medium text-gray-900 rounded-full hover:bg-gray-100 dark:text-white dark:hover:bg-gray-800"
+                className={`inline-flex ml-4 p-2 text-sm font-medium rounded-full ${theme === "dark" ? "text-white hover:bg-gray-800" : "text-gray-900 hover:bg-gray-100"}`}
                 type="button"
               >
                 <svg
@@ -93,13 +94,13 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
                 </svg>
               </button>
               {isDropdownOpen && (
-                <div className="absolute z-10 right-5 bg-white divide-y divide-gray-100 rounded-lg shadow w-20 dark:bg-gray-700">
-                  <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                <div className={`absolute z-10 right-5 divide-y divide-gray-100 rounded-lg shadow w-20 ${theme === "dark" ? "bg-gray-800" : "bg-white border border-gray-200"}`}>
+                  <ul className={`py-2 text-sm ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
                     <li>
                       <a
-                      onClick={onEdit}
+                        onClick={onEdit}
                         href="#"
-                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        className={`block px-4 py-2 ${theme === "dark" ? "hover:bg-gray-700 hover:text-white" : "hover:bg-gray-100"}`}
                       >
                         Edit
                       </a>
@@ -107,7 +108,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
                     <li>
                       <a
                         onClick={confirmDelete}
-                        className="block px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        className={`block px-4 py-2 cursor-pointer ${theme === "dark" ? "hover:bg-gray-700 hover:text-white" : "hover:bg-gray-100"}`}
                       >
                         Delete
                       </a>
@@ -120,13 +121,13 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
         </div>
       </div>
       {isConfirmingDelete && (
-        <div className="fixed inset-0 flex items-center justify-center z-20  bg-gray-800 bg-opacity-90 ">
-          <div className="bg-gray-900 p-5 rounded-lg w-1/3 border border-gray-600 shadow-2xl">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
+          <div className={`p-5 rounded-lg w-1/3 border shadow-2xl ${theme === "dark" ? "bg-gray-900 border-gray-700 text-white" : "bg-white border-gray-200 text-gray-900"}`}>
             <h3 className="text-xl mb-4">Are you sure you want to delete this tweet?</h3>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={cancelDelete}
-                className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400"
+                className={`px-4 py-2 rounded-md ${theme === "dark" ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-gray-200 hover:bg-gray-300 text-gray-800"}`}
               >
                 Cancel
               </button>
@@ -140,7 +141,7 @@ function TweetComponent({ tweet, tweetData,refreshTweets }) {
           </div>
         </div>
       )}
-      {<div className="text-white ml-5 mt-2">
+      {<div className={`ml-5 mt-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
         {userTweet?.content}
       </div>}
     </div>

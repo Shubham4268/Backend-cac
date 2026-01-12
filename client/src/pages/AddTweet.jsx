@@ -7,12 +7,11 @@ function AddTweet() {
 
   return (
     <>
-    <div className={`mt-28 text-white w-full h-screen transition-all duration-300 ${
-      collapsed ? 'ml-16' : 'ml-60'
-    }`} >
+      <div className={`mt-28 text-white w-full h-screen transition-all duration-300 ${collapsed ? 'ml-16' : 'ml-60'
+        }`} >
         <AddTweetForm />
-    </div>
-      
+      </div>
+
     </>
   );
 }

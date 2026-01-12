@@ -133,9 +133,8 @@ function Home() {
       <Header onSearch={handleSearch} />
       <Loader />
       <div
-        className={`flex flex-col items-center mt-24 mb-4 pt-6 w-full h-full transition-all duration-300 ${
-          collapsed ? "ml-16" : "ml-60"
-        } ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+        className={`flex flex-col items-center mt-24 mb-4 pt-6 w-full h-full transition-all duration-300 ${collapsed ? "ml-16" : "ml-60"
+          } ${theme === "dark" ? "text-white" : "text-gray-900"}`}
       >
         <ToastContainer />
 
@@ -171,71 +170,59 @@ function Home() {
 
         {/* Videos Grid */}
         {!error && resultType === "videos" && videos.length > 0 && (
-          <div className={`grid gap-8 min-h-full w-full px-6 ${
-            collapsed ? "grid-cols-4" : "grid-cols-3 "
-          }`}>
+          <div className={`grid gap-8 min-h-full w-full px-6 ${collapsed ? "grid-cols-4" : "grid-cols-3 "
+            }`}>
             {videos?.map((video) => (
               <div
                 key={video?._id}
-                className={`max-w-xs mx-auto w-full ${
-            collapsed ? "" : "scale-110 my-3"
-          }`}>
+                className={`max-w-xs mx-auto w-full ${collapsed ? "" : "scale-110 my-3"
+                  }`}>
                 <VideoComponent videofile={video} notify={notify} />
               </div>
             ))}
           </div>
         )}
 
-        {/* Users Grid */}
-        {!error && resultType === "users" && users.length > 0 && (
-          <div className={`grid gap-6 min-h-full w-full px-6 ${
-            collapsed ? "grid-cols-4" : "grid-cols-3"
-          }`}>
-            {users?.map((user) => (
-              <div
-                key={user?._id}
-                className="max-w-sm mx-auto w-full"
-              >
-                <UserCard user={user} />
-              </div>
-            ))}
+        {!error && videos.length > 0 && (
+          <div className="mt-16 flex justify-center items-center gap-6">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePagination("prev")}
+              className={`
+                      px-4 py-2 rounded-xl border transition disabled:opacity-40
+                      ${theme === "dark"
+                  ? "bg-gray-900 border-gray-800 hover:bg-gray-800 text-white"
+                  : "bg-white border-gray-300 hover:bg-gray-50 text-gray-700"
+                }
+                    `}
+            >
+              Previous
+            </button>
+
+            <p className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"} text-sm`}>
+              Page{" "}
+              <span className={`${theme === "dark" ? "text-white" : "text-gray-900"} font-medium`}>{currentPage}</span>{" "}
+              of{" "}
+              <span className={`${theme === "dark" ? "text-white" : "text-gray-900"} font-medium`}>
+                {Math.ceil(totalVideos / limit)}
+              </span>
+            </p>
+
+            <button
+              disabled={currentPage * limit >= totalVideos}
+              onClick={() => handlePagination("next")}
+              className={`
+                      px-4 py-2 rounded-xl border transition disabled:opacity-40
+                      ${theme === "dark"
+                  ? "bg-gray-900 border-gray-800 hover:bg-gray-800 text-white"
+                  : "bg-white border-gray-300 hover:bg-gray-50 text-gray-700"
+                }
+                    `}
+            >
+              Next
+            </button>
           </div>
         )}
-
-        {!error && videos.length > 0 && (
-              <div className="mt-16 flex justify-center items-center gap-6">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => handlePagination("prev")}
-                  className="
-                    px-4 py-2 rounded-xl bg-gray-900 border border-gray-800
-                    hover:bg-gray-800 transition disabled:opacity-40
-                  "
-                >
-                  Previous
-                </button>
-
-                <p className="text-gray-400 text-sm">
-                  Page{" "}
-                  <span className="text-white font-medium">{currentPage}</span>{" "}
-                  of{" "}
-                  <span className="text-white font-medium">
-                    {Math.ceil(totalVideos / limit)}
-                  </span>
-                </p>
-
-                <button
-                  disabled={currentPage * limit >= totalVideos}
-                  onClick={() => handlePagination("next")}
-                  className="
-                    px-4 py-2 rounded-xl bg-gray-900 border border-gray-800
-                    hover:bg-gray-800 transition disabled:opacity-40
-                  "
-                >
-                  Next
-                </button>
-              </div>
-            )}
       </div>
     </>
   );

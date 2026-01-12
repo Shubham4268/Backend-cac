@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { handleApiError } from "../utils/errorHandler";
 import { login } from "../features/slices/authSlice.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../features/slices/loaderSlice.js";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 
@@ -13,6 +13,7 @@ const Login = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = useSelector((state) => state.theme.theme);
 
   const togglePasswordVisibility = () =>
     setShowPassword((prev) => !prev);
@@ -58,19 +59,19 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-950 text-white relative overflow-hidden">
+    <div className={`min-h-screen w-full flex items-center justify-center relative overflow-hidden ${theme === "dark" ? "bg-gradient-to-b from-gray-900 to-gray-950 text-white" : "bg-gradient-to-b from-gray-50 to-white text-gray-900"}`}>
 
       {/* ambient background glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.15),transparent_60%)]" />
+      <div className={`absolute inset-0 bg-[radial-gradient(circle_at_top,${theme === "dark" ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.1)"},transparent_60%)]`} />
 
-      <div className="relative w-full max-w-md rounded-2xl bg-gray-900/80 backdrop-blur-xl border border-white/10 shadow-2xl p-8">
+      <div className={`relative w-full max-w-md rounded-2xl backdrop-blur-xl border shadow-2xl p-8 ${theme === "dark" ? "bg-gray-900/80 border-white/10" : "bg-white/80 border-gray-200"}`}>
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+          <h2 className={`text-3xl font-bold tracking-tight bg-clip-text text-transparent ${theme === "dark" ? "bg-gradient-to-r from-white to-gray-400" : "bg-gradient-to-r from-gray-900 to-gray-700"}`}>
             Welcome back
           </h2>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"} text-sm mt-1`}>
             Log in to continue to your account
           </p>
         </div>
@@ -86,7 +87,7 @@ const Login = () => {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className={`block text-sm font-medium mb-1 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
               Email address
             </label>
             <input
@@ -96,14 +97,14 @@ const Login = () => {
               value={formData.email}
               onChange={onChange}
               placeholder="you@example.com"
-              className="w-full rounded-lg bg-gray-950 px-3.5 py-2.5 text-sm border border-white/10 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition"
+              className={`w-full rounded-lg px-3.5 py-2.5 text-sm border focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition ${theme === "dark" ? "bg-gray-950 border-white/10 placeholder:text-gray-500" : "bg-gray-50 border-gray-300 placeholder:text-gray-400"}`}
             />
           </div>
 
           {/* Password */}
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="block text-sm font-medium text-gray-300">
+              <label className={`block text-sm font-medium ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
                 Password
               </label>
               <span className="text-xs text-indigo-400 hover:text-indigo-300 cursor-pointer">
@@ -119,7 +120,7 @@ const Login = () => {
                 value={formData.password}
                 onChange={onChange}
                 placeholder="••••••••"
-                className="w-full rounded-lg bg-gray-950 px-3.5 py-2.5 text-sm border border-white/10 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition pr-10"
+                className={`w-full rounded-lg px-3.5 py-2.5 text-sm border focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition pr-10 ${theme === "dark" ? "bg-gray-950 border-white/10 placeholder:text-gray-500" : "bg-gray-50 border-gray-300 placeholder:text-gray-400"}`}
               />
 
               {formData.password && (
@@ -144,7 +145,7 @@ const Login = () => {
         </form>
 
         {/* Footer */}
-        <p className="mt-8 text-center text-sm text-gray-400">
+        <p className={`mt-8 text-center text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
           Don’t have an account?{" "}
           <Link
             to="/register"

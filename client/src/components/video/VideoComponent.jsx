@@ -84,8 +84,8 @@ function VideoComponent({ videofile, notify }) {
       console.error("Error adding video to playlist:", err);
       setError(
         err.response?.data?.message ||
-          err.message ||
-          "Failed to add video to playlist"
+        err.message ||
+        "Failed to add video to playlist"
       );
     }
   }, [video?._id, notify]);
@@ -151,147 +151,146 @@ function VideoComponent({ videofile, notify }) {
     [video?.createdAt]
   );
 
- return (
-  <Link to={to} className="group" onClick={handleVideoClick}>
-    <div className={`
+  return (
+    <Link to={to} className="group" onClick={handleVideoClick}>
+      <div className={`
       relative rounded-2xl overflow-hidden
       shadow-lg hover:shadow-2xl
       transition-all duration-300
-      ${theme === "dark" ? "bg-gray-800" : "bg-white border border-gray-200"}
+      ${theme === "dark" ? "bg-gray-800" : "bg-white border border-gray-200 shadow-lg"}
     `}>
 
-      {/* Thumbnail */}
-      <div className="relative aspect-video overflow-hidden">
-        <img
-          loading="lazy"
-          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-          src={video?.thumbnail}
-          alt={video?.title || "video thumbnail"}
-        />
+        {/* Thumbnail */}
+        <div className="relative aspect-video overflow-hidden">
+          <img
+            loading="lazy"
+            className="object-contain bg-black  w-full h-full group-hover:scale-105 transition-transform duration-500"
+            src={video?.thumbnail}
+            alt={video?.title || "video thumbnail"}
+          />
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-80" />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-80" />
 
-        {/* Duration */}
-        <span className="
+          {/* Duration */}
+          <span className="
           absolute bottom-2 right-2 
           bg-black/80 backdrop-blur px-2.5 py-1 rounded-lg
           text-xs font-medium text-white tracking-wide
         ">
-          {formattedDuration}
-        </span>
-      </div>
+            {formattedDuration}
+          </span>
+        </div>
 
-      {/* Content */}
-      <div className="p-4 flex gap-3">
+        {/* Content */}
+        <div className="p-4 flex gap-3">
 
-        {/* Avatar */}
-        {showProfile && (
-          <Link to={`/profile/${owner?.username}`} onClick={(e) => e.stopPropagation()}>
-            <img
-              src={owner?.avatar}
-              alt={owner?.fullName}
-              className="
+          {/* Avatar */}
+          {showProfile && (
+            <Link to={`/profile/${owner?.username}`} onClick={(e) => e.stopPropagation()}>
+              <img
+                src={owner?.avatar}
+                alt={owner?.fullName}
+                className="
                 w-10 h-10 rounded-full object-cover
                 hover:scale-105 transition
               "
-            />
-          </Link>
-        )}
+              />
+            </Link>
+          )}
 
-        {/* Text */}
-        <div className="flex-1 min-w-0">
+          {/* Text */}
+          <div className="flex-1 min-w-0">
 
-          <p className={`
+            <p className={`
             font-semibold leading-snug line-clamp-2
             group-hover:text-blue-400 transition
             ${theme === "dark" ? "text-white" : "text-gray-900"}
           `}>
-            {video?.title}
-          </p>
+              {video?.title}
+            </p>
 
-          {showProfile && (
-            <Link
-              to={`/profile/${owner?.username}`}
-              onClick={(e) => e.stopPropagation()}
-              className="inline-block mt-1"
-            >
-              <p className={`text-sm hover:text-gray-300 ${
-                theme === "dark" ? "text-gray-400" : "text-gray-600"
+            {showProfile && (
+              <Link
+                to={`/profile/${owner?.username}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-block mt-1"
+              >
+                <p className={`text-sm hover:text-gray-300 ${theme === "dark" ? "text-gray-400" : "text-gray-600"
+                  }`}>
+                  {owner?.fullName}
+                </p>
+              </Link>
+            )}
+
+            <div className={`flex items-center gap-2 text-xs mt-1 ${theme === "dark" ? "text-gray-500" : "text-gray-600"
               }`}>
-                {owner?.fullName}
-              </p>
-            </Link>
-          )}
+              <span>
+                {video?.views === 0
+                  ? "no views"
+                  : video?.views < 2
+                    ? `${video?.views} view`
+                    : `${video?.views} views`}
+              </span>
+              <span>•</span>
+              <span>{timeAgo}</span>
+            </div>
+          </div>
 
-          <div className={`flex items-center gap-2 text-xs mt-1 ${
-            theme === "dark" ? "text-gray-500" : "text-gray-600"
-          }`}>
-            <span>
-              {video?.views === 0
-                ? "no views"
-                : video?.views < 2
-                ? `${video?.views} view`
-                : `${video?.views} views`}
-            </span>
-            <span>•</span>
-            <span>{timeAgo}</span>
+          {/* Menu */}
+          <div className="relative self-start">
+            <button
+              onClick={handleDotsClick}
+              className={`
+              p-1.5 rounded-full transition
+              ${theme === "dark"
+                  ? "text-gray-400 hover:text-white hover:bg-gray-800"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                }
+            `}
+            >
+              <svg
+                className="w-4 h-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 4 15"
+              >
+                <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+              </svg>
+            </button>
+
+            {isDropdownOpen && (
+              <VideoMenu
+                playlistId={playlistId}
+                handleRemoveFromPlaylist={handleRemoveFromPlaylist}
+                openModal={openModal}
+              />
+            )}
           </div>
         </div>
 
-        {/* Menu */}
-        <div className="relative self-start">
-          <button
-            onClick={handleDotsClick}
-            className="
-              p-1.5 rounded-full
-              text-gray-400 hover:text-white
-              hover:bg-gray-800 transition
-            "
-          >
-            <svg
-              className="w-4 h-4"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 4 15"
-            >
-              <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-            </svg>
-          </button>
-
-          {isDropdownOpen && (
-            <VideoMenu
-              playlistId={playlistId}
-              handleRemoveFromPlaylist={handleRemoveFromPlaylist}
-              openModal={openModal}
-            />
-          )}
-        </div>
+        {/* Modal */}
+        {isModalOpen && (
+          <PlaylistModal
+            playlists={playlists}
+            selectedPlaylistId={selectedPlaylistId}
+            setSelectedPlaylistId={setSelectedPlaylistId}
+            handleAddToPlaylist={handleAddToPlaylist}
+            newPlaylistName={newPlaylistName}
+            setNewPlaylistName={setNewPlaylistName}
+            handleCreatePlaylist={handleCreatePlaylist}
+            loading={loading}
+            error={error}
+            closeModal={() => {
+              setIsModalOpen(false);
+              setIsDropdownOpen(false);
+            }}
+          />
+        )}
       </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <PlaylistModal
-          playlists={playlists}
-          selectedPlaylistId={selectedPlaylistId}
-          setSelectedPlaylistId={setSelectedPlaylistId}
-          handleAddToPlaylist={handleAddToPlaylist}
-          newPlaylistName={newPlaylistName}
-          setNewPlaylistName={setNewPlaylistName}
-          handleCreatePlaylist={handleCreatePlaylist}
-          loading={loading}
-          error={error}
-          closeModal={() => {
-            setIsModalOpen(false);
-            setIsDropdownOpen(false);
-          }}
-        />
-      )}
-    </div>
-  </Link>
-);
+    </Link>
+  );
 
 }
 
 export default React.memo(VideoComponent);
-  

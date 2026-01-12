@@ -28,7 +28,7 @@ function ProfileDropdown({ user }) {
   }, []);
 
   return (
-    <div className="relative mt-2" ref={dropdownRef}>
+    <div className="relative " ref={dropdownRef}>
       {/* Avatar Button */}
       <button
         id="dropdownUserAvatarButton"

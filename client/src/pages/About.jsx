@@ -1,11 +1,17 @@
 import Header from "../components/Header/Header.jsx";
-import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer/Footer.jsx";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Play, Server, Shield, Sparkles, Globe, Cpu } from "lucide-react";
 
 function About() {
   const navigate = useNavigate();
+  const location = useLocation();
   const authStatus = useSelector((state) => state.user.status);
+  const theme = useSelector((state) => state.theme.theme);
+  const collapsed = useSelector((state) => state.navbar.collapsed);
+
+  const isNavbarVisible = location.pathname !== "/";
 
   const handleStartExploring = () => {
     if (authStatus) {
@@ -16,15 +22,13 @@ function About() {
   };
 
   return (
-    <div className="flex-1 text-white min-h-screen">
-      <Header />
-
+    <div className={`flex-1 min-h-screen transition-all duration-300 ${theme === "dark" ? "text-white" : "text-gray-900"} ${isNavbarVisible ? (collapsed ? "ml-16" : "ml-60") : ""}`}>
       {/* HERO */}
-      <section className="pt-44 pb-20 px-6 text-center bg-gradient-to-b from-gray-900 to-gray-950">
+      <section className={`pt-44 pb-20 px-6 text-center ${theme === "dark" ? "bg-gradient-to-b from-gray-900 to-gray-950" : "bg-gradient-to-b from-gray-50 to-white"}`}>
         <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6">
           About <span className="text-blue-500">TwiTube</span>
         </h1>
-        <p className="max-w-3xl mx-auto text-gray-400 text-lg leading-relaxed">
+        <p className={`max-w-3xl mx-auto text-lg leading-relaxed ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
           TwiTube is a full-stack video platform engineered as a serious backend-first system.
           It blends video sharing, social interaction, and scalable architecture into one learning-driven product.
         </p>
@@ -59,10 +63,10 @@ function About() {
             desc: "Every feature exists to teach how real products are built, scaled, secured, and evolved."
           }
         ].map((item, i) => (
-          <div key={i} className="bg-gray-900 rounded-2xl p-6 border border-gray-800 hover:border-blue-500/40 transition">
+          <div key={i} className={`rounded-2xl p-6 border transition ${theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200 shadow-sm hover:border-blue-500/40"}`}>
             {item.icon}
             <h3 className="text-xl font-semibold mt-4 mb-2">{item.title}</h3>
-            <p className="text-gray-400 leading-relaxed">{item.desc}</p>
+            <p className={`leading-relaxed ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>{item.desc}</p>
           </div>
         ))}
       </section>
@@ -74,10 +78,10 @@ function About() {
         </h2>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800">
+          <div className={`rounded-2xl p-8 border ${theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200 shadow-sm"}`}>
             <Play className="text-blue-500 w-8 h-8 mb-3" />
             <h3 className="text-xl font-semibold mb-3">Video Platform Core</h3>
-            <ul className="text-gray-400 space-y-2">
+            <ul className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"} space-y-2`}>
               <li>• Secure video upload and streaming</li>
               <li>• Metadata, thumbnails, search & discovery</li>
               <li>• Watch history & personalized experience</li>
@@ -85,10 +89,10 @@ function About() {
             </ul>
           </div>
 
-          <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800">
+          <div className={`rounded-2xl p-8 border ${theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200 shadow-sm"}`}>
             <Globe className="text-blue-500 w-8 h-8 mb-3" />
             <h3 className="text-xl font-semibold mb-3">Social Interaction Layer</h3>
-            <ul className="text-gray-400 space-y-2">
+            <ul className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"} space-y-2`}>
               <li>• Creator profiles and subscriptions</li>
               <li>• Likes, comments, and engagement</li>
               <li>• Tweet-style short content</li>
@@ -99,34 +103,34 @@ function About() {
       </section>
 
       {/* ENGINEERING */}
-      <section className="bg-gray-900/40 border-y border-gray-800 px-6 py-20">
+      <section className={`${theme === "dark" ? "bg-gray-900/40 border-gray-800" : "bg-gray-50 border-gray-200"} border-y px-6 py-20`}>
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
           <div>
             <h2 className="text-3xl font-bold mb-4">Engineering Philosophy</h2>
-            <p className="text-gray-400 leading-relaxed mb-6">
-              TwiTube is structured to behave like a real-world system.  
+            <p className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"} leading-relaxed mb-6`}>
+              TwiTube is structured to behave like a real-world system.
               Authentication flows, file pipelines, database modeling, and API contracts are treated as first-class citizens.
             </p>
-            <p className="text-gray-400 leading-relaxed">
+            <p className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"} leading-relaxed`}>
               The goal isn’t just to “build features” — it’s to understand why systems are built the way they are,
               where they break, and how they scale.
             </p>
           </div>
 
-          <div className="bg-gray-950 rounded-2xl p-8 border border-gray-800">
+          <div className={`rounded-2xl p-8 border ${theme === "dark" ? "bg-gray-950 border-gray-800" : "bg-white border-gray-200 shadow-sm"}`}>
             <Cpu className="text-blue-500 w-8 h-8 mb-3" />
             <h3 className="text-xl font-semibold mb-4">Technology Stack</h3>
 
-            <div className="grid grid-cols-2 gap-6 text-gray-400">
+            <div className={`grid grid-cols-2 gap-6 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
               <div>
-                <p className="font-semibold text-white mb-2">Frontend</p>
+                <p className={`font-semibold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>Frontend</p>
                 <p>React + Vite</p>
                 <p>Tailwind CSS</p>
                 <p>Redux Toolkit</p>
                 <p>React Router</p>
               </div>
               <div>
-                <p className="font-semibold text-white mb-2">Backend</p>
+                <p className={`font-semibold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>Backend</p>
                 <p>Node.js & Express</p>
                 <p>MongoDB</p>
                 <p>JWT Authentication</p>
@@ -140,7 +144,7 @@ function About() {
       {/* CTA */}
       <section className="px-6 py-24 text-center">
         <h2 className="text-4xl font-bold mb-4">Build. Learn. Explore.</h2>
-        <p className="text-gray-400 max-w-2xl mx-auto mb-10">
+        <p className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"} max-w-2xl mx-auto mb-10`}>
           TwiTube exists at the intersection of engineering practice and creative experimentation.
           A platform to explore systems, not just screens.
         </p>
@@ -150,7 +154,7 @@ function About() {
             <>
               <button
                 onClick={() => navigate("/login")}
-                className="bg-gray-800 hover:bg-gray-700 px-7 py-2.5 rounded-xl font-medium transition"
+                className={`px-7 py-2.5 rounded-xl font-medium transition ${theme === "dark" ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-200 hover:bg-gray-300 text-gray-900"}`}
                 aria-label="Log in to your existing account"
               >
                 Login

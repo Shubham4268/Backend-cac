@@ -23,6 +23,7 @@ function VideoDetails({ video, notify }) {
 
   const owner = videoFile.owner;
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
+  const theme = useSelector((state) => state.theme.theme);
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchChannelStats = async () => {
@@ -31,8 +32,7 @@ function VideoDetails({ video, notify }) {
       try {
         dispatch(setLoading(true));
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/stats/${
-            owner._id
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/stats/${owner._id
           }`
         );
 
@@ -43,8 +43,7 @@ function VideoDetails({ video, notify }) {
         setSubscribers(getTotalSubscribers);
         setSubscribed(subscribedStatus);
         const likeResponse = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/v/${
-            videoFile._id
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/v/${videoFile._id
           }`
         );
 
@@ -64,8 +63,7 @@ function VideoDetails({ video, notify }) {
     const fetchPlaylists = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/user/${
-            user?._id
+          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/user/${user?._id
           }`
         ); // Adjust the URL accordingly
 
@@ -89,8 +87,7 @@ function VideoDetails({ video, notify }) {
 
   const onclick = async () => {
     const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/toggle/v/${
-        videoFile._id
+      `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/likes/toggle/v/${videoFile._id
       }`
     );
 
@@ -110,8 +107,7 @@ function VideoDetails({ video, notify }) {
     const channelId = owner?._id;
 
     const response = await axios.post(
-      `${
-        import.meta.env.VITE_BACKEND_BASEURL
+      `${import.meta.env.VITE_BACKEND_BASEURL
       }/api/v1/subscriptions/c/${channelId}`
     );
 
@@ -132,8 +128,7 @@ function VideoDetails({ video, notify }) {
     try {
       // Make API call to add the video to the playlist
       const response = await axios.patch(
-        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/add/${
-          videoFile?._id
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/playlists/add/${videoFile?._id
         }/${playlistId}`
       );
 
@@ -154,8 +149,8 @@ function VideoDetails({ video, notify }) {
       // Provide user feedback for the error
       setError(
         err.response?.data?.message ||
-          err.message ||
-          "Failed to add video to playlist"
+        err.message ||
+        "Failed to add video to playlist"
       );
     }
   };
@@ -187,7 +182,10 @@ function VideoDetails({ video, notify }) {
     }
   };
   return (
-    <div className="relative flex flex-col h-full bg-gradient-to-r from-gray-900 to-gray-950 rounded-2xl shadow-xl overflow-hidden">
+    <div className={`relative flex flex-col h-full rounded-2xl shadow-xl overflow-hidden ${theme === "dark"
+      ? "bg-gradient-to-r from-gray-900 to-gray-950 text-white"
+      : "bg-gradient-to-b from-gray-200 via-white to-gray-300 border border-gray-200 text-gray-900"
+      }`}>
       <div className="absolute top-0 right-1 p-2  mt-5 ">
         <button
           onClick={(e) => {
@@ -207,10 +205,9 @@ function VideoDetails({ video, notify }) {
           </svg>
         </button>
 
-        {/* Dropdown Menu */}
         {isDropdownOpen && (
-          <div className="absolute z-10 right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700">
-            <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
+          <div className={`absolute z-10 right-0 mt-2 divide-y divide-gray-100 rounded-lg shadow w-fit ${theme === "dark" ? "bg-gray-700" : "bg-white border border-gray-200"}`}>
+            <ul className={`py-1 text-sm ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
               <li>
                 <button
                   onClick={(e) => {
@@ -218,7 +215,7 @@ function VideoDetails({ video, notify }) {
                     setError(null);
                     setIsModalOpen(true);
                   }}
-                  className="block px-4 py-2 text-nowrap hover:bg-gray-100 dark:hover:bg-gray-900 dark:hover:text-white"
+                  className={`block px-4 py-2 text-nowrap transition-colors ${theme === "dark" ? "hover:bg-gray-900 hover:text-white" : "hover:bg-gray-100"}`}
                 >
                   Add to Playlist
                 </button>
@@ -231,10 +228,10 @@ function VideoDetails({ video, notify }) {
       {/* Modal for selecting playlist or creating a new one */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-10 bg-black bg-opacity-50 flex justify-center items-center"
+          className="fixed inset-0 z-10 bg-black/50 backdrop-blur-sm flex justify-center items-center"
           onClick={(e) => e.preventDefault()}
         >
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96 dark:bg-gray-800 dark:text-white">
+          <div className={`rounded-lg shadow-lg p-6 w-96 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900 border border-gray-200"}`}>
             {/* Close Button */}
             <button
               onClick={() => {
@@ -255,7 +252,7 @@ function VideoDetails({ video, notify }) {
               ) : (
                 <select
                   onChange={(e) => setSelectedPlaylistId(e.target.value)}
-                  className="w-full p-2 bg-gray-100 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  className={`w-full p-2 border rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-gray-50 border-gray-300 text-gray-900"}`}
                   size={5}
                 >
                   {playlists?.map((playlist) => (
@@ -285,15 +282,14 @@ function VideoDetails({ video, notify }) {
                 type="text"
                 value={newPlaylistName}
                 onChange={(e) => setNewPlaylistName(e.target.value)}
-                className="w-10/12 p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 mr-1"
+                className={`w-10/12 p-2 border rounded-md mr-1 ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}
                 placeholder="Enter playlist name"
               />
               <button
                 onClick={handleCreatePlaylist}
                 disabled={loadingPlaylist}
-                className={`w-2/12 text-white rounded-md disabled:opacity-50 text-xs font-light hover:font-normal ${
-                  loadingPlaylist ? "bg-transparent border" : "bg-blue-500"
-                }`}
+                className={`w-2/12 text-white rounded-md disabled:opacity-50 text-xs font-light hover:font-normal ${loadingPlaylist ? "bg-transparent border" : "bg-blue-500"
+                  }`}
               >
                 {loadingPlaylist ? "Creating..." : "Create"}
               </button>
@@ -304,25 +300,32 @@ function VideoDetails({ video, notify }) {
           </div>
         </div>
       )}
-      <span className="text-center font-bold text-2xl underline mt-6 ">
+      <span className={`text-center font-bold text-2xl underline mt-6 ${theme === "dark" ? "text-white" : "text-gray-900"
+        }`}>
         About Video
       </span>
-      <div className="font-bold my-3 mx-5">
+      <div className={`font-bold my-3 mx-5 ${theme === "dark" ? "text-white" : "text-gray-900"
+        }`}>
         {videoFile.title || "Untitled Video"}
       </div>
-      <div className="flex flex-col space-y-2 mb-3">
+      <div className={`flex flex-col space-y-2 mb-3 ${theme === "dark" ? "text-gray-300" : "text-gray-700"
+        }`}>
         <span className="mx-5">{videoFile.views || 0} Views</span>
         <span className="mx-5">
           Uploaded Date: {formatDate(videoFile.createdAt)}
         </span>
       </div>
 
-      <div className="mt-3 mx-3 bg-white/5 rounded-xl p-4 leading-relaxed text-gray-300 text-sm max-h-44 overflow-auto">
+      <div className={`mt-3 mx-3 rounded-xl p-4 leading-relaxed text-sm max-h-44 overflow-auto ${theme === "dark"
+        ? "bg-white/5 text-gray-300"
+        : "bg-gray-200 text-gray-700"
+        }`}>
         <span className="mb-1 text-center font-bold">Description: </span>
         {videoFile.description || "No description available."}
       </div>
 
-      <div className="absolute flex justify-between bottom-3 right-0 w-full h-[78px] border-t border-gray-400">
+      <div className={`absolute flex justify-between bottom-3 right-0 w-full h-[78px] border-t ${theme === "dark" ? "border-gray-700" : "border-gray-300"
+        }`}>
         <div className="flex">
           {owner ? (
             <>
@@ -338,12 +341,12 @@ function VideoDetails({ video, notify }) {
                   to={`/profile/${owner?.username}`}
                   className="block max-w-full"
                 >
-                  <span className="block max-w-full truncate hover:text-gray-300 mt-2">
+                  <span className={`block max-w-full truncate mt-2 transition-colors ${theme === "dark" ? "hover:text-gray-300" : "hover:text-indigo-600"}`}>
                     {owner?.fullName || "Unknown User"}
                   </span>
                 </Link>
 
-                <span className="text-xs text-gray-400 leading-tight">
+                <span className="text-xs text-gray-500 leading-tight">
                   {subscribers < 2
                     ? `${subscribers || 0} Subscriber`
                     : `${subscribers || 0} Subscribers`}

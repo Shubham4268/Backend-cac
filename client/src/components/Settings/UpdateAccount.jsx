@@ -8,7 +8,7 @@ import { setLoading } from "../../features/slices/loaderSlice.js";
 import { toast, ToastContainer } from "react-toastify";
 import { Camera } from "lucide-react";
 
-const InputField = ({ type = "text", name, value, onChange, placeholder }) => (
+const InputField = ({ type = "text", name, value, onChange, placeholder, theme }) => (
   <div className="w-full">
     <input
       type={type}
@@ -17,15 +17,16 @@ const InputField = ({ type = "text", name, value, onChange, placeholder }) => (
       onChange={onChange}
       placeholder={placeholder}
       required
-      className="
+      className={`
         w-full rounded-xl
-        bg-gray-950/60 text-gray-100
         px-4 py-2.5 text-sm
-        border border-white/10
-        placeholder:text-gray-500
+        border transition
         focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
-        transition
-      "
+        ${theme === "dark"
+          ? "bg-gray-950/60 text-gray-100 border-white/10 placeholder:text-gray-500"
+          : "bg-gray-50 text-gray-900 border-gray-300 placeholder:text-gray-400"
+        }
+      `}
     />
   </div>
 );
@@ -34,6 +35,7 @@ function UpdateAccount() {
   const response = useSelector((state) => state.user.userData);
   const { loggedInUser: user } = response || {};
   const collapsed = useSelector((state) => state.navbar.collapsed);
+  const theme = useSelector((state) => state.theme.theme);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -108,28 +110,30 @@ function UpdateAccount() {
   };
 
   return (
-    <div className={`min-h-screen w-full text-white relative overflow-hidden transition-all duration-300 ${
-      collapsed ? "ml-16" : "ml-60"
-    }`}>
+    <div className={`min-h-screen w-full relative overflow-hidden transition-all duration-300 ${collapsed ? "ml-16" : "ml-60"
+      } ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
       <div className="relative flex items-center justify-center min-h-screen px-6 py-24">
         <ToastContainer />
 
         {/* Card */}
         <div
-          className="
+          className={`
             w-full max-w-xl
             rounded-2xl
-            border border-white/10
-            bg-slate-800 backdrop-blur-3xl
+            border backdrop-blur-3xl
             px-8 py-8
-          "
+            ${theme === "dark"
+              ? "bg-slate-800 border-white/10"
+              : "bg-white border-gray-200 shadow-xl"
+            }
+          `}
         >
           {/* Header */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-semibold tracking-tight bg-white bg-clip-text text-transparent">
+            <h2 className={`text-3xl font-semibold tracking-tight bg-clip-text text-transparent ${theme === "dark" ? "bg-white" : "bg-gradient-to-r from-gray-900 to-gray-700"}`}>
               Update Your Account
             </h2>
-            <p className="text-gray-400 text-sm mt-2">
+            <p className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"} text-sm mt-2`}>
               Manage your profile information and avatar
             </p>
           </div>
@@ -184,6 +188,7 @@ function UpdateAccount() {
                 name="fullName"
                 value={formData.fullName}
                 onChange={onChange}
+                theme={theme}
               />
               <InputField
                 placeholder="Email"
@@ -191,6 +196,7 @@ function UpdateAccount() {
                 name="email"
                 value={formData.email}
                 onChange={onChange}
+                theme={theme}
               />
             </div>
 

@@ -1,4 +1,5 @@
 import { createPortal } from "react-dom";
+import { useSelector } from "react-redux";
 
 function PlaylistModal({
   playlists,
@@ -12,6 +13,7 @@ function PlaylistModal({
   error,
   closeModal
 }) {
+  const theme = useSelector((state) => state.theme.theme);
   return createPortal(
     <div
       className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center"
@@ -21,8 +23,8 @@ function PlaylistModal({
         closeModal();
       }}
     >
-      <div 
-        className="bg-white rounded-lg shadow-lg p-6 w-96 dark:bg-gray-800 dark:text-white"
+      <div
+        className={`rounded-lg shadow-lg p-6 w-96 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900 border border-gray-200"}`}
         onClick={(e) => e.stopPropagation()}
       >
 
@@ -41,7 +43,7 @@ function PlaylistModal({
           ) : (
             <select
               onChange={(e) => setSelectedPlaylistId(e.target.value)}
-              className="w-full p-2 bg-gray-100 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 "
+              className={`w-full p-2 border rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-gray-50 border-gray-300 text-gray-900"}`}
               size={5}
             >
               {playlists?.map((playlist) => (
@@ -70,15 +72,14 @@ function PlaylistModal({
             type="text"
             value={newPlaylistName}
             onChange={(e) => setNewPlaylistName(e.target.value)}
-            className="w-10/12 p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 mr-1"
+            className={`w-10/12 p-2 border rounded-md mr-1 ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}
             placeholder="Enter playlist name"
           />
           <button
             onClick={handleCreatePlaylist}
             disabled={loading}
-            className={`w-2/12 text-white rounded-md disabled:opacity-50 text-xs font-light hover:font-normal ${
-              loading ? "bg-transparent border" : "bg-blue-500"
-            }`}
+            className={`w-2/12 text-white rounded-md disabled:opacity-50 text-xs font-light hover:font-normal ${loading ? "bg-transparent border" : "bg-blue-500"
+              }`}
           >
             {loading ? "Creating..." : "Create"}
           </button>

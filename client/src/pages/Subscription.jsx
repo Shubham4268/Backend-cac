@@ -14,7 +14,8 @@ function Subscription() {
   const [totalVideos, setTotalVideos] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedOption, setSelectedOption] = useState("videos");
-  const [limit, setLimit] = useState(9);
+  // Limit 12 works for both 3-col (expanded) and 4-col (collapsed) layouts
+  const [limit, setLimit] = useState(12);
   const [error, setError] = useState(null);
   const notify = (text) => toast(text);
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
@@ -58,23 +59,7 @@ function Subscription() {
     }
   };
 
-  const isNavbarToggle = useRef(false);
-  const isFirstRender = useRef(true);
-
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    isNavbarToggle.current = true;
-    setLimit(collapsed ? 12 : 9);
-  }, [collapsed]);
-
-  useEffect(() => {
-    if (isNavbarToggle.current) {
-      isNavbarToggle.current = false;
-      return;
-    }
     if (id) {
       fetchVideos();
     }

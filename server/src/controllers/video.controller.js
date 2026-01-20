@@ -8,7 +8,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js"
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, query = "", sortBy = "createdAt", sortType = "desc", userId } = req.query;
+    const { page = 1, limit = 13, query = "", sortBy = "createdAt", sortType = "desc", userId } = req.query;
 
     // Construct the filter object
     // filter is an object that defines the search criteria for the database query:

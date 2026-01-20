@@ -15,23 +15,19 @@ axios.defaults.withCredentials = true;
 
 function Home() {
   const [videos, setVideos] = useState([]);
-  const [users, setUsers] = useState([]);
   const [totalVideos, setTotalVideos] = useState(0);
-  const [totalUsers, setTotalUsers] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(9);
+  const collapsed = useSelector((state) => state.navbar.collapsed);
+  // Limit 12 works for both 3-col (expanded) and 4-col (collapsed) layouts
+  const [limit, setLimit] = useState(12);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortType, setSortType] = useState("desc");
   const [query, setQuery] = useState("");
-  const [searchType, setSearchType] = useState("videos"); // "videos" or "users"
-  const [resultType, setResultType] = useState("videos"); // Which results to display
   const [error, setError] = useState(null);
   const notify = (text) => toast(text);
   const dispatch = useDispatch();
-  const collapsed = useSelector((state) => state.navbar.collapsed);
   const theme = useSelector((state) => state.theme.theme);
 
-  // dispatch(setLoading(true));
   const fetchVideos = async () => {
     dispatch(setLoading(true));
     try {
@@ -64,56 +60,8 @@ function Home() {
     }
   };
 
-  const fetchUsers = async () => {
-    dispatch(setLoading(true));
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users`,
-        {
-          withCredentials: true,
-          params: {
-            page: currentPage,
-            limit,
-            query,
-          },
-        }
-      );
-
-      const { success, data } = response.data;
-      if (success) {
-        setUsers(data.users || []);
-        setTotalUsers(data.totalUsers || 0);
-        setError(null);
-      }
-    } catch (error) {
-      handleApiError(error, setError);
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
-  const isNavbarToggle = useRef(false);
-  const isFirstRender = useRef(true);
-
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    isNavbarToggle.current = true;
-    setLimit(collapsed ? 12 : 9);
-  }, [collapsed]);
-
-  useEffect(() => {
-    if (isNavbarToggle.current) {
-      isNavbarToggle.current = false;
-      return;
-    }
-    // Fetch both videos and users for comprehensive search
     fetchVideos();
-    if (query) {
-      fetchUsers();
-    }
   }, [currentPage, limit, sortBy, sortType, query]);
 
   const handleSearch = (e) => {
@@ -172,7 +120,7 @@ function Home() {
         {error && <p className="text-blue-500 text-center mb-5">{error}</p>}
 
         {/* Videos Grid */}
-        {!error && resultType === "videos" && videos.length > 0 && (
+        {!error && videos.length > 0 && (
           <div
             key={`${currentPage}-${sortBy}-${sortType}-${query}-${limit}`}
             className={`grid gap-8 min-h-full w-full px-4 sm:px-6 

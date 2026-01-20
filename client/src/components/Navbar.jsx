@@ -1,6 +1,6 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { handleApiError } from "../utils/errorHandler.js";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/slices/authSlice.js";
@@ -46,6 +46,19 @@ const Navbar = () => {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleNavClick = () => {
+    if (isMobile && !collapsed) {
+      dispatch(toggleNavbar());
+    }
+  };
 
   const currentUser = useSelector((state) => state.user?.userData);
   const theme = useSelector((state) => state.theme.theme);
@@ -75,22 +88,11 @@ const Navbar = () => {
           ? 'bg-gradient-to-b from-gray-900 to-gray-950 border-r border-gray-800 text-white'
           : 'bg-gradient-to-b from-slate-300 to-slate-100 border-r border-gray-200 text-gray-900'
         }
-      transition-all duration-300 ease-in-out z-30
-      ${collapsed ? "w-16" : "w-60"}`}
+      transition-all duration-300 ease-in-out z-50
+      ${collapsed ? "w-0 md:w-16 overflow-hidden" : "w-64 md:w-60"}
+      ${!collapsed && isMobile ? "shadow-2xl" : ""}
+      `}
     >
-      {/* Toggle */}
-      <div className={`flex justify-start px-3 py-3 border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
-        }`}>
-        <button
-          onClick={() => dispatch(toggleNavbar())}
-          className={`p-2 rounded-lg transition ${theme === 'dark'
-            ? 'hover:bg-gray-800'
-            : 'hover:bg-gray-100'
-            }`}
-        >
-          {collapsed ? <Menu size={20} /> : <X size={20} />}
-        </button>
-      </div>
 
       {/* Nav */}
       <nav className="px-2 py-4 space-y-6">
@@ -114,6 +116,7 @@ const Navbar = () => {
                   <NavLink
                     key={idx}
                     to={path}
+                    onClick={handleNavClick}
                     className={({ isActive }) =>
                       `group flex items-center gap-3 px-3 py-2.5 rounded-xl 
                       transition-all duration-200 relative overflow-hidden
@@ -173,61 +176,65 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {error && (
-        <p className={`text-xs text-center px-3 mt-2 ${theme === 'dark' ? 'text-red-400' : 'text-red-500'
-          }`}>
-          {error}
-        </p>
-      )}
+      {
+        error && (
+          <p className={`text-xs text-center px-3 mt-2 ${theme === 'dark' ? 'text-red-400' : 'text-red-500'
+            }`}>
+            {error}
+          </p>
+        )
+      }
 
       {/* Logout Confirmation Modal */}
-      {showLogoutModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className={`w-full max-w-md rounded-2xl border shadow-2xl p-6 ${theme === 'dark'
-            ? 'bg-gradient-to-b from-gray-900 to-gray-950 border-white/10'
-            : 'bg-white border-gray-200'
-            }`}>
-            {/* Title */}
-            <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+      {
+        showLogoutModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+            <div className={`w-full max-w-md rounded-2xl border shadow-2xl p-6 ${theme === 'dark'
+              ? 'bg-gradient-to-b from-gray-900 to-gray-950 border-white/10'
+              : 'bg-white border-gray-200'
               }`}>
-              Confirm logout
-            </h2>
+              {/* Title */}
+              <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                Confirm logout
+              </h2>
 
-            <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}>
-              You will be signed out of your account. Any unsaved work may be lost.
-            </p>
+              <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                You will be signed out of your account. Any unsaved work may be lost.
+              </p>
 
-            {/* Actions */}
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                onClick={() => setShowLogoutModal(false)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${theme === 'dark'
-                  ? 'text-gray-300 hover:bg-white/10'
-                  : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-              >
-                Cancel
-              </button>
+              {/* Actions */}
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowLogoutModal(false)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${theme === 'dark'
+                    ? 'text-gray-300 hover:bg-white/10'
+                    : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                >
+                  Cancel
+                </button>
 
-              <button
-                onClick={() => {
-                  setShowLogoutModal(false);
-                  logoutHandler();
-                }}
-                className="px-5 py-2 rounded-lg text-sm font-semibold
+                <button
+                  onClick={() => {
+                    setShowLogoutModal(false);
+                    logoutHandler();
+                  }}
+                  className="px-5 py-2 rounded-lg text-sm font-semibold
                            bg-red-600 text-white
                            hover:bg-red-500
                            shadow-lg shadow-red-600/30
                            transition"
-              >
-                Logout
-              </button>
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </aside>
+        )
+      }
+    </aside >
   );
 };
 

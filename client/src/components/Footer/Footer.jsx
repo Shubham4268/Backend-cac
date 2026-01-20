@@ -38,7 +38,7 @@ export default function Footer() {
 
   return (
     <footer
-      className={`w-full transition-all duration-300   ${user ? (collapsed ? "w-[calc(100%-4rem)]" : "ml-60 w-[calc(100%-15rem)]") : ""
+      className={`w-full transition-all duration-300   ${user ? (collapsed ? "w-[calc(100%-4rem)]" : " w-[calc(100%-14rem)] scale-90 ml-[76px] pl-20") : ""
         } ${theme === "dark"
           ? "bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white border-t border-white/10"
           : "bg-gradient-to-t from-slate-300 to-slate-200 text-gray-900 border-t border-gray-200"

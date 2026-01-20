@@ -40,3 +40,19 @@ html, body, #root {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  opacity: 0; /* meaningful initial state before animation starts */
+  animation: slideUp 0.5s ease-out forwards;
+}

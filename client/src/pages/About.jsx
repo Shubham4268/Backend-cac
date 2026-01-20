@@ -11,7 +11,9 @@ function About() {
   const theme = useSelector((state) => state.theme.theme);
   const collapsed = useSelector((state) => state.navbar.collapsed);
 
-  const isNavbarVisible = location.pathname !== "/";
+  // Determine if the Navbar (sidebar) is actually visible.
+  // It is visible if the user is authenticated (as per ShowNavbar logic).
+  const isNavbarVisible = authStatus;
 
   const handleStartExploring = () => {
     if (authStatus) {

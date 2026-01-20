@@ -5,10 +5,12 @@ import { login } from "../features/slices/authSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../features/slices/loaderSlice.js";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { validateEmail } from "../utils/validation.js";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
+  const [emailError, setEmailError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
@@ -18,12 +20,25 @@ const Login = () => {
   const togglePasswordVisibility = () =>
     setShowPassword((prev) => !prev);
 
-  const onChange = (e) =>
+  const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === "email") setEmailError(null);
+  }
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setEmailError(null);
+
+    if (!validateEmail(formData.email)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    if (!formData.password) {
+      setError("Password is required"); // Should be handled by required attribute but good to have
+      return;
+    }
 
     try {
       dispatch(setLoading(true));
@@ -97,8 +112,10 @@ const Login = () => {
               value={formData.email}
               onChange={onChange}
               placeholder="you@example.com"
-              className={`w-full rounded-lg px-3.5 py-2.5 text-sm border focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition ${theme === "dark" ? "bg-gray-950 border-white/10 placeholder:text-gray-500" : "bg-gray-50 border-gray-300 placeholder:text-gray-400"}`}
+              maxLength={50}
+              className={`w-full rounded-lg px-3.5 py-2.5 text-sm border focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition ${theme === "dark" ? "bg-gray-950 border-white/10 placeholder:text-gray-500" : "bg-gray-50 border-gray-300 placeholder:text-gray-400"} ${emailError ? "border-red-500 focus:border-red-500" : ""}`}
             />
+            {emailError && <p className="text-red-400 text-xs mt-1 ml-1">{emailError}</p>}
           </div>
 
           {/* Password */}
@@ -120,6 +137,7 @@ const Login = () => {
                 value={formData.password}
                 onChange={onChange}
                 placeholder="••••••••"
+                maxLength={128}
                 className={`w-full rounded-lg px-3.5 py-2.5 text-sm border focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40 transition pr-10 ${theme === "dark" ? "bg-gray-950 border-white/10 placeholder:text-gray-500" : "bg-gray-50 border-gray-300 placeholder:text-gray-400"}`}
               />
 

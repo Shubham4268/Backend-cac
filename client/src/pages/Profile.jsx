@@ -123,7 +123,7 @@ function Profile() {
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 via-fuchsia-500/10 to-cyan-500/10 blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto px-10 py-14 flex items-center gap-10">
-          <div className="relative">
+          <div className="relative min-w-40 ">
             <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-indigo-500 to-cyan-400 blur opacity-30" />
             <img
               src={user?.avatar}
@@ -132,7 +132,7 @@ function Profile() {
             />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 ">
             <h1 className="text-5xl font-bold tracking-tight">
               {user?.fullName}
             </h1>

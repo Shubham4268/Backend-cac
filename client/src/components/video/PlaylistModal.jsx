@@ -1,5 +1,6 @@
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 
 function PlaylistModal({
   playlists,
@@ -13,7 +14,22 @@ function PlaylistModal({
   error,
   closeModal
 }) {
+  const [localError, setLocalError] = useState(null);
   const theme = useSelector((state) => state.theme.theme);
+
+  const onCreateClick = () => {
+    setLocalError(null);
+    if (!newPlaylistName.trim()) {
+      setLocalError("Playlist name is required");
+      return;
+    }
+    if (newPlaylistName.length > 50) {
+      setLocalError("Playlist name must be less than 50 characters");
+      return;
+    }
+    handleCreatePlaylist();
+  };
+
   return createPortal(
     <div
       className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center"
@@ -74,9 +90,10 @@ function PlaylistModal({
             onChange={(e) => setNewPlaylistName(e.target.value)}
             className={`w-10/12 p-2 border rounded-md mr-1 ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}
             placeholder="Enter playlist name"
+            maxLength={50}
           />
           <button
-            onClick={handleCreatePlaylist}
+            onClick={onCreateClick}
             disabled={loading}
             className={`w-2/12 text-white rounded-md disabled:opacity-50 text-xs font-light hover:font-normal ${loading ? "bg-transparent border" : "bg-blue-500"
               }`}
@@ -86,6 +103,7 @@ function PlaylistModal({
         </div>
 
         {error && <div className="text-red-500 mt-2">{error}</div>}
+        {localError && <div className="text-red-500 mt-2">{localError}</div>}
       </div>
     </div>,
     document.body

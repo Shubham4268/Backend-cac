@@ -43,6 +43,17 @@ function AddTweetForm() {
     e.preventDefault();
     setError(null);
 
+    const content = formData.content.trim();
+    if (!content) {
+      setError("Tweet content cannot be empty");
+      return;
+    }
+
+    if (content.length > 280) {
+      setError(`Tweet is too long (${content.length}/280 characters)`);
+      return;
+    }
+
     const url = editing
       ? `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/${postData?._id}`
       : `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/create-Tweet`;
@@ -188,8 +199,12 @@ function AddTweetForm() {
                     ? "bg-gray-900 text-gray-100 border-white/15 placeholder:text-gray-400"
                     : "bg-gray-50 text-gray-900 border-gray-300 placeholder:text-gray-500"
                   }
+                   ${error && error.includes("Tweet") ? "border-red-500 focus:border-red-500" : ""}
                 `}
               />
+              <div className={`text-xs text-right ${formData.content.length > 280 ? "text-red-500" : "text-gray-500"}`}>
+                {formData.content.length}/280
+              </div>
 
               {/* CTA */}
               <button

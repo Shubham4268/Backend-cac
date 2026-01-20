@@ -216,7 +216,7 @@ function VideoComponent({ videofile, notify }) {
                 onClick={(e) => e.stopPropagation()}
                 className="inline-block mt-1"
               >
-                <p className={`text-sm hover:text-gray-300 ${theme === "dark" ? "text-gray-400" : "text-gray-600"
+                <p className={`text-sm max-w-48 truncate  hover:text-gray-300 ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                   }`}>
                   {owner?.fullName}
                 </p>

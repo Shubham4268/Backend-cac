@@ -3,14 +3,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ProfileDropdown from "./ProfileDropdown";
 import { useSelector, useDispatch } from "react-redux";
 import { FcCamcorderPro } from "react-icons/fc";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Menu } from "lucide-react";
 import { toggleTheme } from "../../features/slices/themeSlice";
+import { toggleNavbar } from "../../features/slices/navbarSlice";
 
 function Header({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState("");
   const user = useSelector((state) => state.user?.userData?.loggedInUser);
   const theme = useSelector((state) => state.theme.theme);
   const dispatch = useDispatch();
+  const collapsed = useSelector((state) => state.navbar.collapsed);
 
   const handleSearch = (e) => {
     const value = e.target.value;
@@ -30,25 +32,32 @@ function Header({ onSearch }) {
   };
 
   return (
-    <div className={`z-10 flex fixed top-0 w-full h-[75px] py-4 text-white ${theme === 'dark'
+    <div className={`z-10 flex fixed top-0 h-[75px] py-4 text-white w-full ${theme === 'dark'
       ? 'bg-gray-800'
-      : 'bg-gradient-to-r from-slate-300 to-slate-300 border-b border-gray-200'
-      }`}>
-      <span
-        onClick={redirecToHomePage}
-        className="text-4xl ml-5 cursor-pointer z-10"
-      >
-        <span className="flex space-x-3 items-center">
+      : 'bg-gradient-to-r from-slate-300 to-slate-300 border-b border-gray-200'}`}>
+      <span className="flex items-center">
+        {location.pathname !== "/login" && location.pathname !== "/register" && !(location.pathname === "/" && !user) && (
+          <button
+            onClick={() => dispatch(toggleNavbar())}
+            className={`p-2 ml-2 md:ml-3 md:mr-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+          >
+            <Menu size={24} />
+          </button>
+        )}
+        <span
+          onClick={redirecToHomePage}
+          className="text-4xl ml-0 sm:ml-5 cursor-pointer z-10 flex items-center"
+        >
           {/* <FcCamcorderPro className=" hover:animate-spin	"/> */}
           <img src="/Logo.png" alt="" width={"55px"} className="" />
-          <div className={`text-3xl font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+          <div className={`hidden sm:block text-3xl font-bold ml-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
             Twi<span className="text-blue-600">Tube</span>
           </div>
         </span>
       </span>
-      <div className="absolute inset-0 flex justify-center">
+      <div className="absolute inset-0 flex justify-center pointer-events-none">
         <form
-          className="max-w-md w-full self-center"
+          className={`w-[45%] sm:w-[60%] md:w-full pointer-events-auto max-w-md self-center transition-all duration-300`}
           onSubmit={(e) => {
             e.preventDefault();
           }}
@@ -78,21 +87,20 @@ function Header({ onSearch }) {
           )}
         </form>
       </div>
-      {location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/register" && (location.pathname !== "/about" || user) && (
-        <div className="absolute self-baseline right-10 flex items-center gap-4 mt-2">
-          <button
-            onClick={handleThemeToggle}
-            className={`p-2 rounded-lg transition-colors ${theme === 'dark'
-              ? 'hover:bg-gray-700 text-gray-300 hover:text-white'
-              : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
-              }`}
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-          >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
-          <ProfileDropdown user={user} />
-        </div>
-      )}
+
+      <div className="absolute self-baseline right-2 sm:right-10 flex items-center gap-2 sm:gap-4 mt-2">
+        <button
+          onClick={handleThemeToggle}
+          className={`p-2 rounded-lg transition-colors ${theme === 'dark'
+            ? 'hover:bg-gray-700 text-gray-300 hover:text-white'
+            : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
+            }`}
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+        >
+          {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+        </button>
+        {user && <ProfileDropdown user={user} />}
+      </div>
     </div>
   );
 }

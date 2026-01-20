@@ -7,8 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { setLoading } from "../../features/slices/loaderSlice.js";
 import { toast, ToastContainer } from "react-toastify";
 import { Camera } from "lucide-react";
+import { validateEmail } from "../../utils/validation.js";
 
-const InputField = ({ type = "text", name, value, onChange, placeholder, theme }) => (
+const InputField = ({ type = "text", name, value, onChange, placeholder, theme, error, maxLength }) => (
   <div className="w-full">
     <input
       type={type}
@@ -17,6 +18,7 @@ const InputField = ({ type = "text", name, value, onChange, placeholder, theme }
       onChange={onChange}
       placeholder={placeholder}
       required
+      maxLength={maxLength}
       className={`
         w-full rounded-xl
         px-4 py-2.5 text-sm
@@ -26,8 +28,10 @@ const InputField = ({ type = "text", name, value, onChange, placeholder, theme }
           ? "bg-gray-950/60 text-gray-100 border-white/10 placeholder:text-gray-500"
           : "bg-gray-50 text-gray-900 border-gray-300 placeholder:text-gray-400"
         }
+        ${error ? "border-red-500 focus:border-red-500" : ""}
       `}
     />
+    {error && <p className="text-red-400 text-xs mt-1 ml-1">{error}</p>}
   </div>
 );
 
@@ -37,6 +41,7 @@ function UpdateAccount() {
   const collapsed = useSelector((state) => state.navbar.collapsed);
   const theme = useSelector((state) => state.theme.theme);
   const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const notify = (text) => toast(text);
@@ -54,6 +59,9 @@ function UpdateAccount() {
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setIsAccountChanged(true);
+    if (fieldErrors[e.target.name]) {
+      setFieldErrors(prev => ({ ...prev, [e.target.name]: null }));
+    }
   };
 
   const handleFileChange = async (e) => {
@@ -86,6 +94,18 @@ function UpdateAccount() {
   const onSubmitAccount = async (e) => {
     e.preventDefault();
     setError(null);
+    setFieldErrors({});
+
+    const { fullName, email } = formData;
+    const errors = {};
+
+    if (!fullName.trim()) errors.fullName = "Full name is required";
+    if (!validateEmail(email)) errors.email = "Please enter a valid email address";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
 
     try {
       dispatch(setLoading(true));
@@ -189,6 +209,8 @@ function UpdateAccount() {
                 value={formData.fullName}
                 onChange={onChange}
                 theme={theme}
+                maxLength={50}
+                error={fieldErrors.fullName}
               />
               <InputField
                 placeholder="Email"
@@ -197,6 +219,8 @@ function UpdateAccount() {
                 value={formData.email}
                 onChange={onChange}
                 theme={theme}
+                maxLength={50}
+                error={fieldErrors.email}
               />
             </div>
 

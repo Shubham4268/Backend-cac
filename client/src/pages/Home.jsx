@@ -133,19 +133,21 @@ function Home() {
       <Header onSearch={handleSearch} />
       <Loader />
       <div
-        className={`flex flex-col items-center mt-24 mb-4 pt-6 w-full h-full transition-all duration-300 ${collapsed ? "ml-16" : "ml-60"
-          } ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+        className={`flex flex-col items-center mt-24 mb-4 pt-6 w-full h-full transition-all duration-300 
+          ${collapsed ? "md:ml-16" : "md:ml-60"} 
+          ${theme === "dark" ? "text-white" : "text-gray-900"}`}
       >
         <ToastContainer />
 
         {!error && (
-          <div className="flex justify-end w-full mb-6 pr-8 gap-4">
+          <div className="flex flex-row justify-end w-full mb-6 px-4 sm:pr-8 gap-2 sm:gap-4">
 
             {/* ✅ Sort By */}
             <Select
               label="Sort by"
               value={sortBy}
               onChange={setSortBy}
+              className="w-32 sm:w-44"
               options={[
                 { label: "Date", value: "createdAt" },
                 { label: "Title", value: "title" },
@@ -157,6 +159,7 @@ function Home() {
               label="Order"
               value={sortType}
               onChange={setSortType}
+              className="w-32 sm:w-44"
               options={[
                 { label: "Ascending", value: "asc" },
                 { label: "Descending", value: "desc" },
@@ -170,13 +173,16 @@ function Home() {
 
         {/* Videos Grid */}
         {!error && resultType === "videos" && videos.length > 0 && (
-          <div className={`grid gap-8 min-h-full w-full px-6 ${collapsed ? "grid-cols-4" : "grid-cols-3 "
-            }`}>
-            {videos?.map((video) => (
+          <div
+            key={`${currentPage}-${sortBy}-${sortType}-${query}-${limit}`}
+            className={`grid gap-8 min-h-full w-full px-4 sm:px-6 
+            grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${collapsed ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
+            {videos?.map((video, index) => (
               <div
                 key={video?._id}
-                className={`max-w-xs mx-auto w-full ${collapsed ? "" : "scale-110 my-3"
-                  }`}>
+                className={`max-w-xs mx-auto w-full transition-transform hover:scale-105 duration-300 animate-slide-up`}
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
                 <VideoComponent videofile={video} notify={notify} />
               </div>
             ))}

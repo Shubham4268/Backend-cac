@@ -29,7 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
     //     throw new ApiError(400, "Fullname required");
     // }
     if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
-        throw new ApiError(400,"All fields are required"); // Throw error if any field is missing
+        throw new ApiError(400, "All fields are required"); // Throw error if any field is missing
     }
 
     // Check if a user with the same email or username already exists in the database
@@ -83,7 +83,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if (!createdUser) {
         throw new ApiError(500, "Something went wrong while registering the user");
     }
-    
+
 
     // Return a successful response with the created user details
 
@@ -102,7 +102,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
         user.refreshToken = refreshToken
         await user.save({ validateBeforeSave: false }); // save method validates for each field while saving everytime, so to avoid needless validation, validateBeforeSave is set to false.
- 
+
         return { accessToken, refreshToken }
 
 
@@ -143,19 +143,23 @@ const loginUser = asyncHandler(async (req, res) => {
     // Retrieve the logged-in user details, excluding sensitive fields
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
+    // Cookie options based on environment
+    const isProduction = process.env.NODE_ENV === "production";
+    const cookieOptions = {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "None" : "Lax",
+    };
+
     // Respond with the user details and set cookies with the tokens
     // debugger;
     res.cookie('accessToken', accessToken, {
-        httpOnly: true,  // Prevent access to the cookie via JavaScript (helps mitigate XSS attacks)
-        secure: true,    // Only send the cookie over HTTPS (for security)
-        sameSite: 'None', // Prevent the cookie from being sent in cross-origin requests (helps mitigate CSRF attacks)
+        ...cookieOptions,
         maxAge: 24 * 60 * 60 * 1000,  // Cookie expires in 1 day
     });
 
     res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,  // Prevent access to the cookie via JavaScript
-        secure: true,    // Only send the cookie over HTTPS
-        sameSite: 'None', // SameSite strategy
+        ...cookieOptions,
         maxAge: 7 * 24 * 60 * 60 * 1000  // Refresh token cookie expires in 7 days
     });
     return res
@@ -189,13 +193,15 @@ const logoutUser = asyncHandler(async (req, res) => {
     );
 
     // Options to secure cookie clearing process
+    const isProduction = process.env.NODE_ENV === "production";
     const options = {
-        httpOnly: true,         // Server-only access
-        secure: true            // HTTPS only
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "None" : "Lax",
     };
 
-    res.clearCookie("accessToken")
-    res.clearCookie("refreshToken")
+    res.clearCookie("accessToken", options)
+    res.clearCookie("refreshToken", options)
     // Clear cookies and respond with logout success message
     return res
         .status(200)
@@ -239,9 +245,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         }
 
         // Define options for secure HTTP-only cookies to store the new tokens
+        const isProduction = process.env.NODE_ENV === "production";
         const options = {
-            httpOnly: true, // Prevent JavaScript access for security
-            secure: true    // Use HTTPS for secure transport
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? "None" : "Lax",
         };
 
         // Generate new access and refresh tokens
@@ -501,8 +509,8 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 avatar: 1,
                 coverImage: 1,
                 email: 1,
-                subscribers : 1,
-                subscribedTo : 1
+                subscribers: 1,
+                subscribedTo: 1
             }
         }
     ]);

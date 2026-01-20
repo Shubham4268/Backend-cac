@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
+import { validateFile } from "../../utils/validation.js";
 
-const InputField = ({ type = "text", name, value, onChange, placeholder, theme }) => (
+const InputField = ({ type = "text", name, value, onChange, placeholder, theme, error, maxLength }) => (
   <div className="w-full">
     <input
       type={type}
@@ -15,6 +16,7 @@ const InputField = ({ type = "text", name, value, onChange, placeholder, theme }
       onChange={onChange}
       placeholder={placeholder}
       required
+      maxLength={maxLength}
       className={`
         w-full rounded-xl px-4 py-2.5 text-sm border transition
         focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
@@ -22,8 +24,10 @@ const InputField = ({ type = "text", name, value, onChange, placeholder, theme }
           ? "bg-gray-950/60 text-gray-100 border-white/10 placeholder:text-gray-500"
           : "bg-gray-50 text-gray-900 border-gray-300 placeholder:text-gray-400"
         }
+        ${error ? "border-red-500 focus:border-red-500" : ""}
       `}
     />
+    {error && <p className="text-red-400 text-xs mt-1 ml-1">{error}</p>}
   </div>
 );
 
@@ -48,17 +52,44 @@ function AddVideoForm() {
     e.preventDefault();
     setError(null);
 
+    if (formData.title.trim().length < 3) {
+      setError("Title must be at least 3 characters");
+      return;
+    }
+
+    const videoFile = videoFileRef.current?.files[0];
+    const thumbnailFile = thumbnailRef.current?.files[0];
+
+    if (!videoFile) {
+      setError("Video file is required");
+      return;
+    }
+
+    if (!thumbnailFile) {
+      setError("Thumbnail is required");
+      return;
+    }
+
+    // Validate Video (Max 50MB)
+    const videoError = validateFile(videoFile, 50, ["video/mp4", "video/webm", "video/ogg", "video/*"]);
+    if (videoError) {
+      setError(`Video Error: ${videoError}`);
+      return;
+    }
+
+    // Validate Thumbnail (Max 2MB)
+    const thumbnailError = validateFile(thumbnailFile, 2, ["image/jpeg", "image/png", "image/jpg", "image/webp", "image/*"]);
+    if (thumbnailError) {
+      setError(`Thumbnail Error: ${thumbnailError}`);
+      return;
+    }
+
     const data = new FormData();
     data.append("title", formData.title);
     data.append("description", formData.description);
 
-    if (videoFileRef.current?.files[0]) {
-      data.append("videoFile", videoFileRef.current.files[0]);
-    }
-
-    if (thumbnailRef.current?.files[0]) {
-      data.append("thumbnail", thumbnailRef.current.files[0]);
-    }
+    data.append("videoFile", videoFile);
+    data.append("thumbnail", thumbnailFile);
 
     try {
       dispatch(setLoading(true));
@@ -143,6 +174,8 @@ function AddVideoForm() {
                 name="title"
                 value={formData.title}
                 theme={theme}
+                maxLength={50}
+                error={error && error.includes("Title") ? error : null}
               />
 
               <textarea
@@ -151,6 +184,7 @@ function AddVideoForm() {
                 value={formData.description}
                 onChange={onChange}
                 required
+                maxLength={500}
                 className={`
                   w-full min-h-[90px] rounded-xl px-4 py-2.5 text-sm border transition
                   focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
@@ -190,8 +224,8 @@ function AddVideoForm() {
 
 
               <div className={`flex items-center gap-4 p-4 rounded-xl border transition ${theme === "dark"
-                  ? "border-white/10 bg-gray-950/60 hover:border-white/20"
-                  : "border-gray-300 bg-gray-50 hover:border-gray-400"
+                ? "border-white/10 bg-gray-950/60 hover:border-white/20"
+                : "border-gray-300 bg-gray-50 hover:border-gray-400"
                 }`}>
                 <span className={`text-xs w-28 shrink-0 ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                   }`}>

@@ -50,7 +50,7 @@ function UserTweets({ user }) {
           {isOwner ? "Your Tweets" : `${user?.fullName}'s Tweets`}
         </h2>
         <p className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"} text-sm mt-1`}>
-          {isOwner ? "Thoughts, updates, and moments you’ve shared" : `Thoughts shared by ${user?.fullName}`}
+          {isOwner ? "Thoughts, updates, and moments you’ve shared" : `Thoughts shared by ${user?.fullName}`  }
         </p>
       </div>
 

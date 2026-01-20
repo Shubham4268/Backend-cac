@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import VideoComponent from "../components/video/VideoComponent";
 import { toast, ToastContainer } from "react-toastify";
@@ -58,7 +58,23 @@ function Subscription() {
     }
   };
 
+  const isNavbarToggle = useRef(false);
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    isNavbarToggle.current = true;
+    setLimit(collapsed ? 12 : 9);
+  }, [collapsed]);
+
+  useEffect(() => {
+    if (isNavbarToggle.current) {
+      isNavbarToggle.current = false;
+      return;
+    }
     if (id) {
       fetchVideos();
     }
@@ -90,7 +106,7 @@ function Subscription() {
               Subscribed Channels
             </p>
             <div
-              className={`h-40 mt-2 flex z-50 flex-row flex-nowrap ml-6  ${collapsed ? "max-w-[1450px]" : "max-w-screen-xl"
+              className={`h-40 mt-2 flex z-50 flex-row flex-nowrap pl-6  ${collapsed ? "max-w-[1450px]" : "max-w-screen-xl"
                 } scroll-smooth  overflow-x-scroll flex gap-6 pb-4 scrollbar-thin scrollbar-thumb-gray-800`}
             >
               {channels?.map((channel) => (

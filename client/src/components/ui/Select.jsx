@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { ChevronDown } from "lucide-react";
 import { useSelector } from "react-redux";
 
-function Select({ label, value, onChange, options }) {
+function Select({ label, value, onChange, options, className = "w-44" }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const theme = useSelector((state) => state.theme.theme);
@@ -21,7 +21,7 @@ function Select({ label, value, onChange, options }) {
   const selected = options.find((o) => o.value === value);
 
   return (
-    <div ref={ref} className="relative w-44">
+    <div ref={ref} className={`relative ${className}`}>
       <label className={`absolute -top-2 left-3 px-1 text-[10px] tracking-widest uppercase ${theme === "dark" ? "bg-gray-950 text-gray-500" : "bg-gray-100 text-gray-700"}`}>
         {label}
       </label>
@@ -90,6 +90,7 @@ Select.propTypes = {
       label: PropTypes.string.isRequired,
     })
   ).isRequired,
+  className: PropTypes.string,
 };
 
 export default Select;

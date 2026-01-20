@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
 import { toast, ToastContainer } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
+import { validatePassword } from "../../utils/validation.js";
 
 function ChangePassword() {
   const [error, setError] = useState(null);
@@ -33,6 +34,21 @@ function ChangePassword() {
     e.preventDefault();
     setError(null);
 
+    if (!formData.oldPassword) {
+      setError("Current password is required");
+      return;
+    }
+
+    if (!validatePassword(formData.newPassword)) {
+      setError("New password must be at least 6 characters");
+      return;
+    }
+
+    if (formData.oldPassword === formData.newPassword) {
+      setError("New password must be different from current password");
+      return;
+    }
+
     try {
       dispatch(setLoading(true));
       const response = await axios.post(
@@ -58,9 +74,8 @@ function ChangePassword() {
   };
 
   return (
-    <div className={`min-h-screen w-full relative overflow-hidden transition-all duration-300 ${
-      collapsed ? "ml-16" : "ml-60"
-    } ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+    <div className={`min-h-screen w-full relative overflow-hidden transition-all duration-300 ${collapsed ? "ml-16" : "ml-60"
+      } ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
       <div className="relative flex items-center justify-center min-h-screen px-6 py-24">
         <ToastContainer />
 
@@ -71,19 +86,18 @@ function ChangePassword() {
             rounded-2xl
             border backdrop-blur-3xl
             px-8 py-8
-            ${theme === "dark" 
-              ? "bg-slate-800 border-white/10" 
+            ${theme === "dark"
+              ? "bg-slate-800 border-white/10"
               : "bg-white border-gray-200 shadow-xl"
             }
           `}
         >
           {/* Header */}
           <div className="text-center mb-8">
-            <h2 className={`text-3xl font-semibold tracking-tight bg-clip-text text-transparent ${
-              theme === "dark" 
-                ? "bg-white" 
-                : "bg-gradient-to-r from-gray-900 to-gray-700"
-            }`}>
+            <h2 className={`text-3xl font-semibold tracking-tight bg-clip-text text-transparent ${theme === "dark"
+              ? "bg-white"
+              : "bg-gradient-to-r from-gray-900 to-gray-700"
+              }`}>
               Change Password
             </h2>
             <p className={`text-sm mt-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
@@ -113,6 +127,8 @@ function ChangePassword() {
                 value={formData.newPassword}
                 onChange={onChange}
                 theme={theme}
+                maxLength={128}
+                error={error && error.includes("New") ? error : null} // Simple mapping since generic error
               />
             </div>
 
@@ -140,7 +156,7 @@ function ChangePassword() {
   );
 }
 
-const InputField = ({ name, value, onChange, placeholder, theme }) => {
+const InputField = ({ name, value, onChange, placeholder, theme, error, maxLength }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -166,7 +182,9 @@ const InputField = ({ name, value, onChange, placeholder, theme }) => {
             ? "bg-gray-950/60 text-gray-100 border-white/10 placeholder:text-gray-500"
             : "bg-gray-50 text-gray-900 border-gray-300 placeholder:text-gray-400"
           }
+          ${error ? "border-red-500 focus:border-red-500" : ""}
         `}
+        maxLength={maxLength}
       />
       {value && (
         <button
@@ -177,6 +195,7 @@ const InputField = ({ name, value, onChange, placeholder, theme }) => {
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       )}
+      {error && <p className="text-red-400 text-xs mt-1 ml-1">{error}</p>}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { handleApiError } from "../utils/errorHandler.js";
 import { setLoading } from "../features/slices/loaderSlice.js";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { Loader2 } from "lucide-react";
 import { validateEmail, validatePassword, validateUsername } from "../utils/validation.js";
 
 const Register = () => {
@@ -22,6 +23,7 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useSelector((state) => state.theme.theme);
+  const loading = useSelector((state) => state.loader.loading);
 
   const togglePasswordVisibility = () =>
     setShowPassword((prev) => !prev);
@@ -70,7 +72,7 @@ const Register = () => {
         );
 
         if (loggedInUser?.data?.success) {
-          dispatch(login(loggedInUser.data.data));
+          dispatch(login(loggedInUser.data.data.loggedInUser));
           navigate("/home");
           setFormData({
             fullName: "",
@@ -174,9 +176,14 @@ const Register = () => {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full mt-2 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 hover:shadow-indigo-500/40 transition"
+            disabled={loading}
+            className={`w-full mt-2 py-2.5 rounded-lg text-white text-sm font-semibold transition flex items-center justify-center
+              ${loading 
+                ? "bg-indigo-400 cursor-not-allowed" 
+                : "bg-indigo-600 shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 hover:shadow-indigo-500/40"
+              }`}
           >
-            Create account
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Create account"}
           </button>
         </form>
 

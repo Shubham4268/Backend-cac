@@ -155,12 +155,12 @@ const loginUser = asyncHandler(async (req, res) => {
     // debugger;
     res.cookie('accessToken', accessToken, {
         ...cookieOptions,
-        maxAge: 24 * 60 * 60 * 1000,  // Cookie expires in 1 day
+        maxAge: 24 * 60 * 60 * 1000,          // 1 day — matches ACCESS_TOKEN_EXPIRY
     });
 
     res.cookie('refreshToken', refreshToken, {
         ...cookieOptions,
-        maxAge: 7 * 24 * 60 * 60 * 1000  // Refresh token cookie expires in 7 days
+        maxAge: 10 * 24 * 60 * 60 * 1000,     // 10 days — matches REFRESH_TOKEN_EXPIRY
     });
     return res
         .status(200)
@@ -259,8 +259,14 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         // Also send a JSON response confirming the tokens were refreshed
         return res
             .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", newRefreshToken, options)
+            .cookie("accessToken", accessToken, {
+                ...options,
+                maxAge: 24 * 60 * 60 * 1000,      // 1 day — same as login
+            })
+            .cookie("refreshToken", newRefreshToken, {
+                ...options,
+                maxAge: 10 * 24 * 60 * 60 * 1000, // 10 days — same as login
+            })
             .json(
                 new ApiResponse(
                     200,

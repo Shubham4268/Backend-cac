@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { VideoComponent } from "../components";
-import { toast, ToastContainer } from "react-toastify";
+import toast from "react-hot-toast";
 import { setLoading } from "../features/slices/loaderSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { handleApiError } from "../utils/errorHandler.js";
@@ -50,7 +50,7 @@ function Playlist() {
           }`}>
           Description: {playlist?.description}
         </span>
-        <ToastContainer />
+
         {videos?.length ? (
           <div className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 justify-items-center gap-4 min-h-full w-full mt-4">
             {videos?.map((video) => (

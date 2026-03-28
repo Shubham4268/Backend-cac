@@ -67,11 +67,10 @@ function ProfileDropdown({ user }) {
             w-64
             rounded-2xl
             border shadow-2xl
-            backdrop-blur-xl
             overflow-hidden
-            animate-in fade-in slide-in-from-top-2 duration-200
+            animate-slide-up
             ${theme === "dark" 
-              ? "bg-gradient-to-b from-gray-800 to-gray-900 border-white/10 shadow-black/50" 
+              ? "bg-gray-800 border-gray-700 shadow-black/50" 
               : "bg-white border-gray-200 shadow-gray-300/50"
             }
           `}
@@ -83,7 +82,7 @@ function ProfileDropdown({ user }) {
             <div className="flex items-center gap-3">
               <img
                 className={`w-12 h-12 rounded-full object-cover border-2 ${
-                  theme === "dark" ? "border-indigo-500/30" : "border-indigo-300"
+                  theme === "dark" ? "border-blue-500/30" : "border-blue-300"
                 }`}
                 src={currUser?.avatar}
                 alt={currUser?.fullName}
@@ -122,8 +121,8 @@ function ProfileDropdown({ user }) {
               >
                 <User size={18} className={`transition ${
                   theme === "dark" 
-                    ? "text-gray-400 group-hover:text-indigo-400" 
-                    : "text-gray-500 group-hover:text-indigo-600"
+                    ? "text-gray-400 group-hover:text-blue-400" 
+                    : "text-gray-500 group-hover:text-blue-600"
                 }`} />
                 <span>Update Details</span>
               </Link>
@@ -145,8 +144,8 @@ function ProfileDropdown({ user }) {
               >
                 <KeyRound size={18} className={`transition ${
                   theme === "dark" 
-                    ? "text-gray-400 group-hover:text-indigo-400" 
-                    : "text-gray-500 group-hover:text-indigo-600"
+                    ? "text-gray-400 group-hover:text-blue-400" 
+                    : "text-gray-500 group-hover:text-blue-600"
                 }`} />
                 <span>Change Password</span>
               </Link>

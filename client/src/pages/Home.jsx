@@ -3,13 +3,13 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { handleApiError } from "../utils/errorHandler.js";
 import Header from "../components/Header/Header.jsx";
-import { toast, ToastContainer } from "react-toastify";
+import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setLoading } from "../features/slices/loaderSlice.js";
 import { useSelector } from "react-redux";
 import { FcNext, FcPrevious } from "react-icons/fc";
 import Select from "../components/ui/Select.jsx"; // ✅ added
-import { Loader } from "../components/index.js";
+import { Loader, VideoGridSkeleton } from "../components/index.js";
 
 axios.defaults.withCredentials = true;
 
@@ -28,8 +28,10 @@ function Home() {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.theme);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const fetchVideos = async () => {
-    dispatch(setLoading(true));
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/videos`,
@@ -56,7 +58,7 @@ function Home() {
     } catch (error) {
       handleApiError(error, setError);
     } finally {
-      dispatch(setLoading(false));
+      setIsLoading(false);
     }
   };
 
@@ -79,13 +81,12 @@ function Home() {
   return (
     <>
       <Header onSearch={handleSearch} />
-      <Loader />
       <div
         className={`flex flex-col items-center mt-24 mb-4 pt-6 w-full h-full transition-all duration-300 
           ${collapsed ? "md:ml-16" : "md:ml-60"} 
           ${theme === "dark" ? "text-white" : "text-gray-900"}`}
       >
-        <ToastContainer />
+
 
         {!error && (
           <div className="flex flex-row justify-end w-full mb-6 px-4 sm:pr-8 gap-2 sm:gap-4">
@@ -120,24 +121,29 @@ function Home() {
         {error && <p className="text-blue-500 text-center mb-5">{error}</p>}
 
         {/* Videos Grid */}
-        {!error && videos.length > 0 && (
-          <div
-            key={`${currentPage}-${sortBy}-${sortType}-${query}-${limit}`}
-            className={`grid gap-8 min-h-full w-full px-4 sm:px-6 
-            grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${collapsed ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
-            {videos?.map((video, index) => (
+        <div
+          key={`${currentPage}-${sortBy}-${sortType}-${query}-${limit}`}
+          className={`grid gap-8 min-h-full w-full px-4 sm:px-6 
+          grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${collapsed ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}
+        >
+          {isLoading ? (
+            Array.from({ length: limit }).map((_, index) => (
+              <VideoGridSkeleton key={index} />
+            ))
+          ) : !error && videos.length > 0 ? (
+            videos.map((video, index) => (
               <div
                 key={video?._id}
-                className={`max-w-xs mx-auto w-full transition-transform hover:scale-105 duration-300 animate-slide-up`}
+                className={`max-w-[320px] mx-auto w-full transition-transform hover:scale-105 duration-300 animate-slide-up`}
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <VideoComponent videofile={video} notify={notify} />
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          ) : null}
+        </div>
 
-        {!error && videos.length > 0 && (
+        {!isLoading && !error && videos.length > 0 && (
           <div className="mt-16 flex justify-center items-center gap-6">
             <button
               disabled={currentPage === 1}

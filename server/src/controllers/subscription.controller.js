@@ -1,6 +1,7 @@
 import mongoose, { isValidObjectId } from "mongoose"
 import { User } from "../models/user.model.js"
 import { Video } from "../models/video.model.js"
+import { Tweet } from "../models/tweet.model.js"
 import { Subscription } from "../models/subscription.model.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
@@ -158,44 +159,43 @@ const getSubscribedChannelsVideos = asyncHandler(async (req, res) => {
     });
 
 
-    const tweets = await User.aggregate([
+    const tweets = await Tweet.aggregate([
         {
-          $match: {
-            _id: { $in: channelIds.map(channel => channel._id) }, // Extract `_id` from each channel object
-          },
-        },
-        {
-          $lookup: {
-            from: "tweets",
-            localField: "_id",
-            foreignField: "owner",
-            as: "userTweets",
-          },
-        },
-        {
-          $unwind: "$userTweets", // Deconstruct the `userTweets` array into individual documents
-        },
-        {
-          $sort: {
-            "userTweets.createdAt": -1, // Sort tweets by `createdAt` (descending order)
-          },
-        },
-        {
-          $group: {
-            _id: "$_id", // Group back by user
-            fullName: { $first: "$fullName" },
-            avatar: { $first: "$avatar" },
-            userTweets: {
-              $push: {
-                _id: "$userTweets._id",
-                content: "$userTweets.content", // Replace 'content' with desired fields
-                createdAt: "$userTweets.createdAt",
-              },
+            $match: {
+                owner: { $in: channelIds.map(channel => channel._id) }, // Extract `_id` from each channel object
             },
-          },
         },
-      ]);
-      
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "ownerDetails",
+            },
+        },
+        {
+            $unwind: "$ownerDetails", // Deconstruct the `ownerDetails` array into individual documents
+        },
+        {
+            $project: {
+                _id: 1,
+                content: 1,
+                createdAt: 1,
+                owner: {
+                    _id: "$ownerDetails._id",
+                    fullName: "$ownerDetails.fullName",
+                    avatar: "$ownerDetails.avatar",
+                    username: "$ownerDetails.username"
+                }
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1, // Sort tweets globally by `createdAt` (descending order)
+            },
+        },
+    ]);
+
 
     // Return paginated response
     return res.status(200).json(

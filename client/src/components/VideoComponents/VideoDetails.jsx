@@ -2,10 +2,10 @@ import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import LikeButton from "../Common/LikeButton";
 import SubscribeButton from "../Common/SubscribeButton";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
+import PlaylistModal from "../video/PlaylistModal";
 
 function VideoDetails({ video, notify }) {
   const [subscribers, setSubscribers] = useState(null);
@@ -18,7 +18,7 @@ function VideoDetails({ video, notify }) {
   const [error, setError] = useState(null);
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
-  const [newPlaylistName, setNewPlaylistName] = useState(null);
+  const [newPlaylistName, setNewPlaylistName] = useState("");
   const [loadingPlaylist, setLoadingPlaylist] = useState(false);
 
   const owner = videoFile.owner;
@@ -227,78 +227,21 @@ function VideoDetails({ video, notify }) {
 
       {/* Modal for selecting playlist or creating a new one */}
       {isModalOpen && (
-        <div
-          className="fixed inset-0 z-10 bg-black/50 backdrop-blur-sm flex justify-center items-center"
-          onClick={(e) => e.preventDefault()}
-        >
-          <div className={`rounded-lg shadow-lg p-6 w-96 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900 border border-gray-200"}`}>
-            {/* Close Button */}
-            <button
-              onClick={() => {
-                setIsModalOpen(false);
-                setIsDropdownOpen(false);
-              }}
-              className="w-full text-sm text-end text-blue-500 hover:underline mb-2"
-            >
-              Close
-            </button>
-
-            <h2 className="text-lg font-semibold mb-4">Select Playlist</h2>
-
-            {/* Dropdown to Select Playlist */}
-            <div className="mb-4">
-              {playlists.length === 0 ? (
-                <div>No playlists found</div>
-              ) : (
-                <select
-                  onChange={(e) => setSelectedPlaylistId(e.target.value)}
-                  className={`w-full p-2 border rounded-md ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-gray-50 border-gray-300 text-gray-900"}`}
-                  size={5}
-                >
-                  {playlists?.map((playlist) => (
-                    <option key={playlist?._id} value={playlist?._id}>
-                      {playlist?.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-
-            {/* Button to add video to selected playlist */}
-            <button
-              onClick={() => handleAddToPlaylist(selectedPlaylistId)}
-              disabled={!selectedPlaylistId || loadingPlaylist}
-              className="w-full p-2 bg-blue-500 text-white rounded-md disabled:opacity-50"
-            >
-              {loadingPlaylist ? "Adding..." : "Add to Playlist"}
-            </button>
-
-            {/* New Playlist Form */}
-            <h3 className="text-md font-medium mt-4 mb-2">
-              Create New Playlist
-            </h3>
-            <div className="flex">
-              <input
-                type="text"
-                value={newPlaylistName}
-                onChange={(e) => setNewPlaylistName(e.target.value)}
-                className={`w-10/12 p-2 border rounded-md mr-1 ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}
-                placeholder="Enter playlist name"
-              />
-              <button
-                onClick={handleCreatePlaylist}
-                disabled={loadingPlaylist}
-                className={`w-2/12 text-white rounded-md disabled:opacity-50 text-xs font-light hover:font-normal ${loadingPlaylist ? "bg-transparent border" : "bg-blue-500"
-                  }`}
-              >
-                {loadingPlaylist ? "Creating..." : "Create"}
-              </button>
-            </div>
-
-            {/* Error Handling */}
-            {error && <div className="text-red-500 mt-2">{error}</div>}
-          </div>
-        </div>
+        <PlaylistModal
+          playlists={playlists}
+          selectedPlaylistId={selectedPlaylistId}
+          setSelectedPlaylistId={setSelectedPlaylistId}
+          handleAddToPlaylist={handleAddToPlaylist}
+          newPlaylistName={newPlaylistName}
+          setNewPlaylistName={setNewPlaylistName}
+          handleCreatePlaylist={handleCreatePlaylist}
+          loading={loadingPlaylist}
+          error={error}
+          closeModal={() => {
+            setIsModalOpen(false);
+            setIsDropdownOpen(false);
+          }}
+        />
       )}
       <span className={`text-center font-bold text-2xl underline mt-6 ${theme === "dark" ? "text-white" : "text-gray-900"
         }`}>

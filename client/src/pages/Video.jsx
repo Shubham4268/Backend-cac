@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { VideoDetails, VideoFile } from "../components";
+import { VideoDetails, VideoFile, VideoDetailSkeleton, CommentsSection } from "../components";
 import { handleApiError } from "../utils/errorHandler";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import toast from "react-hot-toast";
 import { setLoading } from "../features/slices/loaderSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,11 +12,11 @@ function Video() {
   const [error, setError] = useState(null);
   const { id } = useParams();
   const notify = (text) => toast(text);
-  const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.theme);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(setLoading(true));
+    setIsLoading(true);
     const fetchVideo = async () => {
       try {
         const response = await axios.get(
@@ -37,7 +37,7 @@ function Video() {
       } catch (error) {
         handleApiError(error, setError);
       } finally {
-        dispatch(setLoading(false));
+        setIsLoading(false);
       }
     };
 
@@ -46,40 +46,41 @@ function Video() {
 
   return (
     <div className="mt-24 px-6 lg:px-12 max-w-[1600px] mx-auto">
-      <ToastContainer />
+
 
       {error && (
-        <p className="text-red-500 text-center mb-5">
+        <p className="text-red-500 text-center mb-5 mt-32">
           {error || "Failed to load video"}
         </p>
       )}
 
-      {/* Equal height grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+      {/* Render Skeletons while fetching */}
+      {isLoading && !error && <VideoDetailSkeleton />}
 
-        {/* 🎥 Video stage */}
-        <div className="lg:col-span-2 flex">
-          <div className="relative w-full h-[500px] bg-black rounded-2xl overflow-hidden shadow-2xl ml-10 flex items-center justify-center">
-            {video ? (
+      {/* Equal height grid — only render smoothly when data exists */}
+      {!isLoading && !error && video && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mt-6">
+          {/* 🎥 Video stage */}
+          <div className="lg:col-span-2 flex">
+            <div className="relative w-full h-[500px] bg-black rounded-2xl overflow-hidden shadow-2xl ml-0 lg:ml-10 flex items-center justify-center">
               <VideoFile video={video} />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-400">
-                Loading video...
-              </div>
-            )}
+            </div>
           </div>
-        </div>
 
-        {/* 📦 Details — forced to same height */}
-        <div className="lg:col-span-1 flex">
-          {video ? (
-            <div className="w-[450px] h-[500px]">
+          {/* 📦 Details — forced to same height */}
+          <div className="lg:col-span-1 flex">
+            <div className="w-full lg:w-[450px] lg:h-[500px]">
               <VideoDetails video={video} notify={notify} />
             </div>
-          ) : (
-            <div className={`text-gray-400 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>Loading details...</div>
-          )}
+          </div>
         </div>
+      )}
+
+      {/* 💬 Comments section */}
+      <div className="max-w-[1390px] mx-auto">
+        {!isLoading && !error && video && (
+          <CommentsSection videoId={id} />
+        )}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   status: false,
-  userData: null, // This will include the loggedInUser object as part of the backend response
+  userData: null,
 };
 
 export const authSlice = createSlice({
@@ -10,21 +10,19 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      state.status = true; // Mark user as logged in
-      if (state.userData) {
-        state.userData = {
-          ...state.userData, // Preserve other fields in userData
-          loggedInUser: {
-            ...state.userData.loggedInUser, // Merge existing loggedInUser data
-            ...action.payload, // Update with new data from the backend
-          },
-        };
-      } else {
-        state.userData = action.payload // Initialize if userData is null
-    }},
+      state.status = true;
+
+      // Strip tokens — only keep the loggedInUser object.
+      // The backend returns { loggedInUser, accessToken, refreshToken }.
+      // Tokens live in httpOnly cookies; they must NOT be persisted to localStorage.
+      const loggedInUser =
+        action.payload?.loggedInUser ?? action.payload;
+
+      state.userData = { loggedInUser };
+    },
     logout: (state) => {
-      state.status = false; // Mark user as logged out
-      state.userData = null; // Clear userData
+      state.status = false;
+      state.userData = null;
     },
   },
 });

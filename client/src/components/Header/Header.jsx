@@ -17,7 +17,12 @@ function Header({ onSearch }) {
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    onSearch({ target: { value } }); // Trigger search on each change
+    
+    // Only trigger the API search if there are at least 3 characters,
+    // or if the user completely clears the input to reset the video grid.
+    if (value.trim().length >= 3 || value.trim().length === 0) {
+      onSearch({ target: { value } });
+    }
   };
 
   const location = useLocation();
@@ -66,7 +71,7 @@ function Header({ onSearch }) {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search videos..."
+                placeholder="Search videos or users..."
                 value={searchQuery}
                 onChange={handleSearch} // Trigger search dynamically
                 className={`block w-full p-4 ps-10 text-sm border rounded-full focus:ring-blue-500 focus:border-blue-500 transition ${theme === "dark"

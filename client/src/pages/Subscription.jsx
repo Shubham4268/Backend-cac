@@ -2,10 +2,11 @@ import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import VideoComponent from "../components/video/VideoComponent";
-import { toast, ToastContainer } from "react-toastify";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { TweetComponent } from "../components";
 import { setLoading } from "../features/slices/loaderSlice";
+import { SubscriptionSkeleton } from "../components/index.js";
 
 function Subscription() {
   const [videos, setVideos] = useState([]);
@@ -24,10 +25,11 @@ function Subscription() {
   console.log(channels);
   const collapsed = useSelector((state) => state.navbar.collapsed);
   const theme = useSelector((state) => state.theme.theme);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchVideos = async () => {
     try {
-      dispatch(setLoading(true));
+      setIsLoading(true);
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/subscriptions/u/${id}`,
         {
@@ -55,7 +57,7 @@ function Subscription() {
       setError("An error occurred while fetching ");
       console.error(error);
     } finally {
-      dispatch(setLoading(false));
+      setIsLoading(false);
     }
   };
 
@@ -81,7 +83,9 @@ function Subscription() {
           }`}
       >
 
-        {!channels.length ? (
+        {isLoading ? (
+          <SubscriptionSkeleton />
+        ) : !channels.length ? (
           <div className={`my-20 w-full text-center text-3xl ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
             You have not subscribed to any channels yet
           </div>
@@ -163,7 +167,7 @@ function Subscription() {
           <hr className={theme === "dark" ? "border-gray-800" : "border-gray-300"} />
         </div>
 
-        <ToastContainer />
+
         {selectedOption === "videos" && (
           <div className={`px-6 mt-10 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
             {channels.length !== 0 && !videos.length && (
@@ -248,35 +252,33 @@ function Subscription() {
 
               {tweetData?.length > 0 && (
                 <div className="flex flex-col gap-8 mt-6">
-                  {tweetData.map((data) =>
-                    data?.userTweets?.map((tweet) => (
-                      <div
-                        key={tweet._id}
-                        className={`
-                          relative
-                          backdrop-blur
-                          rounded-3xl
-                          px-6 py-5
-                          shadow-lg
-                          hover:shadow-xl
-                          transition-all
-                          ${theme === "dark"
-                            ? "bg-gradient-to-b from-gray-800/80 to-gray-900/90"
-                            : "bg-white border border-gray-200"
-                          }
-                        `}
-                      >
-                        {/* subtle left accent */}
-                        <span className="absolute left-0 top-6 bottom-6 w-[3px] rounded-full bg-gradient-to-b from-indigo-500 to-cyan-400" />
+                  {tweetData.map((tweet) => (
+                    <div
+                      key={tweet._id}
+                      className={`
+                        relative
+                        backdrop-blur
+                        rounded-3xl
+                        px-6 py-5
+                        shadow-lg
+                        hover:shadow-xl
+                        transition-all
+                        ${theme === "dark"
+                          ? "bg-gradient-to-b from-gray-800/80 to-gray-900/90"
+                          : "bg-white border border-gray-200"
+                        }
+                      `}
+                    >
+                      {/* subtle left accent */}
+                      <span className="absolute left-0 top-6 bottom-6 w-[3px] rounded-full bg-gradient-to-b from-indigo-500 to-cyan-400" />
 
-                        <TweetComponent
-                          tweet={tweet}
-                          tweetData={data}
-                          refreshTweets={fetchVideos}
-                        />
-                      </div>
-                    ))
-                  )}
+                      <TweetComponent
+                        tweet={tweet}
+                        tweetData={tweet.owner}
+                        refreshTweets={fetchVideos}
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

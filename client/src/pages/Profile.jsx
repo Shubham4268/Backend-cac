@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
@@ -7,7 +7,7 @@ import {
   UserTweets,
   UserPlaylists,
 } from "../components";
-import { toast, ToastContainer } from "react-toastify";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../features/slices/loaderSlice.js";
 
@@ -17,13 +17,22 @@ function Profile() {
   const [subscribed, setSubscribed] = useState(null);
   const [subscribers, setSubscribers] = useState(null);
   const [channelInfo, setChannelInfo] = useState(null);
-  const [activeDiv, setActiveDiv] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || "videos";
+  
+  // Mapping for activeDiv based on URl state
+  const tabMap = {
+    videos: 1,
+    tweets: 2,
+    playlists: 3,
+  };
+  const activeDiv = tabMap[activeTab] || 1;
   const notify = (text) => toast(text);
   const dispatch = useDispatch();
   const currUser = useSelector((state) => state.user.userData);
   // console.log("currUser: ",currUser.loggedInUser._id);
   // console.log("user: ",user._id);
-  console.log(currUser?.loggedInUser?._id == user?._id);
+  console.log("Viewing own profile:", currUser?.loggedInUser?._id == user?._id);
 
 
 
@@ -115,7 +124,7 @@ function Profile() {
         }
       `}
     >
-      <ToastContainer className="z-10" />
+
 
       {/* Hero */}
       <div className={`relative overflow-hidden border-b ${theme === "dark" ? "border-white/10" : "border-gray-200"
@@ -159,9 +168,9 @@ function Profile() {
       <div className={`mt-4 border-b ${theme === "dark" ? "border-white/10" : "border-gray-200"
         }`}>
         <div className="max-w-7xl mx-auto px-10 flex justify-evenly py-3">
-          <SectionTab label="Videos" active={activeDiv === 1} onClick={() => setActiveDiv(1)} />
-          <SectionTab label="Tweets" active={activeDiv === 2} onClick={() => setActiveDiv(2)} />
-          {currUser?.loggedInUser?._id == user?._id && <SectionTab label="Playlists" active={activeDiv === 3} onClick={() => setActiveDiv(3)} />}
+          <SectionTab label="Videos" active={activeDiv === 1} onClick={() => setSearchParams({ tab: "videos" })} />
+          <SectionTab label="Tweets" active={activeDiv === 2} onClick={() => setSearchParams({ tab: "tweets" })} />
+          {currUser?.loggedInUser?._id == user?._id && <SectionTab label="Playlists" active={activeDiv === 3} onClick={() => setSearchParams({ tab: "playlists" })} />}
         </div>
       </div>
 

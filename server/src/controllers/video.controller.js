@@ -15,14 +15,29 @@ const getAllVideos = asyncHandler(async (req, res) => {
     // If query is provided, it searches for video titles that match the string using a regular expression ($regex) for partial matching. The $options: "i" makes the search case-insensitive.
     // If userId is provided, it adds a filter to match videos by the user’s ID.
     const filter = {};
-    if (query) {
-        filter.title = { $regex: query, $options: "i" }; // Case-insensitive search by title
-    }
+
     if (userId) {
-        filter.owner = mongoose.Types.ObjectId(userId); // Filter by userId if provided
+        filter.owner = mongoose.Types.ObjectId(userId);
     }
-    console.log("Filter",filter);
-    
+
+    if (query) {
+        // Find users whose username or fullName matches the query
+        const matchingUsers = await User.find({
+            $or: [
+                { fullName: { $regex: query, $options: "i" } },
+                { username: { $regex: query, $options: "i" } }
+            ]
+        }).select("_id");
+
+        const matchingUserIds = matchingUsers.map(user => user._id);
+
+        filter.$or = [
+            { title: { $regex: query, $options: "i" } },
+            { owner: { $in: matchingUserIds } }
+        ];
+    }
+    console.log("Filter", filter);
+
     // Count total videos matching the filter
     const totalVideos = await Video.countDocuments(filter);
 
@@ -40,15 +55,15 @@ const getAllVideos = asyncHandler(async (req, res) => {
         { $unwind: "$owner" }, // Unwind the owner array into a single object
         {
             $project: {
-                _id : 1,
+                _id: 1,
                 title: 1,
                 description: 1,
                 videoFile: 1,
                 thumbnail: 1,
                 duration: 1,
                 createdAt: 1,
-                views : 1,
-                isPublished : 1,
+                views: 1,
+                isPublished: 1,
 
                 "owner": 1,
             }, // Select only specific fields to include in the result
@@ -110,7 +125,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     if (!video || !thumbnail) {
         throw new ApiError(400, "Video and thumbnail are required")
     }
-    
+
 
     // const video = "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4"
     const createdVideo = await Video.create({
@@ -119,10 +134,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
         // videoFile: "https://res.cloudinary.com/djp8zilvt/video/upload/v1732013164/samples/dance-2.mp4",
         // thumbnail: "https://res.cloudinary.com/djp8zilvt/image/upload/v1732013170/cld-sample-4.jpg",
         // duration: 10,
-        videoFile : video.url,
+        videoFile: video.url,
         thumbnail: thumbnail.url,
         duration: video.duration,
-        
+
         owner: req.user?._id
     })
 

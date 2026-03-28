@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { change } from "../../features/slices/tweetSlice";
 import { handleApiError } from "../../utils/errorHandler";
-import { toast, ToastContainer } from "react-toastify";
+import toast from "react-hot-toast";
 
 function TweetComponent({ tweet, tweetData, refreshTweets }) {
   const [error, setError] = useState(null);
@@ -64,7 +64,7 @@ function TweetComponent({ tweet, tweetData, refreshTweets }) {
   return (
     <div className="flex flex-col w-5/6 m-auto h-fit px-5 pb-5 rounded-lg">
       {error && <p className="text-red-500 text-center">{error}</p>}
-      <ToastContainer />
+
       <div className="flex justify-between mt-5">
         <div className="flex self-start">
           <img

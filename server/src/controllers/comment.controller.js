@@ -1,55 +1,75 @@
 import mongoose from "mongoose"
-import {Comment} from "../models/comment.model.js"
-import {ApiError} from "../utils/ApiError.js"
-import {ApiResponse} from "../utils/ApiResponse.js"
-import {asyncHandler} from "../utils/asyncHandler.js"
+import { Comment } from "../models/comment.model.js"
+import { ApiError } from "../utils/ApiError.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
+import { asyncHandler } from "../utils/asyncHandler.js"
 import { Video } from "../models/video.model.js"
 
 const getVideoComments = asyncHandler(async (req, res) => {
-    //TODO: get all comments for a video
-    const {videoId} = req.params
-    const {page = 3, limit = 5} = req.query
+    const { videoId } = req.params
+    const { page = 1, limit = 10 } = req.query
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
 
     const comments = await Comment.aggregate([
         {
-            $match : {
-                video : new mongoose.Types.ObjectId(videoId)
+            $match: {
+                video: new mongoose.Types.ObjectId(videoId)
             }
         },
+        // Step 1: Join user document (plain $lookup, works on all MongoDB versions)
         {
-            $project : {
-                _id : 0,
-                content : 1
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "ownerArr"
             }
         },
+        // Step 2: Unwind — preserveNullAndEmptyArrays keeps comments whose owner was deleted
         {
-            $skip: (page - 1) * limit,
+            $unwind: {
+                path: "$ownerArr",
+                preserveNullAndEmptyArrays: true
+            }
         },
+        // Step 3: Shape the final document
         {
-            $limit: parseInt(limit),
+            $project: {
+                _id: 1,
+                content: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                owner: {
+                    _id: "$ownerArr._id",
+                    fullName: "$ownerArr.fullName",
+                    username: "$ownerArr.username",
+                    avatar: "$ownerArr.avatar"
+                }
+            }
         },
+        { $sort: { createdAt: -1 } },
+        { $skip: (pageNum - 1) * limitNum },
+        { $limit: limitNum },
     ])
-    
+
     const totalComments = await Comment.countDocuments({
-        video: videoId,
+        video: new mongoose.Types.ObjectId(videoId),
     });
 
-    if (!comments.length) {
-        throw new ApiError(404, "No comments found for this video");
-    }
-
-    const hasNextPage = page * limit < totalComments;
-    const hasPreviousPage = page > 1;
+    const hasNextPage = pageNum * limitNum < totalComments;
+    const hasPreviousPage = pageNum > 1;
 
     return res.status(200).json(
         new ApiResponse(
             200,
             {
                 totalComments,
-                currentPage: parseInt(page),
-                limit: parseInt(limit),
-                nextPage: hasNextPage ? parseInt(page) + 1 : null,
-                previousPage: hasPreviousPage ? parseInt(page) - 1 : null,
+                currentPage: pageNum,
+                limit: limitNum,
+                nextPage: hasNextPage ? pageNum + 1 : null,
+                previousPage: hasPreviousPage ? pageNum - 1 : null,
                 comments,
             },
             "Comments fetched successfully"
@@ -59,8 +79,8 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
 const addComment = asyncHandler(async (req, res) => {
     // TODO: add a comment to a video
-    const {videoId} = req.params
-    const {content} = req.body;
+    const { videoId } = req.params
+    const { content } = req.body;
 
     if (!mongoose.isValidObjectId(videoId) || ! await Video.exists(new mongoose.Types.ObjectId(videoId))) {
         throw new ApiError(400, "Video Id is invalid")
@@ -72,8 +92,8 @@ const addComment = asyncHandler(async (req, res) => {
 
     const comment = await Comment.create({
         content,
-        video : new mongoose.Types.ObjectId(videoId),
-        owner : req.user?._id
+        video: new mongoose.Types.ObjectId(videoId),
+        owner: req.user?._id
     })
 
     if (!comment) {
@@ -81,20 +101,20 @@ const addComment = asyncHandler(async (req, res) => {
     }
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(
-            200,
-            comment,
-            "Comment added successfully"
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                comment,
+                "Comment added successfully"
+            )
         )
-    )
 })
 
 const updateComment = asyncHandler(async (req, res) => {
     // TODO: update a comment
-    const {commentId} = req.params;
-    const {content} = req.body;
+    const { commentId } = req.params;
+    const { content } = req.body;
 
     if (!mongoose.isValidObjectId(commentId)) {
         throw new ApiError(400, "Comment Id is invalid")
@@ -104,8 +124,8 @@ const updateComment = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Content is required")
     }
 
-    const updatedComment = await Comment.findByIdAndUpdate(commentId,{
-        $set : {
+    const updatedComment = await Comment.findByIdAndUpdate(commentId, {
+        $set: {
             content
         }
     }, { new: true })
@@ -113,13 +133,13 @@ const updateComment = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Could not update comment")
     }
 
-    return res.status(200).json(new ApiResponse(200, updatedComment,"Comment updated successfully"))
+    return res.status(200).json(new ApiResponse(200, updatedComment, "Comment updated successfully"))
 })
 
 
 const deleteComment = asyncHandler(async (req, res) => {
     // TODO: delete a comment
-    const {commentId} = req.params;
+    const { commentId } = req.params;
 
     if (!mongoose.isValidObjectId(commentId)) {
         throw new ApiError(400, "Comment Id is invalid")
@@ -132,20 +152,20 @@ const deleteComment = asyncHandler(async (req, res) => {
     }
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(
-            200,
-            deletedComment,
-            "Comment deleted successfully"
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                deletedComment,
+                "Comment deleted successfully"
+            )
         )
-    )
 
 })
 
 export {
-    getVideoComments, 
-    addComment, 
+    getVideoComments,
+    addComment,
     updateComment,
-     deleteComment
-    }
+    deleteComment
+}

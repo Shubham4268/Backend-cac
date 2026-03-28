@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { handleApiError } from "../../utils/errorHandler.js";
-import { toast, ToastContainer } from "react-toastify";
+import toast from "react-hot-toast";
 import { change } from "../../features/slices/tweetSlice";
 
 function AddTweetForm() {
@@ -99,7 +99,7 @@ function AddTweetForm() {
 
   return (
     <div className="flex justify-center px-6 py-20">
-      <ToastContainer />
+
 
       <div
         className={`

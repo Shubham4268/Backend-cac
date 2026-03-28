@@ -4,7 +4,7 @@ import { handleApiError } from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
-import { toast, ToastContainer } from "react-toastify";
+import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { validatePassword } from "../../utils/validation.js";
 
@@ -77,7 +77,7 @@ function ChangePassword() {
     <div className={`min-h-screen w-full relative overflow-hidden transition-all duration-300 ${collapsed ? "ml-16" : "ml-60"
       } ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
       <div className="relative flex items-center justify-center min-h-screen px-6 py-24">
-        <ToastContainer />
+
 
         {/* Card */}
         <div

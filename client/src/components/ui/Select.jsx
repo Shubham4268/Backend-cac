@@ -33,7 +33,7 @@ function Select({ label, value, onChange, options, className = "w-44" }) {
           border rounded-xl px-4 py-2.5 transition
           focus:outline-none focus:ring-2 focus:ring-blue-500/40
           ${theme === "dark"
-            ? "bg-slate-800 text-gray-200 border-gray-800 hover:border-gray-700"
+            ? "bg-gray-800 text-gray-200 border-gray-800 hover:border-gray-700"
             : "bg-white text-gray-700 border-gray-300 hover:border-gray-400"
           }
         `}
@@ -50,7 +50,7 @@ function Select({ label, value, onChange, options, className = "w-44" }) {
           className={`
             absolute z-50 mt-2 w-full
             border rounded-xl shadow-xl overflow-hidden
-            animate-in fade-in slide-in-from-top-1
+            animate-slide-up
             ${theme === "dark" ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}
           `}
         >

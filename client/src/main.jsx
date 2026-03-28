@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { PersistGate } from "redux-persist/integration/react";
+import "./setupAxios.js"; // global axios config and 401 interceptor
 import {
   AuthLayout,
   ChangePassword,
@@ -33,7 +34,7 @@ import {
   RouterProvider,
   ScrollRestoration,
 } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
+
 
 const router = createBrowserRouter([
   {
@@ -153,10 +154,7 @@ const router = createBrowserRouter([
       },
       {
         element: <VideoComponent video />,
-      },
-      {
-        element: <Loader />,
-      },
+      }
     ],
   },
 ]);
@@ -164,7 +162,6 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
-      <Loader />
       <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
         <RouterProvider router={router}>
           <App />

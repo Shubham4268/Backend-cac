@@ -5,6 +5,8 @@ import VideoComponent from "../video/VideoComponent.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
 import { handleApiError } from "../../utils/errorHandler.js";
+import { EditVideoModal, DeleteConfirmationModal } from "../index.js";
+import toast from "react-hot-toast";
 
 function UserVideos({ user, notify }) {
   const currUser = user;
@@ -13,26 +15,52 @@ function UserVideos({ user, notify }) {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.theme);
   const loggedInUser = useSelector((state) => state.user?.userData?.loggedInUser);
-  const isOwner = loggedInUser?._id === currUser?._id;
+  const isOwner = loggedInUser?._id == currUser?._id;
+  const [editingVideo, setEditingVideo] = useState(null);
+  const [videoToDelete, setVideoToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const fetchVideos = async () => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/videos/${currUser?._id}`
+      );
+      const { data } = response?.data || {};
+      setVideos(data);
+    } catch (error) {
+      handleApiError(error, setError);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
   useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        dispatch(setLoading(true));
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/dashboards/videos/${currUser?._id
-          }`
-        );
-        const { data } = response?.data || {};
-        setVideos(data);
-      } catch (error) {
-        handleApiError(error, setError);
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
     fetchVideos();
   }, [currUser?._id, dispatch]);
+
+  const handleDeleteVideo = async () => {
+    if (!videoToDelete) return;
+    try {
+      setDeleteLoading(true);
+      dispatch(setLoading(true));
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/videos/${videoToDelete._id}`);
+      if (response?.data?.success) {
+        toast.success("Video deleted successfully");
+        setVideoToDelete(null);
+        fetchVideos();
+      }
+    } catch (err) {
+      handleApiError(err, setError);
+    } finally {
+      setDeleteLoading(false);
+      dispatch(setLoading(false));
+    }
+  };
+
+  const handleUpdateInList = (updatedVideo) => {
+    setVideos((prev) => prev.map((v) => v._id === updatedVideo._id ? updatedVideo : v));
+  };
 
   return (
     <div className="w-full flex justify-center px-6">
@@ -71,25 +99,43 @@ function UserVideos({ user, notify }) {
           "
           >
             {videos.map((video) => (
-              <div
-                key={video._id}
-                className={`
-                  group
-                  rounded-2xl
-                  overflow-hidden
-                  backdrop-blur
-                  shadow-md hover:shadow-xl
-                  transition-all duration-300
-                  ${theme === "dark"
-                    ? "bg-gradient-to-b from-gray-800/60 to-gray-900/80"
-                    : "bg-white border border-gray-200"
-                  }
-                `}
-              >
-                <VideoComponent videofile={video} notify={notify} />
-              </div>
+                <VideoComponent 
+                  key={video._id}
+                  videofile={video} 
+                  notify={notify} 
+                  isOwner={isOwner} 
+                  onEdit={setEditingVideo}
+                  onDelete={() => setVideoToDelete(video)}
+                  className={`
+                    group
+                    rounded-xl
+                    shadow-md hover:shadow-xl
+                    transition-all duration-300
+                    ${theme === "dark"
+                      ? "bg-gray-800 border border-gray-700"
+                      : "bg-white border border-gray-200"
+                    }
+                  `}
+                />
             ))}
           </div>
+        )}
+
+        {editingVideo && (
+          <EditVideoModal 
+            video={editingVideo} 
+            onClose={() => setEditingVideo(null)} 
+            onUpdate={handleUpdateInList} 
+          />
+        )}
+
+        {videoToDelete && (
+          <DeleteConfirmationModal
+            videoTitle={videoToDelete.title}
+            onClose={() => setVideoToDelete(null)}
+            onConfirm={handleDeleteVideo}
+            loading={deleteLoading}
+          />
         )}
       </div>
     </div>

@@ -9,7 +9,7 @@ import VideoMenu from "./VideoMenu";
 import PlaylistModal from "./PlaylistModal";
 import { getTimeDifference, formatDuration } from "../../utils/time";
 
-function VideoComponent({ videofile, notify }) {
+function VideoComponent({ videofile, notify, isOwner, onEdit, onDelete, className }) {
   const [showProfile, setShowProfile] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,6 +57,7 @@ function VideoComponent({ videofile, notify }) {
   const toggleDropdown = useCallback(() => setIsDropdownOpen((p) => !p), []);
   const handleDotsClick = useCallback((e) => {
     e?.preventDefault?.();
+    e?.stopPropagation?.();
     toggleDropdown();
   }, [toggleDropdown]);
 
@@ -152,9 +153,9 @@ function VideoComponent({ videofile, notify }) {
   );
 
   return (
-    <Link to={to} className="group" onClick={handleVideoClick}>
+    <Link to={to} className={`group ${isDropdownOpen ? "z-[100] relative" : "z-0"} ${className}`} onClick={handleVideoClick}>
       <div className={`
-      relative rounded-2xl overflow-hidden
+      relative rounded-2xl
       shadow-lg hover:shadow-2xl
       transition-all duration-300
       ${theme === "dark" ? "bg-gray-800" : "bg-white border border-gray-200 shadow-lg"}
@@ -260,11 +261,22 @@ function VideoComponent({ videofile, notify }) {
             </button>
 
             {isDropdownOpen && (
-              <VideoMenu
-                playlistId={playlistId}
-                handleRemoveFromPlaylist={handleRemoveFromPlaylist}
-                openModal={openModal}
-              />
+              <div onClick={(e) => e.stopPropagation()}>
+                <VideoMenu
+                  playlistId={playlistId}
+                  handleRemoveFromPlaylist={handleRemoveFromPlaylist}
+                  openModal={openModal}
+                  isOwner={isOwner}
+                  onEdit={() => {
+                    onEdit(video);
+                    setIsDropdownOpen(false);
+                  }}
+                  onDelete={() => {
+                    onDelete(video._id);
+                    setIsDropdownOpen(false);
+                  }}
+                />
+              </div>
             )}
           </div>
         </div>

@@ -2,7 +2,8 @@ import axios from "axios";
 import { handleApiError } from "../../utils/errorHandler.js";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../features/slices/loaderSlice.js";
 import { validateFile } from "../../utils/validation.js";
@@ -18,10 +19,10 @@ const InputField = ({ type = "text", name, value, onChange, placeholder, theme, 
       required
       maxLength={maxLength}
       className={`
-        w-full rounded-xl px-4 py-2.5 text-sm border transition
-        focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
+        w-full rounded-lg px-4 py-2.5 text-sm border transition
+        focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40
         ${theme === "dark"
-          ? "bg-gray-950/60 text-gray-100 border-white/10 placeholder:text-gray-500"
+          ? "bg-gray-900 text-gray-100 border-gray-600 placeholder:text-gray-400"
           : "bg-gray-50 text-gray-900 border-gray-300 placeholder:text-gray-400"
         }
         ${error ? "border-red-500 focus:border-red-500" : ""}
@@ -32,9 +33,10 @@ const InputField = ({ type = "text", name, value, onChange, placeholder, theme, 
 );
 
 function AddVideoForm() {
-  const notify = (text) => toast(text);
+  const notify = (text) => toast.success(text);
   const navigate = useNavigate();
   const theme = useSelector((state) => state.theme.theme);
+  const loading = useSelector((state) => state.loader.loading);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -43,6 +45,7 @@ function AddVideoForm() {
 
   const [error, setError] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
 
   const videoFileRef = useRef(null);
   const thumbnailRef = useRef(null);
@@ -93,6 +96,7 @@ function AddVideoForm() {
 
     try {
       dispatch(setLoading(true));
+      setIsUploading(true);
       setUploadProgress(0);
 
       const response = await axios.post(
@@ -119,7 +123,9 @@ function AddVideoForm() {
       setFormData({ title: "", description: "" });
     } finally {
       dispatch(setLoading(false));
-      setUploadProgress(0);
+      // Keep isUploading true until navigation for success, 
+      // or false if there was an error.
+      if (error) setIsUploading(false);
     }
   };
 
@@ -134,21 +140,21 @@ function AddVideoForm() {
       {/* Ambient glow */}
 
       <div className="relative flex justify-center px-6 py-24">
-        <ToastContainer />
+
 
         {/* Card */}
         <div
           className={`
             w-full max-w-xl rounded-2xl px-8 py-8
             ${theme === "dark"
-              ? "border border-white/10 bg-slate-800 backdrop-blur-3xl"
+              ? "border border-gray-700 bg-gray-800 shadow-2xl"
               : "border border-gray-200 bg-white shadow-xl"
             }
           `}
         >
           {/* Header */}
           <div className="text-center mb-8">
-            <h2 className={`text-3xl font-semibold tracking-tight bg-white bg-clip-text  ${theme === "dark" ? "text-transparent" : "text-black"
+            <h2 className={`text-3xl font-semibold tracking-tight ${theme === "dark" ? "text-white" : "text-black"
               }`}>
               Upload a new video
             </h2>
@@ -186,10 +192,10 @@ function AddVideoForm() {
                 required
                 maxLength={500}
                 className={`
-                  w-full min-h-[90px] rounded-xl px-4 py-2.5 text-sm border transition
-                  focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
+                  w-full min-h-[90px] rounded-lg px-4 py-2.5 text-sm border transition
+                  focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40
                   ${theme === "dark"
-                    ? "bg-gray-950/60 text-gray-100 border-white/10 placeholder:text-gray-500"
+                    ? "bg-gray-900 text-gray-100 border-gray-600 placeholder:text-gray-400"
                     : "bg-gray-50 text-gray-900 border-gray-300 placeholder:text-gray-400"
                   }
                 `}
@@ -199,8 +205,8 @@ function AddVideoForm() {
             {/* Upload blocks */}
             <div className="space-y-3">
 
-              <div className={`flex items-center gap-4 p-4 rounded-xl border transition ${theme === "dark"
-                ? "border-white/10 bg-gray-950/60 hover:border-white/20"
+              <div className={`flex items-center gap-4 p-4 rounded-lg border transition ${theme === "dark"
+                ? "border-gray-600 bg-gray-900 hover:border-gray-500"
                 : "border-gray-300 bg-gray-50 hover:border-gray-400"
                 }`}>
                 <span className={`text-xs w-28 shrink-0 ${theme === "dark" ? "text-gray-400" : "text-gray-600"
@@ -212,8 +218,8 @@ function AddVideoForm() {
                   className={`block w-full text-xs
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-lg file:border-0
-                    file:bg-indigo-600 file:text-white
-                    hover:file:bg-indigo-500
+                    file:bg-blue-600 file:text-white
+                    hover:file:bg-blue-700
                     cursor-pointer
                     ${theme === "dark" ? "text-gray-300" : "text-gray-700"}
                   `}
@@ -223,8 +229,8 @@ function AddVideoForm() {
               </div>
 
 
-              <div className={`flex items-center gap-4 p-4 rounded-xl border transition ${theme === "dark"
-                ? "border-white/10 bg-gray-950/60 hover:border-white/20"
+              <div className={`flex items-center gap-4 p-4 rounded-lg border transition ${theme === "dark"
+                ? "border-gray-600 bg-gray-900 hover:border-gray-500"
                 : "border-gray-300 bg-gray-50 hover:border-gray-400"
                 }`}>
                 <span className={`text-xs w-28 shrink-0 ${theme === "dark" ? "text-gray-400" : "text-gray-600"
@@ -236,10 +242,10 @@ function AddVideoForm() {
                   className={`block w-full text-xs
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-lg file:border-0
-                    file:bg-gray-700 file:text-white
-                    hover:file:bg-gray-600
+                    file:bg-gray-600 file:text-white
+                    hover:file:bg-gray-500
                     cursor-pointer
-                    ${theme === "dark" ? "text-gray-300" : "text-gray-700"}
+                    ${theme === "dark" ? "text-gray-400" : "text-gray-700"}
                   `}
                   type="file"
                   accept="image/*"
@@ -249,39 +255,63 @@ function AddVideoForm() {
 
             </div>
 
-            {/* Upload Progress Bar */}
-            {uploadProgress > 0 && uploadProgress < 100 && (
-              <div className="space-y-2">
+            {/* Upload network handling & server progression */}
+            {isUploading && (
+              <div className="space-y-3 mt-2 px-1 animate-slide-up duration-300">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-400">Uploading...</span>
-                  <span className="text-indigo-400 font-semibold">{uploadProgress}%</span>
+                  <span className={`font-semibold ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}>
+                    {uploadProgress === 100 
+                      ? "Usually takes 5-20s..." 
+                      : `Uploading... ${uploadProgress === 0 ? "Preparing files" : ""}`}
+                  </span>
+                  <span className={`${uploadProgress === 100 ? "text-green-500" : "text-blue-500"} font-bold text-sm drop-shadow-sm`}>
+                    {uploadProgress}%
+                  </span>
                 </div>
-                <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                
+                <div className={`w-full h-3 rounded-full overflow-hidden ${theme === "dark" ? "bg-gray-800" : "bg-gray-200"}`}>
                   <div
-                    className="h-full bg-gradient-to-r from-indigo-600 to-blue-500 transition-all duration-300 ease-out"
+                    className={`h-full rounded-full transition-all duration-300 ease-out shadow-lg shadow-blue-500/10 ${
+                      uploadProgress === 100 
+                        ? "bg-green-500 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]" 
+                        : "bg-blue-600"
+                    }`}
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
+                {uploadProgress === 100 && (
+                  <p className="text-[10px] text-center opacity-50 italic animate-pulse">
+                     Optimizing and encrypting your video...
+                  </p>
+                )}
               </div>
             )}
 
             {/* CTA */}
-            <div className="pt-2 flex justify-center">
+            <div className="pt-4 flex justify-center">
               <button
                 type="submit"
-                disabled={uploadProgress > 0 && uploadProgress < 100}
-                className="
+                disabled={isUploading}
+                className={`
                   relative overflow-hidden
-                  px-8 py-2.5 rounded-xl
-                  bg-indigo-600 text-white text-sm font-medium
-                  shadow-lg 
-                  hover:bg-indigo-500 
-                  active:scale-[0.98]
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  transition
-                "
+                  px-10 py-3 rounded-xl
+                  font-bold text-sm shadow-xl transition-all active:scale-[0.98]
+                  flex items-center gap-2
+                  ${isUploading
+                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20"
+                  }
+                `}
               >
-                {uploadProgress > 0 && uploadProgress < 100 ? "Uploading..." : "Upload video"}
+                {isUploading && uploadProgress === 100 ? (
+                  <><Loader2 className="w-5 h-5 animate-spin" /> Finalizing...</>
+                ) : isUploading ? (
+                  <><Loader2 className="w-5 h-5 animate-spin" /> Uploading...</>
+                ) : (
+                  <>
+                     Upload video
+                  </>
+                )}
               </button>
             </div>
 

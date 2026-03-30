@@ -7,7 +7,6 @@ import "./setupAxios.js"; // global axios config and 401 interceptor
 import {
   AuthLayout,
   ChangePassword,
-  Loader,
   ShowNavbar,
   UpdateAccount,
   UserTweets,

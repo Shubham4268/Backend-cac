@@ -5,6 +5,7 @@ import axios from "axios";
 import { handleApiError } from "../../utils/errorHandler.js";
 import toast from "react-hot-toast";
 import { change } from "../../features/slices/tweetSlice";
+import { setLoading } from "../../features/slices/loaderSlice.js";
 
 function AddTweetForm() {
   const [formData, setFormData] = useState({ content: "" });
@@ -61,6 +62,7 @@ function AddTweetForm() {
     const method = editing ? "patch" : "post";
 
     try {
+      dispatch(setLoading(true));
       const response = await axios[method](url, formData, {
         headers: { "Content-Type": "application/json" },
       });
@@ -75,6 +77,8 @@ function AddTweetForm() {
       setEditing(false);
     } catch (err) {
       handleApiError(err, setError);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -85,6 +89,7 @@ function AddTweetForm() {
 
   const handleDelete = async () => {
     try {
+      dispatch(setLoading(true));
       await axios.delete(
         `${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/${postData?._id}`
       );
@@ -94,6 +99,8 @@ function AddTweetForm() {
       notify("Tweet deleted successfully");
     } catch (err) {
       handleApiError(err, setError);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 

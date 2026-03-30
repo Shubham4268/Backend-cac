@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { Footer, Header, Navbar } from "./components/index.js";
+import { Footer, Header, Navbar, Loader } from "./components/index.js";
 import { useSelector } from "react-redux";
 import { useSessionValidator } from "./hooks/useSessionValidator.js";
 import { Toaster } from "react-hot-toast";
@@ -14,6 +14,8 @@ function App() {
 
   return (
     <>
+      {/* Global overlay loader — triggered by any dispatch(setLoading(true)) */}
+      <Loader />
       <div
         className={`w-full flex flex-row font-sans min-h-screen ${
           theme === "dark"

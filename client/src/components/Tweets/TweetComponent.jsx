@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { change } from "../../features/slices/tweetSlice";
 import { handleApiError } from "../../utils/errorHandler";
 import toast from "react-hot-toast";
+import { setLoading } from "../../features/slices/loaderSlice.js";
 
 function TweetComponent({ tweet, tweetData, refreshTweets }) {
   const [error, setError] = useState(null);
@@ -27,13 +28,16 @@ function TweetComponent({ tweet, tweetData, refreshTweets }) {
 
   const onDelete = async () => {
     try {
+      dispatch(setLoading(true));
       const deletedTweet = await axios.delete(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/tweets/${userTweet?._id}`);
       if (deletedTweet?.data?.success) {
-        refreshTweets();  // Call the refreshTweets function to refresh the list of tweets
+        refreshTweets();
         notify("Tweet Deleted");
       }
     } catch (error) {
       handleApiError(error, setError);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 

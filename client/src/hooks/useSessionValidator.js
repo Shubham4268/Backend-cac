@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "../features/slices/authSlice.js";
+import { setLoading } from "../features/slices/loaderSlice.js";
 import { persistor } from "../app/store.js";
 import axios from "axios";
 
@@ -30,6 +31,7 @@ export function useSessionValidator() {
     let cancelled = false;
 
     const validate = async () => {
+      dispatch(setLoading(true));
       try {
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/current-user`);
         if (!cancelled && response.data?.success) {
@@ -47,6 +49,7 @@ export function useSessionValidator() {
         }
       } finally {
         if (!cancelled) setValidating(false);
+        dispatch(setLoading(false));
       }
     };
 

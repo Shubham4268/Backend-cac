@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "../features/slices/authSlice.js";
 import { setLoading } from "../features/slices/loaderSlice.js";
 import { persistor } from "../app/store.js";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance.js";
 
 /**
  * Validates the current session against the backend on every app load.
@@ -33,7 +33,7 @@ export function useSessionValidator() {
     const validate = async () => {
       dispatch(setLoading(true));
       try {
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASEURL}/api/v1/users/current-user`);
+        const response = await axiosInstance.post(`/users/current-user`);
         if (!cancelled && response.data?.success) {
           // Refresh Redux with the latest user data from the server
           dispatch(login(response.data.data));

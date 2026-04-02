@@ -147,8 +147,8 @@ const loginUser = asyncHandler(async (req, res) => {
     const isProduction = process.env.NODE_ENV === "production";
     const cookieOptions = {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "None" : "Lax",
+        secure: true,
+        sameSite: "None",
     };
 
     // Respond with the user details and set cookies with the tokens
@@ -196,8 +196,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     const isProduction = process.env.NODE_ENV === "production";
     const options = {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "None" : "Lax",
+        secure: true,
+        sameSite: "None",
     };
 
     res.clearCookie("accessToken", options)
@@ -248,8 +248,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         const isProduction = process.env.NODE_ENV === "production";
         const options = {
             httpOnly: true,
-            secure: isProduction,
-            sameSite: isProduction ? "None" : "Lax",
+            secure: true,
+            sameSite: "None",
         };
 
         // Generate new access and refresh tokens

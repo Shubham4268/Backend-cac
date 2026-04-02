@@ -3,7 +3,7 @@ import { store } from "../app/store.js";
 import { logout } from "../features/slices/authSlice.js";
 import { persistor } from "../app/store.js";
 
-const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL;
+const BASE_URL = import.meta.env.VITE_BACKEND_BASEURL || "";
 
 const axiosInstance = axios.create({
   baseURL: `${BASE_URL}/api/v1`,
